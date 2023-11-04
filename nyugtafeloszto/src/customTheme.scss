@@ -1,0 +1,79 @@
+@use "@angular/material" as mat;
+@import "@angular/material/theming";
+@include mat-core();
+
+$custom-primary: (
+  50: #5A4870,
+  100: #504064,
+  200: #463857,
+  300: #3C304B,
+  400: #32283E,
+  500: #282031,
+  600: #1E1825,
+  700: #1E1825,
+  800: #141019,
+  900: #0A080C,
+  A100: #504064,
+  A200: #463857,
+  A400: #32283E,
+  A700: #1E1825,
+  contrast: (
+    50: $black-87-opacity,
+    100: $black-87-opacity,
+    200: $black-87-opacity,
+    300: $black-87-opacity,
+    400: $black-87-opacity,
+    500: #DDD5E0,
+    600: #DDD5E0,
+    700: #DDD5E0,
+    800: #DDD5E0,
+    900: #DDD5E0,
+    A100: $black-87-opacity,
+    A200: $black-87-opacity,
+    A400: $black-87-opacity,
+    A700: #DDD5E0,
+  ),
+);
+
+$custom-accent: (
+  50: #9281B1,
+  100: #8774AA,
+  200: #7C67A2,
+  300: #725D98,
+  400: #68558B,
+  500: #594976,
+  600: #554672,
+  700: #423659,
+  800: #392F4C,
+  900: #2F273F,
+  A100: #8774AA,
+  A200: #7C67A2,
+  A400: #68558B,
+  A700: #423659,
+  contrast: (
+    50: $black-87-opacity,
+    100: $black-87-opacity,
+    200: $black-87-opacity,
+    300: $black-87-opacity,
+    400: $black-87-opacity,
+    500: #DDD5E0,
+    600: #DDD5E0,
+    700: #DDD5E0,
+    800: #DDD5E0,
+    900: #DDD5E0,
+    A100: $black-87-opacity,
+    A200: $black-87-opacity,
+    A400: $black-87-opacity,
+    A700: #DDD5E0,
+  ),
+);
+
+$primary-palette: mat-palette($custom-primary);
+$accent-palette: mat-palette($custom-accent);
+
+$primary: mat-palette($primary-palette, 500);
+$accent: mat-palette($accent-palette, 500);
+
+$theme: mat-light-theme($primary, $accent);
+
+@include angular-material-theme($theme);

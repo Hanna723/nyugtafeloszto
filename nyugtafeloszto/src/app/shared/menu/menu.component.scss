@@ -1,0 +1,45 @@
+@import "../../../styles.scss";
+
+mat-sidenav-container {
+  position: unset;
+}
+
+mat-sidenav-content {
+  mat-toolbar {
+    display: flex;
+    column-gap: 24px;
+  }
+
+  a {
+    color: $primary-white;
+  }
+
+  span {
+    flex: 1 1 auto;
+  }
+}
+
+#sidenav div {
+  display: flex;
+  flex-direction: column;
+  padding-top: 16px;
+  
+  a {
+    padding: 8px 24px;
+  }
+}
+
+a {
+  text-decoration: none;
+}
+
+mat-icon {
+  color: $primary-white;
+}
+
+@media only screen and (max-width: 700px) {
+  mat-toolbar {
+    column-gap: 16px;
+    font-size: 1.1rem;
+  }
+}

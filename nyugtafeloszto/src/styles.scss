@@ -1,1 +1,14 @@
 /* You can add global styles to this file, and also import other style files */
+@import "customTheme.scss";
+
+$primary-white: rgb(232, 232, 232);
+
+html,
+body {
+  height: 100%;
+}
+body {
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+  background-color: $primary-white;
+}

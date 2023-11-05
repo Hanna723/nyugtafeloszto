@@ -1,0 +1,14 @@
+{
+  "targets": {
+    "nyugtafeloszto": {
+      "hosting": {
+        "nyugtafeloszto": [
+          "nyugtafeloszto"
+        ]
+      }
+    }
+  },
+  "projects": {
+    "default": "nyugtafeloszto"
+  }
+}

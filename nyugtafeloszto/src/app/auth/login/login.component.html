@@ -27,6 +27,9 @@
       <mat-error *ngIf="loginForm.controls['password'].errors?.['required']"
         >Kérem adja meg a jelszavát!</mat-error
       >
+      <mat-error *ngIf="loginForm.controls['password'].errors?.['wrong']"
+        >Helytelen e-mail cím vagy jelszó!</mat-error
+      >
     </mat-form-field>
     <mat-checkbox formControlName="rememberMe">Emlékezz rám!</mat-checkbox>
     <button

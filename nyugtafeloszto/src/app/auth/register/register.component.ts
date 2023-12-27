@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { FirebaseError } from '@firebase/util';
 
 import { AuthService } from 'src/app/shared/services/auth.service';
 import { UserService } from 'src/app/shared/services/user.service';
@@ -42,11 +43,28 @@ export class RegisterComponent {
             this.authService.logOut();
           })
           .catch((err) => {
-            console.error(err);
+            this.handleError(err);
           });
       })
       .catch((err) => {
-        console.error(err);
+        this.handleError(err);
       });
+  }
+
+  handleError(err: { code: any }): void {
+    let errorName = 'error';
+    if (err instanceof FirebaseError) {
+      switch (err.code) {
+        case 'auth/invalid-email': {
+          errorName = 'format';
+          break;
+        }
+        case 'auth/email-already-in-use': {
+          errorName = 'taken';
+          break;
+        }
+      }
+    }
+    this.registrationForm.controls['email'].setErrors({ [errorName]: true });
   }
 }

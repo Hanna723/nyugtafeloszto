@@ -7,8 +7,14 @@
       <mat-error *ngIf="registrationForm.controls['email'].errors?.['required']"
         >Kérem adjon meg egy e-mail címet!</mat-error
       >
-      <mat-error *ngIf="registrationForm.controls['email'].errors?.['email']"
-        >Nem e-mail cím!</mat-error
+      <mat-error *ngIf="registrationForm.controls['email'].errors?.['email'] || registrationForm.controls['email'].errors?.['format']"
+        >Helytelen e-mail cím!</mat-error
+      >
+      <mat-error *ngIf="registrationForm.controls['email'].errors?.['taken']"
+        >A megadott e-mail cím foglalt!</mat-error
+      >
+      <mat-error *ngIf="registrationForm.controls['email'].errors?.['error']"
+        >Hiba!</mat-error
       >
     </mat-form-field>
     <mat-form-field>

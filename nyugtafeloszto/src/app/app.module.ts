@@ -19,9 +19,10 @@ import { getFirestore, provideFirestore } from '@angular/fire/firestore';
 import { getStorage, provideStorage } from '@angular/fire/storage';
 
 import { environment } from '../environments/environment';
+import { DialogComponent } from './shared/dialog/dialog.component';
 
 @NgModule({
-  declarations: [AppComponent, HomeComponent, MenuComponent],
+  declarations: [AppComponent, HomeComponent, MenuComponent, DialogComponent],
   imports: [
     BrowserModule,
     AppRoutingModule,

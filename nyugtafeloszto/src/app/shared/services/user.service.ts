@@ -7,7 +7,7 @@ import { User } from '../models/User';
   providedIn: 'root',
 })
 export class UserService {
-  collectionName = 'Felhasznalo';
+  collectionName = 'User';
 
   constructor(private angularFirestore: AngularFirestore) {}
 

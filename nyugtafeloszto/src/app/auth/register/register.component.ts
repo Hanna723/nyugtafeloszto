@@ -60,7 +60,7 @@ export class RegisterComponent {
       data: {
         title: 'Sikeres regisztráció!',
         button: 'Ok',
-        link: 'auth/login'
+        link: 'auth/login',
       },
     });
   }

@@ -18,7 +18,7 @@ a {
   color: mat.get-color-from-palette($accent-palette, default);
 }
 
-div:has(form) {
+div:has(.auth-form) {
   width: 500px;
   margin: 100px auto;
   border-radius: 10px;
@@ -26,17 +26,17 @@ div:has(form) {
   background-color: whitesmoke;
 }
 
-form {
+.auth-form {
   display: flex;
   flex-direction: column;
   padding: 42px;
 }
 
-form button[mat-flat-button] {
+.auth-form button[mat-flat-button] {
   margin: 24px 0 32px 0;
 }
 
-form a {
+.auth-form a {
   margin-top: 24px;
   text-align: center;
 }
@@ -60,18 +60,62 @@ fieldset mat-form-field {
   width: 100%;
 }
 
+.list-container {
+  width: 500px;
+  margin: 20px auto;
+
+  form {
+    display: flex;
+    flex-direction: row;
+  }
+
+  mat-form-field {
+    flex: 1;
+    margin-right: 24px;
+  }
+
+  button {
+    margin-top: 20px;
+  }
+}
+
 @media only screen and (max-width: 550px) {
-  div:has(form) {
+  div:has(.auth-form) {
     width: 350px;
+  }
+
+  .list-container {
+    width: 100vw;
+
+    form {
+      margin: 0 32px;
+    }
   }
 }
 
 @media only screen and (max-width: 400px) {
-  div:has(form) {
+  div:has(.auth-form) {
     width: 100%;
     height: 100%;
     margin: 0;
     border-radius: 0;
+  }
+}
+
+@media only screen and (max-width: 370px) {
+  .list-container {
+    form {
+      flex-direction: column;
+    }
+
+    mat-form-field {
+      margin: 0;
+    }
+
+    button {
+      margin-top: 0;
+      margin-bottom: 24px;
+    }
   }
 }
 

@@ -1,6 +1,6 @@
 <div>
   <div class="form-header">Bejelentkezés</div>
-  <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+  <form class="auth-form" [formGroup]="loginForm" (ngSubmit)="onSubmit()">
     <mat-form-field>
       <mat-label for="email">E-mail</mat-label>
       <input matInput type="text" formControlName="email" />

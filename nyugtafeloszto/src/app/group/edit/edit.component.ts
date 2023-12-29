@@ -68,6 +68,11 @@ export class EditComponent implements OnInit {
     members.push(new FormControl(''));
   }
 
+  removeMember(i: number): void {
+    const members = <FormArray>this.groupForm.controls['members'];
+    members.removeAt(i);
+  }
+
   close(): void {
     this.dialogRef.close();
   }

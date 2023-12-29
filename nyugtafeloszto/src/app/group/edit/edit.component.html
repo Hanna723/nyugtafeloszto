@@ -5,12 +5,17 @@
       <input matInput type="text" formControlName="name" />
     </mat-form-field>
     <fieldset id="fieldset" formArrayName="members">
-      <mat-form-field *ngFor="let member of getControls(); let i = index">
-        <mat-label [attr.for]="i">Tag neve</mat-label>
-        <mat-select formControlName="{{ i }}">
-            <mat-option *ngFor="let el of memberList" [value]="el.id">{{el.name}}</mat-option>
-        </mat-select>
-      </mat-form-field>
+      <div class="memberField" *ngFor="let member of getControls(); let i = index">
+        <mat-form-field>
+          <mat-label [attr.for]="i">Tag neve</mat-label>
+          <mat-select formControlName="{{ i }}">
+            <mat-option *ngFor="let el of memberList" [value]="el.id">{{
+              el.name
+            }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+        <mat-icon color="accent" (click)="removeMember(i)">close</mat-icon>
+      </div>
       <button
         id="add-member"
         mat-stroked-button
@@ -22,7 +27,7 @@
         Új tag
       </button>
     </fieldset>
-    <div>
+    <div class="buttons">
       <button mat-stroked-button color="accent" (click)="close()" type="button">
         Mégsem
       </button>

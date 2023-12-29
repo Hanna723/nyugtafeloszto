@@ -53,10 +53,16 @@ export class EditComponent implements OnInit {
       return;
     }
 
+    let members = this.groupForm.controls['members'].value;
+    members = new Set(members);
+    members.delete('');
+    members = Array.from(members.values());
+    console.log(members);
+
     const group: Group = {
       user: JSON.parse(user).uid,
       name: this.groupForm.controls['name'].value,
-      members: this.groupForm.controls['members'].value,
+      members: members,
     };
     this.groupService.create(group);
 

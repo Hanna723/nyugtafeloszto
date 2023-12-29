@@ -1,11 +1,18 @@
 .name {
-    font-size: 20px;
+  font-size: 20px;
 }
 
-.name ~ div {
-    margin-top: 24px;
+.empty {
+  margin-top: 24px;
 }
 
 table {
-    margin-top: 32px;
+  margin-top: 32px;
+}
+
+@media only screen and (max-width: 550px) {
+  .name,
+  .empty {
+    margin-left: 24px;
+  }
 }

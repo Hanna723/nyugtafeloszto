@@ -15,7 +15,7 @@
     <tr mat-header-row *matHeaderRowDef="columnsToDisplay"></tr>
     <tr mat-row *matRowDef="let row; columns: columnsToDisplay"></tr>
   </table>
-  <div
+  <div class="empty"
     *ngIf="members && !members[0] && members.length === group.members.length"
   >
     A csoportnak nincsenek tagjai

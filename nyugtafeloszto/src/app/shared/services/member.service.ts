@@ -12,9 +12,11 @@ export class MemberService {
   constructor(private angularFirestore: AngularFirestore) {}
 
   create(member: Member) {
+    member.id = this.angularFirestore.createId();
     return this.angularFirestore
       .collection<Member>(this.collectionName)
-      .add(member);
+      .doc(member.id)
+      .set(member);
   }
 
   delete(id: string) {
@@ -25,9 +27,19 @@ export class MemberService {
   }
 
   getAllForOneUser(userId: string) {
-    return this.angularFirestore.collection<Member>(
-      this.collectionName,
-      (ref) => ref.where('user', '==', userId).orderBy('name')
-    ).valueChanges();
+    return this.angularFirestore
+      .collection<Member>(this.collectionName, (ref) =>
+        ref.where('user', '==', userId).orderBy('name')
+      )
+      .valueChanges();
+  }
+
+  getById(id: string, userId: string) {
+    return this.angularFirestore
+      .collection<Member>(this.collectionName, (ref) =>
+        ref.where('user', '==', userId).orderBy('name')
+      )
+      .doc(id)
+      .valueChanges();
   }
 }

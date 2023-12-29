@@ -50,10 +50,9 @@ div:has(.auth-form) {
 }
 
 fieldset {
-  border-radius: 5px;
-  margin-bottom: 24px;
-  padding: 16px;
-  border-color: rgb(212, 212, 212);
+  border: none;
+  margin-right: 0;
+  padding-right: 0;
 }
 
 fieldset mat-form-field {

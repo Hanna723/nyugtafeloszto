@@ -1,21 +1,25 @@
 import { Component, OnInit } from '@angular/core';
-import { FormControl, FormGroup } from '@angular/forms';
+import { Router } from '@angular/router';
+import { MatDialog } from '@angular/material/dialog';
+
 import { Group } from 'src/app/shared/models/Group';
 import { GroupService } from 'src/app/shared/services/group.service';
+import { EditComponent } from '../edit/edit.component';
 
 @Component({
   selector: 'app-list',
   templateUrl: './list.component.html',
-  styleUrls: ['./list.component.scss']
+  styleUrls: ['./list.component.scss'],
 })
-export class ListComponent {
+export class ListComponent implements OnInit {
   tableData?: Array<Group>;
   columnsToDisplay = ['name'];
-  groupForm: FormGroup = new FormGroup({
-    name: new FormControl(''),
-  });
 
-  constructor(private groupService: GroupService) {}
+  constructor(
+    private groupService: GroupService,
+    private router: Router,
+    public edit: MatDialog
+  ) {}
 
   ngOnInit(): void {
     const user = localStorage.getItem('user');
@@ -32,17 +36,11 @@ export class ListComponent {
     }
   }
 
-  onSubmit() {
-    const user = localStorage.getItem('user');
+  navigateToPreview(id: any): void {
+    this.router.navigateByUrl(`/group/${id.id}`);
+  }
 
-    if (!user) {
-      return;
-    }
-    // const group: Group = {
-    //   user: JSON.parse(user).uid,
-    //   name: this.memberForm.controls['name'].value
-    // }
-    // this.memberService.create(member);
-    // this.memberForm.controls['name'].setValue('');
+  openEdit(): void {
+    this.edit.open(EditComponent, { disableClose: true });
   }
 }

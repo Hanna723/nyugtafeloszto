@@ -6,12 +6,17 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatListModule } from '@angular/material/list';
 import { MatTableModule } from '@angular/material/table';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatIconModule } from '@angular/material/icon';
+import {MatSelectModule} from '@angular/material/select';
 
 import { ListComponent } from './list/list.component';
 import { GroupRoutingModule } from './group-routing.module';
+import { PreviewComponent } from './preview/preview.component';
+import { EditComponent } from './edit/edit.component';
 
 @NgModule({
-  declarations: [ListComponent],
+  declarations: [ListComponent, PreviewComponent, EditComponent],
   imports: [
     CommonModule,
     GroupRoutingModule,
@@ -21,6 +26,9 @@ import { GroupRoutingModule } from './group-routing.module';
     MatFormFieldModule,
     MatInputModule,
     MatButtonModule,
+    MatDialogModule,
+    MatIconModule,
+    MatSelectModule
   ],
 })
 export class GroupModule {}

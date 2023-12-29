@@ -1,0 +1,23 @@
+<div class="list-container" *ngIf="group">
+  <div class="name">
+    {{ group.name }}
+  </div>
+  <table
+    mat-table
+    *ngIf="members && members[0] && members.length === group.members.length"
+    [dataSource]="members"
+    class="mat-elevation-z8"
+  >
+    <ng-container matColumnDef="name">
+      <th mat-header-cell *matHeaderCellDef>Tagok</th>
+      <td mat-cell *matCellDef="let element">{{ element.name }}</td>
+    </ng-container>
+    <tr mat-header-row *matHeaderRowDef="columnsToDisplay"></tr>
+    <tr mat-row *matRowDef="let row; columns: columnsToDisplay"></tr>
+  </table>
+  <div
+    *ngIf="members && !members[0] && members.length === group.members.length"
+  >
+    A csoportnak nincsenek tagjai
+  </div>
+</div>

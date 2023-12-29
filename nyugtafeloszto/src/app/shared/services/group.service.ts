@@ -12,9 +12,11 @@ export class GroupService {
   constructor(private angularFirestore: AngularFirestore) {}
 
   create(group: Group) {
+    group.id = this.angularFirestore.createId();
     return this.angularFirestore
       .collection<Group>(this.collectionName)
-      .add(group);
+      .doc(group.id)
+      .set(group);
   }
 
   delete(id: string) {
@@ -27,8 +29,17 @@ export class GroupService {
   getAllForOneUser(userId: string) {
     return this.angularFirestore
       .collection<Group>(this.collectionName, (ref) =>
+        ref.where('user', '==', userId).orderBy('name')
+      )
+      .valueChanges();
+  }
+
+  getById(id: string, userId: string) {
+    return this.angularFirestore
+      .collection<Group>(this.collectionName, (ref) =>
         ref.where('user', '==', userId)
       )
+      .doc(id)
       .valueChanges();
   }
 }

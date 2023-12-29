@@ -1,0 +1,31 @@
+.container {
+  width: 350px;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  padding: 24px;
+
+  div {
+    text-align: end;
+    margin-top: 24px;
+  }
+}
+
+button {
+  width: max-content;
+}
+
+button[type="submit"] {
+    margin-left: 8px;
+}
+
+@media only screen and (max-width: 440px) {
+    .container {
+        max-width: 100vw;
+        max-height: 100vh;
+        height: 100%;
+        width: 100%;
+    }
+}

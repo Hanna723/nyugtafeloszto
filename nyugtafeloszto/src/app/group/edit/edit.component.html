@@ -1,0 +1,32 @@
+<div class="container">
+  <form [formGroup]="groupForm" (ngSubmit)="onSubmit()">
+    <mat-form-field>
+      <mat-label for="name">Név</mat-label>
+      <input matInput type="text" formControlName="name" />
+    </mat-form-field>
+    <fieldset id="fieldset" formArrayName="members">
+      <mat-form-field *ngFor="let member of getControls(); let i = index">
+        <mat-label [attr.for]="i">Tag neve</mat-label>
+        <mat-select formControlName="{{ i }}">
+            <mat-option *ngFor="let el of memberList" [value]="el.id">{{el.name}}</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <button
+        id="add-member"
+        mat-stroked-button
+        color="accent"
+        (click)="addMember()"
+        type="button"
+      >
+        <mat-icon>add</mat-icon>
+        Új tag
+      </button>
+    </fieldset>
+    <div>
+      <button mat-stroked-button color="accent" (click)="close()" type="button">
+        Mégsem
+      </button>
+      <button mat-flat-button color="accent" type="submit">Mentés</button>
+    </div>
+  </form>
+</div>

@@ -1,4 +1,4 @@
-<div class="list-container">
+<div class="list-container" *ngIf="user">
   <button mat-flat-button color="accent" (click)="openEdit()">
     <mat-icon>add</mat-icon>
     Új
@@ -21,4 +21,5 @@
     ></tr>
   </table>
 </div>
+<div class="list-container" *ngIf="!user">A csoportok használatához jelentkezz be!</div>
 <div style="height: 48px"></div>

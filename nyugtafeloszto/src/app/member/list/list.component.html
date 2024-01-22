@@ -1,4 +1,4 @@
-<div class="list-container">
+<div class="list-container" *ngIf="user">
   <form [formGroup]="memberForm" (ngSubmit)="onSubmit()">
     <mat-form-field>
       <mat-label for="name">Név</mat-label>
@@ -27,4 +27,5 @@
     <tr mat-row *matRowDef="let row; columns: columnsToDisplay"></tr>
   </table>
 </div>
+<div class="list-container" *ngIf="!user">A résztvevők használatához jelentkezz be!</div>
 <div style="height: 48px;"></div>

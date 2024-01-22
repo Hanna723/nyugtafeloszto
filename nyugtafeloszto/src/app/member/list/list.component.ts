@@ -15,15 +15,16 @@ export class ListComponent implements OnInit {
   memberForm: FormGroup = new FormGroup({
     name: new FormControl(''),
   });
+  user?: string | null;
 
   constructor(private memberService: MemberService) {}
 
   ngOnInit(): void {
-    const user = localStorage.getItem('user');
+    this.user = localStorage.getItem('user');
 
-    if (user) {
+    if (this.user) {
       this.memberService
-        .getAllForOneUser(JSON.parse(user).uid)
+        .getAllForOneUser(JSON.parse(this.user).uid)
         .subscribe((data) => {
           this.tableData = [];
           data.forEach((el) => {
@@ -41,8 +42,8 @@ export class ListComponent implements OnInit {
     }
     const member: Member = {
       user: JSON.parse(user).uid,
-      name: this.memberForm.controls['name'].value
-    }
+      name: this.memberForm.controls['name'].value,
+    };
     this.memberService.create(member);
     this.memberForm.controls['name'].setValue('');
   }

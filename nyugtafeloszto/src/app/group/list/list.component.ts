@@ -14,6 +14,7 @@ import { EditComponent } from '../edit/edit.component';
 export class ListComponent implements OnInit {
   tableData?: Array<Group>;
   columnsToDisplay = ['name'];
+  user?: string | null;
 
   constructor(
     private groupService: GroupService,
@@ -22,11 +23,11 @@ export class ListComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    const user = localStorage.getItem('user');
+    this.user = localStorage.getItem('user');
 
-    if (user) {
+    if (this.user) {
       this.groupService
-        .getAllForOneUser(JSON.parse(user).uid)
+        .getAllForOneUser(JSON.parse(this.user).uid)
         .subscribe((data) => {
           this.tableData = [];
           data.forEach((el) => {

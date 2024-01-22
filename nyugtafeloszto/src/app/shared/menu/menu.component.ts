@@ -18,7 +18,9 @@ export class MenuComponent {
   ngOnInit(): void {
     this.authService.isLoggedIn().subscribe((user) => {
       this.user = user;
-      localStorage.setItem('user', JSON.stringify(this.user));
+      if (user) {
+        localStorage.setItem('user', JSON.stringify(this.user));
+      }
     })
 
     this.router.events.subscribe((event) => {

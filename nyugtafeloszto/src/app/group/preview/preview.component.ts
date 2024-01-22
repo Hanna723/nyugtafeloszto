@@ -7,6 +7,7 @@ import { Member } from 'src/app/shared/models/Member';
 import { GroupService } from 'src/app/shared/services/group.service';
 import { MemberService } from 'src/app/shared/services/member.service';
 import { EditComponent } from '../edit/edit.component';
+import { DialogComponent } from 'src/app/shared/dialog/dialog.component';
 
 @Component({
   selector: 'app-preview',
@@ -23,7 +24,8 @@ export class PreviewComponent implements OnInit {
     private memberService: MemberService,
     private route: ActivatedRoute,
     private router: Router,
-    public edit: MatDialog
+    public edit: MatDialog,
+    public deleteDialog: MatDialog
   ) {}
 
   ngOnInit(): void {
@@ -51,7 +53,20 @@ export class PreviewComponent implements OnInit {
   }
 
   deleteGroup() {
-    console.log('Delete called');
+    const deleteDialogRef = this.deleteDialog.open(DialogComponent, {
+      disableClose: true,
+      data: {
+        title: 'Figyelem! A csoport véglegesen törlődik.',
+        button: 'Mégsem',
+        submitButton: 'Ok',
+      },
+    });
+
+    deleteDialogRef.componentInstance.submitEvent.subscribe(() => {
+      if (this.group?.id) {
+        this.groupService.delete(this.group?.id);
+      }
+    });
   }
 
   editGroup() {

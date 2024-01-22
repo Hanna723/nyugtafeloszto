@@ -1,5 +1,17 @@
-.name {
+.header {
+  display: flex;
+  justify-content: space-between;
   font-size: 20px;
+  margin-top: 48px;
+
+  div {
+    margin-top: auto;
+    margin-bottom: auto;
+  }
+
+  button {
+    margin-top: 0;
+  }
 }
 
 .empty {
@@ -11,8 +23,9 @@ table {
 }
 
 @media only screen and (max-width: 550px) {
-  .name,
+  .header,
   .empty {
     margin-left: 24px;
+    margin-right: 24px;
   }
 }

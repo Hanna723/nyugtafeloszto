@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import { MatDialogRef } from '@angular/material/dialog';
+import { Component, Inject, OnInit } from '@angular/core';
+import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { FormArray, FormBuilder, FormControl, FormGroup } from '@angular/forms';
 
 import { Group } from 'src/app/shared/models/Group';
@@ -20,6 +20,7 @@ export class EditComponent implements OnInit {
   memberList?: Array<Member>;
 
   constructor(
+    @Inject(MAT_DIALOG_DATA) public data: { group: Group },
     public dialogRef: MatDialogRef<EditComponent>,
     private formBuilder: FormBuilder,
     private groupService: GroupService,
@@ -39,6 +40,16 @@ export class EditComponent implements OnInit {
           });
         });
     }
+
+    if (this.data) {
+      this.groupForm.controls['name'].setValue(this.data.group.name);
+
+      const members = <FormArray>this.groupForm.controls['members'];
+      this.data.group.members.forEach((member) => {
+        members.push(new FormControl(''));
+      });
+      members.setValue(this.data.group.members);
+    }
   }
 
   getControls() {
@@ -57,14 +68,19 @@ export class EditComponent implements OnInit {
     members = new Set(members);
     members.delete('');
     members = Array.from(members.values());
-    console.log(members);
 
     const group: Group = {
       user: JSON.parse(user).uid,
       name: this.groupForm.controls['name'].value,
       members: members,
     };
-    this.groupService.create(group);
+
+    if (this.data) {
+      group.id = this.data.group.id;
+      this.groupService.update(group);
+    } else {
+      this.groupService.create(group);
+    }
 
     this.close();
   }

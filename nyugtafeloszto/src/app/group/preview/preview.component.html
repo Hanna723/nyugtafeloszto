@@ -1,6 +1,20 @@
 <div class="list-container" *ngIf="group">
-  <div class="name">
-    {{ group.name }}
+  <div class="header">
+    <div>
+      {{ group.name }}
+    </div>
+    <div>
+      <button
+        mat-icon-button
+        (click)="deleteGroup()"
+        aria-label="Delete button"
+      >
+        <mat-icon color="accent">delete</mat-icon>
+      </button>
+      <button mat-icon-button (click)="editGroup()" aria-label="Edit button">
+        <mat-icon color="accent">edit</mat-icon>
+      </button>
+    </div>
   </div>
   <table
     mat-table
@@ -15,7 +29,8 @@
     <tr mat-header-row *matHeaderRowDef="columnsToDisplay"></tr>
     <tr mat-row *matRowDef="let row; columns: columnsToDisplay"></tr>
   </table>
-  <div class="empty"
+  <div
+    class="empty"
     *ngIf="members && !members[0] && members.length === group.members.length"
   >
     A csoportnak nincsenek tagjai

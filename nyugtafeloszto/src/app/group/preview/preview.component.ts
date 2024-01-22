@@ -1,10 +1,12 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 
 import { Group } from 'src/app/shared/models/Group';
 import { Member } from 'src/app/shared/models/Member';
 import { GroupService } from 'src/app/shared/services/group.service';
 import { MemberService } from 'src/app/shared/services/member.service';
+import { EditComponent } from '../edit/edit.component';
 
 @Component({
   selector: 'app-preview',
@@ -20,7 +22,8 @@ export class PreviewComponent implements OnInit {
     private groupService: GroupService,
     private memberService: MemberService,
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    public edit: MatDialog
   ) {}
 
   ngOnInit(): void {
@@ -45,5 +48,16 @@ export class PreviewComponent implements OnInit {
     } else {
       this.router.navigateByUrl('/group/list');
     }
+  }
+
+  deleteGroup() {
+    console.log('Delete called');
+  }
+
+  editGroup() {
+    this.edit.open(EditComponent, {
+      disableClose: true,
+      data: { group: this.group },
+    });
   }
 }

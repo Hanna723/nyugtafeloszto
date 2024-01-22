@@ -19,6 +19,13 @@ export class GroupService {
       .set(group);
   }
 
+  update(group: Group) {
+    return this.angularFirestore
+      .collection<Group>(this.collectionName)
+      .doc(group.id)
+      .update(group);
+  }
+
   delete(id: string) {
     return this.angularFirestore
       .collection<Group>(this.collectionName)

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { FirebaseError } from '@firebase/util';
 import { MatDialog } from '@angular/material/dialog';
@@ -7,13 +7,14 @@ import { AuthService } from 'src/app/shared/services/auth.service';
 import { UserService } from 'src/app/shared/services/user.service';
 import { User } from 'src/app/shared/models/User';
 import { DialogComponent } from 'src/app/shared/dialog/dialog.component';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-register',
   templateUrl: './register.component.html',
   styleUrls: ['./register.component.scss'],
 })
-export class RegisterComponent {
+export class RegisterComponent implements OnInit {
   hide: boolean = true;
   registrationForm: FormGroup = new FormGroup({
     email: new FormControl('', [Validators.email, Validators.required]),
@@ -26,8 +27,16 @@ export class RegisterComponent {
   constructor(
     private authService: AuthService,
     private userService: UserService,
+    private router: Router,
     public dialog: MatDialog
   ) {}
+
+  ngOnInit(): void {
+    const user = localStorage.getItem('user');
+    if (user) {
+      this.router.navigateByUrl('/home');
+    }
+  }
 
   onSubmit(): void {
     this.authService

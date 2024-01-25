@@ -20,6 +20,11 @@ export class LoginComponent {
   constructor(private authService: AuthService, private router: Router) {}
 
   ngOnInit(): void {
+    const user = localStorage.getItem('user');
+    if (user) {
+      this.router.navigateByUrl('/home');
+    }
+    
     let rememberedEmail: string | null = localStorage.getItem('email');
 
     if (rememberedEmail) {

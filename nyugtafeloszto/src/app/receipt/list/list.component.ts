@@ -28,7 +28,7 @@ export class ListComponent implements OnInit {
       this.receiptService
         .getAllForOneUser(JSON.parse(this.user).uid)
         .subscribe((data) => {
-          this.tableData = [];
+          this.tableData = [...data];
           data.forEach((el) => {
             this.currencyService
               .getById(el.currency as unknown as string)
@@ -45,7 +45,6 @@ export class ListComponent implements OnInit {
                     symbol: currency?.symbol,
                   };
                 }
-                this.tableData?.push(el);
               });
           });
         });

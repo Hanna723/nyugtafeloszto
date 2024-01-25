@@ -6,7 +6,7 @@ export interface Receipt {
     id?: string;
     currency: Currency;
     date: Timestamp;
-    formattedDate: string | null;
+    formattedDate?: string | null;
     store: string;
     user: string;
     products: Array<Product>;

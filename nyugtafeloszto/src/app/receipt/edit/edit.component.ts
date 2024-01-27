@@ -166,13 +166,14 @@ export class EditComponent implements OnInit {
     }
     const uid = JSON.parse(user).uid;
 
+    let sum = 0;
     let products: Product[] = [];
     const productArray = this.receiptForm.controls['products'] as FormArray;
 
     productArray.controls.forEach((productControl) => {
       let productGroup = productControl as FormGroup;
-
       let pays: Set<string> = new Set();
+
       productGroup.controls['pays'].value.forEach((el: Member | Group) => {
         if (el.id) {
           pays.add(el.id);
@@ -187,6 +188,7 @@ export class EditComponent implements OnInit {
       };
 
       products.push(product);
+      sum += product.price;
     });
 
     const receipt: Receipt = {
@@ -194,7 +196,7 @@ export class EditComponent implements OnInit {
       store: this.receiptForm.controls['store'].value,
       date: this.receiptForm.controls['date'].value,
       currency: this.receiptForm.controls['currency'].value.id,
-      sum: 0,
+      sum: sum,
       products: products,
     };
 

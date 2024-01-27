@@ -37,7 +37,7 @@ export class MemberService {
   getById(id: string, userId: string) {
     return this.angularFirestore
       .collection<Member>(this.collectionName, (ref) =>
-        ref.where('user', '==', userId).orderBy('name')
+        ref.where('user', '==', userId)
       )
       .doc(id)
       .valueChanges();

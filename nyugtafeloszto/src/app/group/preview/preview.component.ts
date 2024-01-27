@@ -16,7 +16,7 @@ import { DialogComponent } from 'src/app/shared/dialog/dialog.component';
 })
 export class PreviewComponent implements OnInit {
   group?: Group;
-  members?: Array<Member>;
+  members: Array<Member> = [];
   columnsToDisplay = ['name'];
 
   constructor(
@@ -33,16 +33,21 @@ export class PreviewComponent implements OnInit {
     const id = this.route.snapshot.params['id'];
 
     if (user && id) {
+      console.log('asdd');
       this.groupService.getById(id, user).subscribe((data) => {
+        console.log(data?.id);
         if (!data) {
           this.router.navigateByUrl('/group/list');
         }
         this.group = data;
-        this.members = [];
-        this.group?.members.forEach((memberId) => {
+
+        data?.members.forEach((memberId) => {
+          // console.log(memberId);
           this.memberService.getById(memberId, user).subscribe((member) => {
             if (member) {
               this.members?.push(member);
+
+              // console.log(this.members);
             }
           });
         });

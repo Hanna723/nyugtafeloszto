@@ -26,10 +26,7 @@ export class ListComponent implements OnInit {
       this.memberService
         .getAllForOneUser(JSON.parse(this.user).uid)
         .subscribe((data) => {
-          this.tableData = [];
-          data.forEach((el) => {
-            this.tableData?.push(el);
-          });
+          this.tableData = [...data];
         });
     }
   }

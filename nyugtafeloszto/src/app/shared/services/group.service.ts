@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
 
 import { Group } from '../models/Group';
+import { first } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -47,6 +48,7 @@ export class GroupService {
         ref.where('user', '==', userId)
       )
       .doc(id)
-      .valueChanges();
+      .valueChanges()
+      .pipe(first());
   }
 }

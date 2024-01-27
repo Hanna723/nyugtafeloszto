@@ -1,5 +1,9 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
+import {
+  MAT_DIALOG_DATA,
+  MatDialog,
+  MatDialogRef,
+} from '@angular/material/dialog';
 import { FormArray, FormBuilder, FormControl, FormGroup } from '@angular/forms';
 
 import { Group } from 'src/app/shared/models/Group';
@@ -34,10 +38,7 @@ export class EditComponent implements OnInit {
       this.memberService
         .getAllForOneUser(JSON.parse(user).uid)
         .subscribe((data) => {
-          this.memberList = [];
-          data.forEach((el) => {
-            this.memberList?.push(el);
-          });
+          this.memberList = [...data];
         });
     }
 

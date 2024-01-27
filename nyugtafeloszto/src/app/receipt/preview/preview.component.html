@@ -1,0 +1,28 @@
+<div *ngIf="receipt">
+  <div>
+    {{ receipt.store }}
+  </div>
+  <div>
+    {{ receipt.formattedDate }}
+  </div>
+  <div>{{ receipt.sum }} {{ receipt.currency.symbol }}</div>
+  <table
+    mat-table
+    *ngIf="members && members[0] && members.length === receipt.members.length"
+    [dataSource]="members"
+    class="mat-elevation-z8"
+  >
+    <ng-container matColumnDef="name">
+      <th mat-header-cell *matHeaderCellDef>Név</th>
+      <td mat-cell *matCellDef="let element">{{ element.name }}</td>
+    </ng-container>
+    <ng-container matColumnDef="pays">
+      <th mat-header-cell *matHeaderCellDef>Fizet</th>
+      <td mat-cell *matCellDef="let element">
+        {{ element.pays }} {{ receipt.currency.symbol }}
+      </td>
+    </ng-container>
+    <tr mat-header-row *matHeaderRowDef="columnsToDisplay"></tr>
+    <tr mat-row *matRowDef="let row; columns: columnsToDisplay"></tr>
+  </table>
+</div>

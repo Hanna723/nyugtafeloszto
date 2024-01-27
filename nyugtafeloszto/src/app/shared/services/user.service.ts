@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
+import { first } from 'rxjs';
 
 import { User } from '../models/User';
 
@@ -28,7 +29,8 @@ export class UserService {
     return this.angularFirestore
       .collection<User>(this.collectionName)
       .doc(id)
-      .valueChanges();
+      .valueChanges()
+      .pipe(first());
   }
 
   getByEmail(email: string) {
@@ -36,7 +38,8 @@ export class UserService {
       .collection<User>(this.collectionName, (ref) =>
         ref.where('email', '==', email)
       )
-      .valueChanges();
+      .valueChanges()
+      .pipe(first());
   }
 
   update(user: User) {

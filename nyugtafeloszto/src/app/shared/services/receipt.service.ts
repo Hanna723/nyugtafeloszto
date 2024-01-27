@@ -1,5 +1,7 @@
 import { Injectable } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
+import { first } from 'rxjs';
+
 import { Receipt } from '../models/Receipt';
 
 @Injectable({
@@ -12,10 +14,11 @@ export class ReceiptService {
 
   create(receipt: Receipt) {
     receipt.id = this.angularFirestore.createId();
-    return this.angularFirestore
+    this.angularFirestore
       .collection<Receipt>(this.collectionName)
       .doc(receipt.id)
       .set(receipt);
+    return receipt.id;
   }
 
   delete(id: string) {
@@ -39,6 +42,7 @@ export class ReceiptService {
         ref.where('user', '==', userId).orderBy('date')
       )
       .doc(id)
-      .valueChanges();
+      .valueChanges()
+      .pipe(first());
   }
 }

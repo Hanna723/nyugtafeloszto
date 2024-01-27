@@ -20,6 +20,7 @@ import { MatAutocompleteActivatedEvent } from '@angular/material/autocomplete';
 import { Receipt } from 'src/app/shared/models/Receipt';
 import { Product } from 'src/app/shared/models/Product';
 import { ReceiptService } from 'src/app/shared/services/receipt.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-edit',
@@ -51,7 +52,8 @@ export class EditComponent implements OnInit {
     private currencyService: CurrencyService,
     private memberService: MemberService,
     private groupService: GroupService,
-    private receiptService: ReceiptService
+    private receiptService: ReceiptService,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -168,6 +170,7 @@ export class EditComponent implements OnInit {
 
     let sum = 0;
     let products: Product[] = [];
+    let members: Set<string> = new Set();
     const productArray = this.receiptForm.controls['products'] as FormArray;
 
     productArray.controls.forEach((productControl) => {
@@ -176,7 +179,15 @@ export class EditComponent implements OnInit {
 
       productGroup.controls['pays'].value.forEach((el: Member | Group) => {
         if (el.id) {
-          pays.add(el.id);
+          if ('members' in el) {
+            el.members.forEach((member) => {
+              pays.add(member);
+              members.add(member);
+            });
+          } else {
+            pays.add(el.id);
+            members.add(el.id);
+          }
         }
       });
 
@@ -198,9 +209,10 @@ export class EditComponent implements OnInit {
       currency: this.receiptForm.controls['currency'].value.id,
       sum: sum,
       products: products,
+      members: Array.from(members),
     };
 
-    console.log(receipt);
-    this.receiptService.create(receipt);
+    const id = this.receiptService.create(receipt);
+    this.router.navigateByUrl(`/receipt/${id}`);
   }
 }

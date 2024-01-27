@@ -14,9 +14,10 @@ import { MatChipsModule } from '@angular/material/chips';
 import { ListComponent } from './list/list.component';
 import { ReceiptRoutingModule } from './receipt-routing.module';
 import { EditComponent } from './edit/edit.component';
+import { PreviewComponent } from './preview/preview.component';
 
 @NgModule({
-  declarations: [ListComponent, EditComponent],
+  declarations: [ListComponent, EditComponent, PreviewComponent],
   imports: [
     CommonModule,
     ReceiptRoutingModule,

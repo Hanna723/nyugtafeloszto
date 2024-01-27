@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
+import { first } from 'rxjs';
 
 import { Member } from '../models/Member';
 
@@ -40,6 +41,7 @@ export class MemberService {
         ref.where('user', '==', userId)
       )
       .doc(id)
-      .valueChanges();
+      .valueChanges()
+      .pipe(first());
   }
 }

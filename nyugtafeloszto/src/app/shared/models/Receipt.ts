@@ -11,4 +11,5 @@ export interface Receipt {
     user: string;
     products: Array<Product>;
     sum: number;
+    members: Array<string>;
 }

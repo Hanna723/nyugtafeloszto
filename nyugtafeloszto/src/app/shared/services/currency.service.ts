@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { Currency } from '../models/Currency';
+import { first } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -20,6 +21,7 @@ export class CurrencyService {
     return this.angularFirestore
       .collection<Currency>(this.collectionName)
       .doc(id)
-      .valueChanges();
+      .valueChanges()
+      .pipe(first());
   }
 }

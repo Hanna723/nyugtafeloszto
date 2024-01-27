@@ -1,5 +1,6 @@
 export interface Member {
-    id?: string;
-    user: string;
-    name: string;
+  id?: string;
+  user: string;
+  name: string;
+  pays?: number;
 }

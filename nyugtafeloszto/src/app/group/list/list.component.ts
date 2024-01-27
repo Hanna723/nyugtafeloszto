@@ -34,8 +34,8 @@ export class ListComponent implements OnInit {
     }
   }
 
-  navigateToPreview(id: any): void {
-    this.router.navigateByUrl(`/group/${id.id}`);
+  navigateToPreview(group: Group): void {
+    this.router.navigateByUrl(`/group/${group.id}`);
   }
 
   openEdit(): void {

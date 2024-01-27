@@ -1,5 +1,6 @@
 import { DatePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 
 import { Receipt } from 'src/app/shared/models/Receipt';
 import { CurrencyService } from 'src/app/shared/services/currency.service';
@@ -18,7 +19,8 @@ export class ListComponent implements OnInit {
   constructor(
     private receiptService: ReceiptService,
     private currencyService: CurrencyService,
-    private datePipe: DatePipe
+    private datePipe: DatePipe,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -39,15 +41,15 @@ export class ListComponent implements OnInit {
                   'yyyy. MM. dd.'
                 );
                 if (currency) {
-                  el.currency = {
-                    id: currency?.id,
-                    name: currency?.name,
-                    symbol: currency?.symbol,
-                  };
+                  el.currency = currency;
                 }
               });
           });
         });
     }
+  }
+
+  navigateToPreview(receipt: Receipt): void {
+    this.router.navigateByUrl(`/receipt/${receipt.id}`);
   }
 }

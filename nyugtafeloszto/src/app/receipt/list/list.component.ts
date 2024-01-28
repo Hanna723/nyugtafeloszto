@@ -1,6 +1,7 @@
 import { DatePipe } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { Subscription } from 'rxjs';
 
 import { Receipt } from 'src/app/shared/models/Receipt';
 import { CurrencyService } from 'src/app/shared/services/currency.service';
@@ -11,10 +12,12 @@ import { ReceiptService } from 'src/app/shared/services/receipt.service';
   templateUrl: './list.component.html',
   styleUrls: ['./list.component.scss'],
 })
-export class ListComponent implements OnInit {
+export class ListComponent implements OnInit, OnDestroy {
   tableData?: Array<Receipt>;
   columnsToDisplay = ['store', 'date', 'sum'];
   user?: string | null;
+  receiptSubscription?: Subscription;
+  currencySubscriptions: Subscription[] = [];
 
   constructor(
     private receiptService: ReceiptService,
@@ -27,12 +30,12 @@ export class ListComponent implements OnInit {
     this.user = localStorage.getItem('user');
 
     if (this.user) {
-      this.receiptService
+      this.receiptSubscription = this.receiptService
         .getAllForOneUser(JSON.parse(this.user).uid)
         .subscribe((data) => {
           this.tableData = [...data];
           data.forEach((el) => {
-            this.currencyService
+            const currencySubscription = this.currencyService
               .getById(el.currency as unknown as string)
               .subscribe((currency) => {
                 let date = el.date.toDate();
@@ -44,9 +47,17 @@ export class ListComponent implements OnInit {
                   el.currency = currency;
                 }
               });
+            this.currencySubscriptions.push(currencySubscription);
           });
         });
     }
+  }
+
+  ngOnDestroy(): void {
+    this.receiptSubscription?.unsubscribe();
+    this.currencySubscriptions.forEach((subscription) => {
+      subscription.unsubscribe();
+    });
   }
 
   navigateToPreview(receipt: Receipt): void {

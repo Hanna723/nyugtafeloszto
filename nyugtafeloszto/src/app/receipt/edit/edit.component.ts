@@ -2,6 +2,7 @@ import {
   AfterViewInit,
   Component,
   ElementRef,
+  OnDestroy,
   OnInit,
   QueryList,
   ViewChild,
@@ -22,13 +23,14 @@ import { Receipt } from 'src/app/shared/models/Receipt';
 import { Product } from 'src/app/shared/models/Product';
 import { ReceiptService } from 'src/app/shared/services/receipt.service';
 import { ActivatedRoute, Router } from '@angular/router';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-edit',
   templateUrl: './edit.component.html',
   styleUrls: ['./edit.component.scss'],
 })
-export class EditComponent implements OnInit {
+export class EditComponent implements OnInit, OnDestroy {
   @ViewChild('currencyInput') currencyInput!: ElementRef<HTMLInputElement>;
   @ViewChildren('payerInput') payerInputs!: QueryList<
     ElementRef<HTMLInputElement>
@@ -51,6 +53,13 @@ export class EditComponent implements OnInit {
   filteredMembersAndGroups?: Array<Member | Group>;
   fetchedMembers?: Array<Member>;
 
+  currencySubscription?: Subscription;
+  memberSubscription?: Subscription;
+  groupSubscription?: Subscription;
+  receiptSubscription?: Subscription;
+  currencySubscription2?: Subscription;
+  memberSubscription2?: Subscription;
+
   constructor(
     private formBuilder: FormBuilder,
     private currencyService: CurrencyService,
@@ -69,23 +78,27 @@ export class EditComponent implements OnInit {
     this.uid = JSON.parse(user).uid;
     this.id = this.route.snapshot.params['id'];
 
-    this.currencyService.getAll().subscribe((data) => {
-      this.currencies = [...data];
-      this.filteredCurrencies = [...data];
-    });
+    this.currencySubscription = this.currencyService
+      .getAll()
+      .subscribe((data) => {
+        this.currencies = [...data];
+        this.filteredCurrencies = [...data];
+      });
 
     if (this.uid) {
-      this.memberService.getAllForOneUser(this.uid).subscribe((data) => {
-        if (this.uid) {
-          this.groupService
-            .getAllForOneUser(this.uid)
-            .subscribe((groupData) => {
-              this.membersAndGroups = [...data, ...groupData];
-              this.fetchedMembers = [...data];
-              this.filteredMembersAndGroups = [...data, ...groupData];
-            });
-        }
-      });
+      this.memberSubscription = this.memberService
+        .getAllForOneUser(this.uid)
+        .subscribe((data) => {
+          if (this.uid) {
+            this.groupSubscription = this.groupService
+              .getAllForOneUser(this.uid)
+              .subscribe((groupData) => {
+                this.membersAndGroups = [...data, ...groupData];
+                this.fetchedMembers = [...data];
+                this.filteredMembersAndGroups = [...data, ...groupData];
+              });
+          }
+        });
     }
 
     if (this.id) {
@@ -93,33 +106,44 @@ export class EditComponent implements OnInit {
     }
   }
 
+  ngOnDestroy(): void {
+    this.currencySubscription?.unsubscribe();
+    this.currencySubscription2?.unsubscribe();
+    this.memberSubscription?.unsubscribe();
+    this.memberSubscription2?.unsubscribe();
+    this.groupSubscription?.unsubscribe();
+    this.receiptSubscription?.unsubscribe();
+  }
+
   setExistingReceiptData(): void {
     if (!this.id || !this.uid) {
       return;
     }
-    this.receiptService.getById(this.id, this.uid).subscribe((data) => {
-      this.receiptForm.controls['store'].setValue(data?.store);
-      this.receiptForm.controls['date'].setValue(data?.date.toDate());
-      if (data?.currency) {
-        this.currencyService
-          .getById(data.currency as unknown as string)
-          .subscribe((currency) => {
-            this.receiptForm.controls['currency'].setValue(currency);
-          });
-      }
+    this.receiptSubscription = this.receiptService
+      .getById(this.id, this.uid)
+      .subscribe((data) => {
+        this.receiptForm.controls['store'].setValue(data?.store);
+        this.receiptForm.controls['date'].setValue(data?.date.toDate());
+        if (data?.currency) {
+          this.currencySubscription2 = this.currencyService
+            .getById(data.currency as unknown as string)
+            .subscribe((currency) => {
+              this.receiptForm.controls['currency'].setValue(currency);
+            });
+        }
 
-      const products = <FormArray>this.receiptForm.controls['products'];
-      data?.products.forEach((product) => {
-        products.push(
-          this.formBuilder.group({
-            name: new FormControl(product.name),
-            piece: new FormControl(product.piece),
-            price: new FormControl(product.price),
-            pays: this.formBuilder.array(product.pays),
-          })
-        );
+        const products = <FormArray>this.receiptForm.controls['products'];
+        data?.products.forEach((product) => {
+          products.push(
+            this.formBuilder.group({
+              name: new FormControl(product.name),
+              piece: new FormControl(product.piece),
+              price: new FormControl(product.price),
+              pays: this.formBuilder.array(product.pays),
+            })
+          );
+        });
       });
-    });
   }
 
   filter(): void {
@@ -171,7 +195,7 @@ export class EditComponent implements OnInit {
     if (this.id) {
       productArray.controls.forEach((control) => {
         if (typeof control.value === 'string' && this.uid) {
-          this.memberService
+          this.memberSubscription2 = this.memberService
             .getById(control.value, this.uid)
             .subscribe((member) => {
               control.setValue(member);

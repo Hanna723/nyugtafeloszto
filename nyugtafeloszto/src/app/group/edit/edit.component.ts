@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
 import {
   MAT_DIALOG_DATA,
   MatDialog,
@@ -10,18 +10,20 @@ import { Group } from 'src/app/shared/models/Group';
 import { Member } from 'src/app/shared/models/Member';
 import { GroupService } from 'src/app/shared/services/group.service';
 import { MemberService } from 'src/app/shared/services/member.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-edit',
   templateUrl: './edit.component.html',
   styleUrls: ['./edit.component.scss'],
 })
-export class EditComponent implements OnInit {
+export class EditComponent implements OnInit, OnDestroy {
   groupForm: FormGroup = new FormGroup({
     name: new FormControl(''),
     members: this.formBuilder.array([]),
   });
   memberList?: Array<Member>;
+  memberSubscription?: Subscription;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: { group: Group },
@@ -35,7 +37,7 @@ export class EditComponent implements OnInit {
     const user = localStorage.getItem('user');
 
     if (user) {
-      this.memberService
+      this.memberSubscription = this.memberService
         .getAllForOneUser(JSON.parse(user).uid)
         .subscribe((data) => {
           this.memberList = [...data];
@@ -51,6 +53,10 @@ export class EditComponent implements OnInit {
       });
       members.setValue(this.data.group.members);
     }
+  }
+
+  ngOnDestroy(): void {
+    this.memberSubscription?.unsubscribe();
   }
 
   getControls() {

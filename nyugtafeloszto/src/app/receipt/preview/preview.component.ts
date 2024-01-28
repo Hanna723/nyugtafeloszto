@@ -1,7 +1,8 @@
 import { DatePipe } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
+import { Subscription } from 'rxjs';
 import { DialogComponent } from 'src/app/shared/dialog/dialog.component';
 
 import { Member } from 'src/app/shared/models/Member';
@@ -15,12 +16,17 @@ import { ReceiptService } from 'src/app/shared/services/receipt.service';
   templateUrl: './preview.component.html',
   styleUrls: ['./preview.component.scss'],
 })
-export class PreviewComponent implements OnInit {
+export class PreviewComponent implements OnInit, OnDestroy {
   user?: string | null;
   receipt?: Receipt;
   needToPay: Map<string, number> = new Map();
   members: Array<Member> = [];
   columnsToDisplay = ['name', 'pays'];
+
+  receiptSubscription?: Subscription;
+  currencySubscription?: Subscription;
+  memberSubscription?: Subscription;
+  submitSubscription?: Subscription;
 
   constructor(
     private receiptService: ReceiptService,
@@ -37,37 +43,48 @@ export class PreviewComponent implements OnInit {
     const id = this.route.snapshot.params['id'];
 
     if (this.user && id) {
-      this.receiptService.getById(id, this.user).subscribe((data) => {
-        this.receipt = data;
-        this.currencyService
-          .getById(data?.currency as unknown as string)
-          .subscribe((currency) => {
-            let date = data?.date.toDate();
-            if (currency && data) {
-              data.currency = currency;
-              data.formattedDate = this.datePipe.transform(
-                date,
-                'yyyy. MM. dd.'
-              );
-            }
-          });
-        this.calculatePrices();
-        this.getMembersFromReceipt();
-      });
+      this.receiptSubscription = this.receiptService
+        .getById(id, this.user)
+        .subscribe((data) => {
+          this.receipt = data;
+          this.currencySubscription = this.currencyService
+            .getById(data?.currency as unknown as string)
+            .subscribe((currency) => {
+              let date = data?.date.toDate();
+              if (currency && data) {
+                data.currency = currency;
+                data.formattedDate = this.datePipe.transform(
+                  date,
+                  'yyyy. MM. dd.'
+                );
+              }
+            });
+          this.calculatePrices();
+          this.getMembersFromReceipt();
+        });
     } else {
       this.router.navigateByUrl('/receipt/list');
     }
   }
 
+  ngOnDestroy(): void {
+    this.receiptSubscription?.unsubscribe();
+    this.currencySubscription?.unsubscribe();
+    this.memberSubscription?.unsubscribe();
+    this.submitSubscription?.unsubscribe();
+  }
+
   getMembersFromReceipt() {
     this.receipt?.members.forEach((memberId) => {
       if (this.user) {
-        this.memberService.getById(memberId, this.user).subscribe((member) => {
-          if (member && member.id) {
-            member.pays = this.needToPay.get(member.id) || 0;
-            this.members.push(member);
-          }
-        });
+        this.memberSubscription = this.memberService
+          .getById(memberId, this.user)
+          .subscribe((member) => {
+            if (member && member.id) {
+              member.pays = this.needToPay.get(member.id) || 0;
+              this.members.push(member);
+            }
+          });
       }
     });
   }
@@ -98,12 +115,13 @@ export class PreviewComponent implements OnInit {
       },
     });
 
-    deleteDialogRef.componentInstance.submitEvent.subscribe(() => {
-      if (this.receipt?.id) {
-        this.receiptService.delete(this.receipt.id);
-        this.router.navigateByUrl('/receipt/list');
-      }
-    });
+    this.submitSubscription =
+      deleteDialogRef.componentInstance.submitEvent.subscribe(() => {
+        if (this.receipt?.id) {
+          this.receiptService.delete(this.receipt.id);
+          this.router.navigateByUrl('/receipt/list');
+        }
+      });
   }
 
   editReceipt() {

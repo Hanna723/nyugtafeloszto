@@ -22,6 +22,10 @@ const routes: Routes = [
         component: PreviewComponent,
       },
       {
+        path: 'edit/:id',
+        component: EditComponent,
+      },
+      {
         path: '**',
         redirectTo: 'list',
       },

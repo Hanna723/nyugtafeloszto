@@ -106,5 +106,9 @@ export class PreviewComponent implements OnInit {
     });
   }
 
-  editReceipt() {}
+  editReceipt() {
+    if (this.receipt?.id) {
+      this.router.navigateByUrl(`/receipt/edit/${this.receipt.id}`);
+    }
+  }
 }

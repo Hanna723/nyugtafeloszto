@@ -34,7 +34,6 @@ export class PreviewComponent implements OnInit {
 
     if (user && id) {
       this.groupService.getById(id, user).subscribe((data) => {
-        console.log(data?.id);
         if (!data) {
           this.router.navigateByUrl('/group/list');
         }

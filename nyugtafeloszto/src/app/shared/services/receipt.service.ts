@@ -21,6 +21,13 @@ export class ReceiptService {
     return receipt.id;
   }
 
+  update(receipt: Receipt) {
+    return this.angularFirestore
+      .collection<Receipt>(this.collectionName)
+      .doc(receipt.id)
+      .update(receipt);
+  }
+
   delete(id: string) {
     return this.angularFirestore
       .collection<Receipt>(this.collectionName)

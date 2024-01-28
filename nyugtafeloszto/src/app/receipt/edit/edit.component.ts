@@ -1,4 +1,5 @@
 import {
+  AfterViewInit,
   Component,
   ElementRef,
   OnInit,
@@ -20,7 +21,7 @@ import { MatAutocompleteActivatedEvent } from '@angular/material/autocomplete';
 import { Receipt } from 'src/app/shared/models/Receipt';
 import { Product } from 'src/app/shared/models/Product';
 import { ReceiptService } from 'src/app/shared/services/receipt.service';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-edit',
@@ -33,6 +34,8 @@ export class EditComponent implements OnInit {
     ElementRef<HTMLInputElement>
   >;
 
+  id?: string;
+  uid?: string;
   receiptForm: FormGroup = new FormGroup({
     store: new FormControl(''),
     date: new FormControl(''),
@@ -46,6 +49,7 @@ export class EditComponent implements OnInit {
   separatorKeysCodes: number[] = [ENTER, COMMA];
   membersAndGroups?: Array<Member | Group>;
   filteredMembersAndGroups?: Array<Member | Group>;
+  fetchedMembers?: Array<Member>;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -53,6 +57,7 @@ export class EditComponent implements OnInit {
     private memberService: MemberService,
     private groupService: GroupService,
     private receiptService: ReceiptService,
+    private route: ActivatedRoute,
     private router: Router
   ) {}
 
@@ -61,17 +66,58 @@ export class EditComponent implements OnInit {
     if (!user) {
       return;
     }
-    const uid = JSON.parse(user).uid;
+    this.uid = JSON.parse(user).uid;
+    this.id = this.route.snapshot.params['id'];
 
     this.currencyService.getAll().subscribe((data) => {
       this.currencies = [...data];
       this.filteredCurrencies = [...data];
     });
 
-    this.memberService.getAllForOneUser(uid).subscribe((data) => {
-      this.groupService.getAllForOneUser(uid).subscribe((groupData) => {
-        this.membersAndGroups = [...data, ...groupData];
-        this.filteredMembersAndGroups = [...data, ...groupData];
+    if (this.uid) {
+      this.memberService.getAllForOneUser(this.uid).subscribe((data) => {
+        if (this.uid) {
+          this.groupService
+            .getAllForOneUser(this.uid)
+            .subscribe((groupData) => {
+              this.membersAndGroups = [...data, ...groupData];
+              this.fetchedMembers = [...data];
+              this.filteredMembersAndGroups = [...data, ...groupData];
+            });
+        }
+      });
+    }
+
+    if (this.id) {
+      this.setExistingReceiptData();
+    }
+  }
+
+  setExistingReceiptData(): void {
+    if (!this.id || !this.uid) {
+      return;
+    }
+    this.receiptService.getById(this.id, this.uid).subscribe((data) => {
+      this.receiptForm.controls['store'].setValue(data?.store);
+      this.receiptForm.controls['date'].setValue(data?.date.toDate());
+      if (data?.currency) {
+        this.currencyService
+          .getById(data.currency as unknown as string)
+          .subscribe((currency) => {
+            this.receiptForm.controls['currency'].setValue(currency);
+          });
+      }
+
+      const products = <FormArray>this.receiptForm.controls['products'];
+      data?.products.forEach((product) => {
+        products.push(
+          this.formBuilder.group({
+            name: new FormControl(product.name),
+            piece: new FormControl(product.piece),
+            price: new FormControl(product.price),
+            pays: this.formBuilder.array(product.pays),
+          })
+        );
       });
     });
   }
@@ -115,7 +161,20 @@ export class EditComponent implements OnInit {
   getPayersFormArray(i: number): FormArray | null {
     const products = this.receiptForm.get('products') as FormArray;
     const product = products.at(i) as FormGroup;
-    return product.get('pays') as FormArray;
+    const productArray = product.get('pays') as FormArray;
+
+    if (this.id) {
+      productArray.controls.forEach((control) => {
+        if (typeof control.value === 'string' && this.uid) {
+          this.memberService.getById(control.value, this.uid).subscribe((member) => {
+            console.log(member);
+            control.setValue(member);
+          });
+        }
+      });
+    }
+
+    return productArray;
   }
 
   addPayer(event: MatChipInputEvent, i: number): void {
@@ -212,7 +271,12 @@ export class EditComponent implements OnInit {
       members: Array.from(members),
     };
 
-    const id = this.receiptService.create(receipt);
-    this.router.navigateByUrl(`/receipt/${id}`);
+    if (this.id) {
+      receipt.id = this.id;
+      this.receiptService.update(receipt);
+    } else {
+      this.id = this.receiptService.create(receipt);
+    }
+    this.router.navigateByUrl(`/receipt/${this.id}`);
   }
 }

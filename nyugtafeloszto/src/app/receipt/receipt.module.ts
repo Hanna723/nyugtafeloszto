@@ -8,7 +8,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatDatepickerModule } from '@angular/material/datepicker';
-import { MatNativeDateModule } from '@angular/material/core';
+import { MAT_DATE_LOCALE, MatNativeDateModule } from '@angular/material/core';
 import { MatChipsModule } from '@angular/material/chips';
 
 import { ListComponent } from './list/list.component';
@@ -34,6 +34,12 @@ import { MatDialogModule } from '@angular/material/dialog';
     MatChipsModule,
     MatDialogModule,
   ],
-  providers: [DatePipe],
+  providers: [
+    DatePipe,
+    {
+      provide: MAT_DATE_LOCALE,
+      useValue: 'hun',
+    },
+  ],
 })
 export class ReceiptModule {}

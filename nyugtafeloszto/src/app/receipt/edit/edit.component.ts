@@ -158,6 +158,11 @@ export class EditComponent implements OnInit {
     );
   }
 
+  removeProduct(i: number): void {
+    const products = this.receiptForm.get('products') as FormArray;
+    products.removeAt(i);
+  }
+
   getPayersFormArray(i: number): FormArray | null {
     const products = this.receiptForm.get('products') as FormArray;
     const product = products.at(i) as FormGroup;
@@ -166,10 +171,11 @@ export class EditComponent implements OnInit {
     if (this.id) {
       productArray.controls.forEach((control) => {
         if (typeof control.value === 'string' && this.uid) {
-          this.memberService.getById(control.value, this.uid).subscribe((member) => {
-            console.log(member);
-            control.setValue(member);
-          });
+          this.memberService
+            .getById(control.value, this.uid)
+            .subscribe((member) => {
+              control.setValue(member);
+            });
         }
       });
     }

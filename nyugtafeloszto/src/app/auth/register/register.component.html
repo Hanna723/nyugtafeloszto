@@ -1,13 +1,18 @@
 <div>
   <div class="form-header">Regisztráció</div>
-  <form class="auth-form" [formGroup]="registrationForm" (ngSubmit)="onSubmit()">
+  <form
+    class="auth-form"
+    [formGroup]="registrationForm"
+    (ngSubmit)="onSubmit()"
+  >
     <mat-form-field>
       <mat-label for="email">E-mail</mat-label>
       <input matInput type="text" formControlName="email" />
       <mat-error *ngIf="registrationForm.controls['email'].errors?.['required']"
         >Kérem adjon meg egy e-mail címet!</mat-error
       >
-      <mat-error *ngIf="registrationForm.controls['email'].errors?.['email'] || registrationForm.controls['email'].errors?.['format']"
+      <mat-error
+        *ngIf="registrationForm.controls['email'].errors?.['email'] || registrationForm.controls['email'].errors?.['format']"
         >Helytelen e-mail cím!</mat-error
       >
       <mat-error *ngIf="registrationForm.controls['email'].errors?.['taken']"
@@ -28,14 +33,18 @@
         mat-icon-button
         matSuffix
         (click)="hide = !hide"
+        [attr.aria-label]="'Jelszó elrejtése'"
         [attr.aria-pressed]="hide"
+        tabindex="-1"
       >
         <mat-icon>{{ hide ? "visibility_off" : "visibility" }}</mat-icon>
       </button>
-      <mat-error *ngIf="registrationForm.controls['password'].errors?.['required']"
+      <mat-error
+        *ngIf="registrationForm.controls['password'].errors?.['required']"
         >Kérem adjon meg egy jelszót!</mat-error
       >
-      <mat-error *ngIf="registrationForm.controls['password'].errors?.['minlength']"
+      <mat-error
+        *ngIf="registrationForm.controls['password'].errors?.['minlength']"
         >Legalább 6 karakter hosszú jelszót adjon meg!</mat-error
       >
     </mat-form-field>

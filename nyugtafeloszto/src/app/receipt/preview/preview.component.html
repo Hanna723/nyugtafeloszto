@@ -6,6 +6,14 @@
     {{ receipt.formattedDate }}
   </div>
   <div>{{ receipt.sum }} {{ receipt.currency.symbol }}</div>
+  <div>
+    <button mat-icon-button (click)="deleteReceipt()" aria-label="Delete button">
+      <mat-icon color="accent">delete</mat-icon>
+    </button>
+    <button mat-icon-button (click)="editReceipt()" aria-label="Edit button">
+      <mat-icon color="accent">edit</mat-icon>
+    </button>
+  </div>
   <table
     mat-table
     *ngIf="members && members[0] && members.length === receipt.members.length"

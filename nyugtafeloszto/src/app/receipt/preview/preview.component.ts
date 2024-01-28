@@ -1,6 +1,8 @@
 import { DatePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
+import { DialogComponent } from 'src/app/shared/dialog/dialog.component';
 
 import { Member } from 'src/app/shared/models/Member';
 import { Receipt } from 'src/app/shared/models/Receipt';
@@ -26,7 +28,8 @@ export class PreviewComponent implements OnInit {
     private currencyService: CurrencyService,
     private datePipe: DatePipe,
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    public deleteDialog: MatDialog
   ) {}
 
   ngOnInit(): void {
@@ -84,4 +87,24 @@ export class PreviewComponent implements OnInit {
       });
     });
   }
+
+  deleteReceipt() {
+    const deleteDialogRef = this.deleteDialog.open(DialogComponent, {
+      disableClose: true,
+      data: {
+        title: 'Figyelem! A nyugta véglegesen törlődik.',
+        button: 'Mégsem',
+        submitButton: 'Ok',
+      },
+    });
+
+    deleteDialogRef.componentInstance.submitEvent.subscribe(() => {
+      if (this.receipt?.id) {
+        this.receiptService.delete(this.receipt.id);
+        this.router.navigateByUrl('/receipt/list');
+      }
+    });
+  }
+
+  editReceipt() {}
 }

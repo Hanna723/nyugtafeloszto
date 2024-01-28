@@ -15,6 +15,7 @@ import { ListComponent } from './list/list.component';
 import { ReceiptRoutingModule } from './receipt-routing.module';
 import { EditComponent } from './edit/edit.component';
 import { PreviewComponent } from './preview/preview.component';
+import { MatDialogModule } from '@angular/material/dialog';
 
 @NgModule({
   declarations: [ListComponent, EditComponent, PreviewComponent],
@@ -31,6 +32,7 @@ import { PreviewComponent } from './preview/preview.component';
     MatDatepickerModule,
     MatNativeDateModule,
     MatChipsModule,
+    MatDialogModule,
   ],
   providers: [DatePipe],
 })

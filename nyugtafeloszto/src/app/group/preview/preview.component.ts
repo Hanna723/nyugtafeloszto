@@ -33,7 +33,6 @@ export class PreviewComponent implements OnInit {
     const id = this.route.snapshot.params['id'];
 
     if (user && id) {
-      console.log('asdd');
       this.groupService.getById(id, user).subscribe((data) => {
         console.log(data?.id);
         if (!data) {
@@ -42,12 +41,9 @@ export class PreviewComponent implements OnInit {
         this.group = data;
 
         data?.members.forEach((memberId) => {
-          // console.log(memberId);
           this.memberService.getById(memberId, user).subscribe((member) => {
             if (member) {
               this.members?.push(member);
-
-              // console.log(this.members);
             }
           });
         });
@@ -70,6 +66,7 @@ export class PreviewComponent implements OnInit {
     deleteDialogRef.componentInstance.submitEvent.subscribe(() => {
       if (this.group?.id) {
         this.groupService.delete(this.group?.id);
+        this.router.navigateByUrl('/group/list');
       }
     });
   }

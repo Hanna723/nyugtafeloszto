@@ -22,7 +22,7 @@ import { environment } from '../environments/environment';
 import { DialogComponent } from './shared/dialog/dialog.component';
 
 @NgModule({
-  declarations: [AppComponent, HomeComponent, MenuComponent, DialogComponent],
+  declarations: [AppComponent, MenuComponent, DialogComponent],
   imports: [
     BrowserModule,
     AppRoutingModule,

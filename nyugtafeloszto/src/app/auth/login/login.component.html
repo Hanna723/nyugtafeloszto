@@ -1,1 +1,47 @@
-<p>login works!</p>
+<div>
+  <div class="form-header">Bejelentkezés</div>
+  <form class="auth-form" [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+    <mat-form-field>
+      <mat-label for="email">E-mail</mat-label>
+      <input matInput type="text" formControlName="email" />
+      <mat-error *ngIf="loginForm.controls['email'].errors?.['required']"
+        >Kérem adja meg az e-mail címét!</mat-error
+      >
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label for="password">Jelszó</mat-label>
+      <input
+        matInput
+        [type]="hide ? 'password' : 'text'"
+        formControlName="password"
+      />
+      <button
+        mat-icon-button
+        matSuffix
+        (click)="hide = !hide"
+        [attr.aria-label]="'Jelszó elrejtése'"
+        [attr.aria-pressed]="hide"
+        tabindex="-1"
+      >
+        <mat-icon>{{ hide ? "visibility_off" : "visibility" }}</mat-icon>
+      </button>
+      <mat-error *ngIf="loginForm.controls['password'].errors?.['required']"
+        >Kérem adja meg a jelszavát!</mat-error
+      >
+      <mat-error *ngIf="loginForm.controls['password'].errors?.['wrong']"
+        >Helytelen e-mail cím vagy jelszó!</mat-error
+      >
+    </mat-form-field>
+    <mat-checkbox formControlName="rememberMe">Emlékezz rám!</mat-checkbox>
+    <button
+      [disabled]="!loginForm.valid"
+      mat-flat-button
+      color="accent"
+      type="submit"
+    >
+      Bejelentkezés
+    </button>
+    <mat-divider></mat-divider>
+    <a routerLink="/auth/register">Fiók létrehozása</a>
+  </form>
+</div>

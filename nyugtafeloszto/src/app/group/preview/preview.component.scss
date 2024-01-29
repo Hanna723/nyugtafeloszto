@@ -1,0 +1,14 @@
+.empty {
+  margin-top: 24px;
+}
+
+table {
+  margin-top: 32px;
+}
+
+@media only screen and (max-width: 550px) {
+  .empty {
+    margin-left: 24px;
+    margin-right: 24px;
+  }
+}

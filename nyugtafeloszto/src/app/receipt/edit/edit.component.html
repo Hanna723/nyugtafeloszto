@@ -1,0 +1,164 @@
+<div class="container">
+  <form [formGroup]="receiptForm" (ngSubmit)="onSubmit()">
+    <mat-form-field>
+      <mat-label for="store">Bolt</mat-label>
+      <input matInput type="text" formControlName="store" />
+    </mat-form-field>
+    <div class="col-fields">
+      <mat-form-field>
+        <mat-label for="date">Dátum</mat-label>
+        <input matInput [matDatepicker]="picker" formControlName="date" />
+        <mat-datepicker-toggle
+          matIconSuffix
+          [for]="picker"
+        ></mat-datepicker-toggle>
+        <mat-datepicker #picker color="accent"></mat-datepicker>
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label for="currency">Pénznem</mat-label>
+        <input
+          #currencyInput
+          matInput
+          type="text"
+          formControlName="currency"
+          [matAutocomplete]="auto"
+          (input)="filter()"
+          (focus)="filter()"
+        />
+        <mat-autocomplete
+          requireSelection
+          #auto="matAutocomplete"
+          [displayWith]="displayCurrency"
+        >
+          <mat-option
+            *ngFor="let currency of filteredCurrencies; trackBy: trackOption"
+            [value]="currency"
+            >{{ currency.name }} ({{ currency.symbol }})</mat-option
+          >
+        </mat-autocomplete>
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label for="members">Résztvevők</mat-label>
+        <mat-chip-grid #chipGrid aria-label="Résztvevők kiválasztása">
+          <mat-chip-row
+            *ngFor="
+              let selected of getMembersFormArray().controls;
+              let i = index
+            "
+            (removed)="removeMember(i)"
+          >
+            {{ selected.value.name }}
+            <button
+              matChipRemove
+              [attr.aria-label]="selected.value.name + ' törlése'"
+            >
+              <mat-icon>cancel</mat-icon>
+            </button>
+          </mat-chip-row>
+        </mat-chip-grid>
+        <input
+          #memberInput
+          [matChipInputFor]="chipGrid"
+          [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+          (matChipInputTokenEnd)="addMember($event)"
+          [matAutocomplete]="autoMember"
+          (input)="filterMember($event)"
+          (focus)="filterMember($event)"
+        />
+        <mat-autocomplete
+          #autoMember="matAutocomplete"
+          requireSelection
+          (optionSelected)="selectedMember($event)"
+        >
+          <mat-option
+            *ngFor="let el of filteredMembers; trackBy: trackPayer"
+            [value]="el"
+            >{{ el.name }}</mat-option
+          >
+        </mat-autocomplete>
+      </mat-form-field>
+    </div>
+    <div formArrayName="products">
+      <fieldset
+        *ngFor="let products of getProducts(); let i = index"
+        [formGroupName]="i"
+      >
+        <mat-form-field>
+          <mat-label for="name">Név</mat-label>
+          <input matInput type="text" formControlName="name" />
+        </mat-form-field>
+        <div class="col-fields">
+          <mat-form-field class="short">
+            <mat-label for="piece">Darab</mat-label>
+            <input matInput type="number" formControlName="piece" />
+          </mat-form-field>
+          <mat-form-field class="short">
+            <mat-label for="price">Ár</mat-label>
+            <input matInput type="number" formControlName="price" />
+          </mat-form-field>
+        </div>
+        <mat-form-field>
+          <mat-label for="pays">Fizet</mat-label>
+          <mat-chip-grid #chipGrid aria-label="Fizetők kiválasztása">
+            <mat-chip-row
+              *ngFor="
+                let selected of getPayersFormArray(i)?.controls;
+                let j = index
+              "
+              (removed)="removePayer(i, j)"
+            >
+              {{ selected.value.name }}
+              <button
+                matChipRemove
+                [attr.aria-label]="selected.value.name + ' törlése'"
+              >
+                <mat-icon>cancel</mat-icon>
+              </button>
+            </mat-chip-row>
+          </mat-chip-grid>
+          <input
+            #payerInput
+            [matChipInputFor]="chipGrid"
+            [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+            (matChipInputTokenEnd)="addPayer($event, i)"
+            [matAutocomplete]="autoPayer"
+            (input)="filterPayer($event)"
+            (focus)="filterPayer($event)"
+          />
+          <mat-autocomplete
+            #autoPayer="matAutocomplete"
+            requireSelection
+            (optionSelected)="selectedPayer($event, i)"
+          >
+            <mat-option
+              *ngFor="let el of filteredMembersAndGroups; trackBy: trackPayer"
+              [value]="el"
+              >{{ el.name }}</mat-option
+            >
+          </mat-autocomplete>
+        </mat-form-field>
+        <button
+          mat-stroked-button
+          color="accent"
+          (click)="removeProduct(i)"
+          type="button"
+        >
+          <mat-icon>remove</mat-icon>
+          Törlés
+        </button>
+      </fieldset>
+      <button
+        mat-stroked-button
+        color="accent"
+        (click)="addProduct()"
+        type="button"
+      >
+        <mat-icon>add</mat-icon>
+        Új termék
+      </button>
+    </div>
+    <div class="buttons">
+      <button mat-flat-button color="accent" type="submit">Mentés</button>
+    </div>
+  </form>
+</div>

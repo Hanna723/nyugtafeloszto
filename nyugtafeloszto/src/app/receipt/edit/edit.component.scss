@@ -1,0 +1,78 @@
+@use "@angular/material" as mat;
+@import "../../../customTheme.scss";
+@import "../../../styles.scss";
+
+::ng-deep .mat-datepicker-toggle {
+  color: mat.get-color-from-palette($accent-palette, default) !important;
+}
+
+mat-chip-row {
+  background-color: mat.get-color-from-palette($accent-palette, 400) !important;
+
+  mat-icon {
+    color: white;
+  }
+}
+
+mat-chip-row:hover {
+  background-color: mat.get-color-from-palette(
+    $accent-palette,
+    default
+  ) !important;
+}
+
+.mat-mdc-standard-chip {
+  --mdc-chip-label-text-color: white !important;
+}
+
+.container {
+  width: 500px;
+  margin: 48px auto;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+}
+
+button[type="submit"] {
+  margin-top: 20px;
+  display: block;
+  margin-left: auto !important;
+}
+
+.col-fields {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+.short {
+  width: 48%;
+}
+
+fieldset {
+  margin-bottom: 20px;
+  border: none;
+  border-bottom: 2px solid mat.get-color-from-palette($accent-palette, 400) !important;
+
+  mat-form-field:not(.short) {
+    width: 100%;
+  }
+
+  button {
+    display: block;
+    margin-left: auto;
+  }
+}
+
+@media only screen and (max-width: 550px) {
+  .container {
+    width: 90vw;
+  }
+
+  .short {
+    width: 100%;
+  }
+}

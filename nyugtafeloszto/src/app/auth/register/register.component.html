@@ -1,1 +1,62 @@
-<p>register works!</p>
+<div>
+  <div class="form-header">Regisztráció</div>
+  <form
+    class="auth-form"
+    [formGroup]="registrationForm"
+    (ngSubmit)="onSubmit()"
+  >
+    <mat-form-field>
+      <mat-label for="email">E-mail</mat-label>
+      <input matInput type="text" formControlName="email" />
+      <mat-error *ngIf="registrationForm.controls['email'].errors?.['required']"
+        >Kérem adjon meg egy e-mail címet!</mat-error
+      >
+      <mat-error
+        *ngIf="registrationForm.controls['email'].errors?.['email'] || registrationForm.controls['email'].errors?.['format']"
+        >Helytelen e-mail cím!</mat-error
+      >
+      <mat-error *ngIf="registrationForm.controls['email'].errors?.['taken']"
+        >A megadott e-mail cím foglalt!</mat-error
+      >
+      <mat-error *ngIf="registrationForm.controls['email'].errors?.['error']"
+        >Hiba!</mat-error
+      >
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label for="password">Jelszó</mat-label>
+      <input
+        matInput
+        [type]="hide ? 'password' : 'text'"
+        formControlName="password"
+      />
+      <button
+        mat-icon-button
+        matSuffix
+        (click)="hide = !hide"
+        [attr.aria-label]="'Jelszó elrejtése'"
+        [attr.aria-pressed]="hide"
+        tabindex="-1"
+      >
+        <mat-icon>{{ hide ? "visibility_off" : "visibility" }}</mat-icon>
+      </button>
+      <mat-error
+        *ngIf="registrationForm.controls['password'].errors?.['required']"
+        >Kérem adjon meg egy jelszót!</mat-error
+      >
+      <mat-error
+        *ngIf="registrationForm.controls['password'].errors?.['minlength']"
+        >Legalább 6 karakter hosszú jelszót adjon meg!</mat-error
+      >
+    </mat-form-field>
+    <button
+      [disabled]="!registrationForm.valid"
+      mat-flat-button
+      color="accent"
+      type="submit"
+    >
+      Regisztráció
+    </button>
+    <mat-divider></mat-divider>
+    <a routerLink="/auth/login">Bejelentkezés</a>
+  </form>
+</div>

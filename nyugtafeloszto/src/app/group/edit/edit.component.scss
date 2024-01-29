@@ -1,0 +1,50 @@
+.container {
+  width: 350px;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  padding: 24px;
+}
+
+fieldset {
+  border: none;
+  margin-right: 0;
+  padding-right: 0;
+}
+
+fieldset mat-form-field {
+  width: 100%;
+}
+
+.buttons {
+  text-align: end;
+  margin-top: 24px;
+}
+
+.memberField {
+  display: flex;
+
+  mat-icon {
+    margin-top: 18px;
+    cursor: pointer;
+  }
+}
+
+button {
+  width: max-content;
+}
+
+button[type="submit"] {
+  margin-left: 8px;
+}
+
+@media only screen and (max-width: 440px) {
+  .container {
+    max-width: 100vw;
+    max-height: 100vh;
+    height: 100%;
+    width: 100%;
+  }
+}

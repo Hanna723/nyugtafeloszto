@@ -13,8 +13,16 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 
+import { AngularFireModule } from '@angular/fire/compat';
+import { getAuth, provideAuth } from '@angular/fire/auth';
+import { getFirestore, provideFirestore } from '@angular/fire/firestore';
+import { getStorage, provideStorage } from '@angular/fire/storage';
+
+import { environment } from '../environments/environment';
+import { DialogComponent } from './shared/dialog/dialog.component';
+
 @NgModule({
-  declarations: [AppComponent, HomeComponent, MenuComponent],
+  declarations: [AppComponent, HomeComponent, MenuComponent, DialogComponent],
   imports: [
     BrowserModule,
     AppRoutingModule,
@@ -23,7 +31,11 @@ import { MatButtonModule } from '@angular/material/button';
     MatSidenavModule,
     MatToolbarModule,
     MatIconModule,
-    MatButtonModule
+    MatButtonModule,
+    AngularFireModule.initializeApp(environment.firebase),
+    provideAuth(() => getAuth()),
+    provideFirestore(() => getFirestore()),
+    provideStorage(() => getStorage()),
   ],
   providers: [],
   bootstrap: [AppComponent],

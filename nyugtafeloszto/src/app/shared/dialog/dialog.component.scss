@@ -1,0 +1,33 @@
+.container {
+  padding: 16px;
+  width: 350px;
+  height: max-content;
+
+  div {
+    font-size: 20px;
+    text-align: center;
+  }
+}
+
+div[mat-dialog-actions] {
+  display: flex;
+  justify-content: end;
+  column-gap: 16px;
+}
+
+button {
+  margin-top: 24px;
+  margin-bottom: 8px;
+}
+
+@media only screen and (max-width: 480px) {
+  .container {
+    width: 300px;
+  }
+}
+
+@media only screen and (max-width: 418px) {
+  .container {
+    width: 200px;
+  }
+}

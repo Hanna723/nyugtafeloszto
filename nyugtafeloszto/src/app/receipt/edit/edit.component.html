@@ -37,6 +37,46 @@
           >
         </mat-autocomplete>
       </mat-form-field>
+      <mat-form-field>
+        <mat-label for="members">Résztvevők</mat-label>
+        <mat-chip-grid #chipGrid aria-label="Résztvevők kiválasztása">
+          <mat-chip-row
+            *ngFor="
+              let selected of getMembersFormArray().controls;
+              let i = index
+            "
+            (removed)="removeMember(i)"
+          >
+            {{ selected.value.name }}
+            <button
+              matChipRemove
+              [attr.aria-label]="selected.value.name + ' törlése'"
+            >
+              <mat-icon>cancel</mat-icon>
+            </button>
+          </mat-chip-row>
+        </mat-chip-grid>
+        <input
+          #memberInput
+          [matChipInputFor]="chipGrid"
+          [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+          (matChipInputTokenEnd)="addMember($event)"
+          [matAutocomplete]="autoMember"
+          (input)="filterMember($event)"
+          (focus)="filterMember($event)"
+        />
+        <mat-autocomplete
+          #autoMember="matAutocomplete"
+          requireSelection
+          (optionSelected)="selectedMember($event)"
+        >
+          <mat-option
+            *ngFor="let el of filteredMembers; trackBy: trackPayer"
+            [value]="el"
+            >{{ el.name }}</mat-option
+          >
+        </mat-autocomplete>
+      </mat-form-field>
     </div>
     <div formArrayName="products">
       <fieldset
@@ -57,7 +97,7 @@
             <input matInput type="number" formControlName="price" />
           </mat-form-field>
         </div>
-        <mat-form-field #products>
+        <mat-form-field>
           <mat-label for="pays">Fizet</mat-label>
           <mat-chip-grid #chipGrid aria-label="Fizetők kiválasztása">
             <mat-chip-row

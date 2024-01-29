@@ -32,6 +32,7 @@ import { Subscription } from 'rxjs';
 })
 export class EditComponent implements OnInit, OnDestroy {
   @ViewChild('currencyInput') currencyInput!: ElementRef<HTMLInputElement>;
+  @ViewChild('memberInput') memberInput!: ElementRef<HTMLInputElement>;
   @ViewChildren('payerInput') payerInputs!: QueryList<
     ElementRef<HTMLInputElement>
   >;
@@ -42,6 +43,7 @@ export class EditComponent implements OnInit, OnDestroy {
     store: new FormControl(''),
     date: new FormControl(''),
     currency: new FormControl(''),
+    members: this.formBuilder.array([]),
     products: this.formBuilder.array([]),
   });
 
@@ -49,16 +51,16 @@ export class EditComponent implements OnInit, OnDestroy {
   filteredCurrencies?: Array<Currency>;
 
   separatorKeysCodes: number[] = [ENTER, COMMA];
-  membersAndGroups?: Array<Member | Group>;
-  filteredMembersAndGroups?: Array<Member | Group>;
+  membersAndGroups: Array<Member | Group> = [];
+  filteredMembersAndGroups: Array<Member | Group> = [];
   fetchedMembers?: Array<Member>;
+  filteredMembers?: Array<Member>;
+  fetchedGroups?: Array<Group>;
 
   currencySubscription?: Subscription;
   memberSubscription?: Subscription;
   groupSubscription?: Subscription;
   receiptSubscription?: Subscription;
-  currencySubscription2?: Subscription;
-  memberSubscription2?: Subscription;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -93,9 +95,9 @@ export class EditComponent implements OnInit, OnDestroy {
             this.groupSubscription = this.groupService
               .getAllForOneUser(this.uid)
               .subscribe((groupData) => {
-                this.membersAndGroups = [...data, ...groupData];
                 this.fetchedMembers = [...data];
-                this.filteredMembersAndGroups = [...data, ...groupData];
+                this.filteredMembers = [...data];
+                this.fetchedGroups = [...groupData];
               });
           }
         });
@@ -108,9 +110,7 @@ export class EditComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.currencySubscription?.unsubscribe();
-    this.currencySubscription2?.unsubscribe();
     this.memberSubscription?.unsubscribe();
-    this.memberSubscription2?.unsubscribe();
     this.groupSubscription?.unsubscribe();
     this.receiptSubscription?.unsubscribe();
   }
@@ -124,12 +124,17 @@ export class EditComponent implements OnInit, OnDestroy {
       .subscribe((data) => {
         this.receiptForm.controls['store'].setValue(data?.store);
         this.receiptForm.controls['date'].setValue(data?.date.toDate());
-        if (data?.currency) {
-          this.currencySubscription2 = this.currencyService
-            .getById(data.currency as unknown as string)
-            .subscribe((currency) => {
-              this.receiptForm.controls['currency'].setValue(currency);
-            });
+        if (data?.members) {
+          const members = this.receiptForm.controls['members'] as FormArray;
+          data.members.forEach((member) => {
+            members.push(new FormControl(member));
+          });
+        }
+        if (data?.currency && this.currencies) {
+          const currency = this.currencies.find(
+            (el) => el.id === (data.currency as unknown as string)
+          );
+          this.receiptForm.controls['currency'].setValue(currency);
         }
 
         const products = <FormArray>this.receiptForm.controls['products'];
@@ -143,6 +148,7 @@ export class EditComponent implements OnInit, OnDestroy {
             })
           );
         });
+        this.filterMembersAndGroups();
       });
   }
 
@@ -192,17 +198,14 @@ export class EditComponent implements OnInit, OnDestroy {
     const product = products.at(i) as FormGroup;
     const productArray = product.get('pays') as FormArray;
 
-    if (this.id) {
-      productArray.controls.forEach((control) => {
-        if (typeof control.value === 'string' && this.uid) {
-          this.memberSubscription2 = this.memberService
-            .getById(control.value, this.uid)
-            .subscribe((member) => {
-              control.setValue(member);
-            });
-        }
-      });
-    }
+    productArray.controls.forEach((control) => {
+      if (typeof control.value === 'string' && this.fetchedMembers) {
+        const member = this.fetchedMembers.find(
+          (el) => el.id === control.value
+        );
+        control.setValue(member);
+      }
+    });
 
     return productArray;
   }
@@ -211,7 +214,7 @@ export class EditComponent implements OnInit, OnDestroy {
     const value = (event.value || '').trim();
 
     if (value) {
-      const selected = this.filteredMembersAndGroups?.at(0);
+      const selected = this.filteredMembersAndGroups.at(0);
 
       if (selected) {
         let control = new FormControl<Member | Group>(selected);
@@ -223,7 +226,7 @@ export class EditComponent implements OnInit, OnDestroy {
     event.chipInput!.clear();
   }
 
-  removePayer(i: number, j: number) {
+  removePayer(i: number, j: number): void {
     const payers = this.getPayersFormArray(i);
 
     if (payers && j >= 0 && j < payers?.length) {
@@ -241,13 +244,106 @@ export class EditComponent implements OnInit, OnDestroy {
     const input = event.target as HTMLInputElement;
     const filterValue = input.value.toLowerCase();
 
-    this.filteredMembersAndGroups = this.membersAndGroups?.filter((el) =>
+    this.filteredMembersAndGroups = this.membersAndGroups.filter((el) =>
       el.name.toLowerCase().includes(filterValue.toLowerCase())
     );
   }
 
   trackPayer(index: number, option: Member | Group) {
     return option.name;
+  }
+
+  getMembersFormArray(): FormArray {
+    const members = this.receiptForm.get('members') as FormArray;
+
+    members.controls.forEach((control) => {
+      if (typeof control.value === 'string' && this.fetchedMembers) {
+        const member = this.fetchedMembers.find(
+          (el) => el.id === control.value
+        );
+        control.setValue(member);
+      }
+    });
+
+    return members;
+  }
+
+  addMember(event: MatChipInputEvent): void {
+    const value = (event.value || '').trim();
+
+    if (value) {
+      const selected = this.filteredMembers?.at(0);
+
+      if (selected) {
+        let control = new FormControl<Member>(selected);
+        this.getMembersFormArray()?.push(control);
+        this.filteredMembers = this.fetchedMembers;
+      }
+    }
+
+    event.chipInput!.clear();
+    this.filterMembersAndGroups();
+  }
+
+  removeMember(i: number): void {
+    const members = this.getMembersFormArray();
+
+    if (members && i >= 0 && i < members?.length) {
+      members.removeAt(i);
+    }
+    this.filterMembersAndGroups();
+  }
+
+  selectedMember(event: MatAutocompleteActivatedEvent): void {
+    let control = new FormControl<Member>(event.option?.value);
+    this.getMembersFormArray()?.push(control);
+    this.memberInput.nativeElement.value = '';
+    this.filterMembersAndGroups();
+  }
+
+  filterMember(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const filterValue = input.value.toLowerCase();
+
+    this.filteredMembers = this.fetchedMembers?.filter((el) =>
+      el.name.toLowerCase().includes(filterValue.toLowerCase())
+    );
+  }
+
+  filterMembersAndGroups(): void {
+    let members: Set<string> = new Set();
+
+    const memberArray = this.receiptForm.controls['members'] as FormArray;
+
+    memberArray.controls.forEach((memberControl) => {
+      members.add(memberControl.value.id);
+    });
+
+    if (members.size === 0) {
+      this.membersAndGroups = [];
+      this.filteredMembersAndGroups = this.membersAndGroups;
+      return;
+    }
+
+    if (this.fetchedMembers && this.fetchedGroups) {
+      this.membersAndGroups = [...this.fetchedMembers, ...this.fetchedGroups];
+    }
+    this.membersAndGroups = this.membersAndGroups.filter((el) => {
+      if ('members' in el) {
+        let hasMember = false;
+        el.members.forEach((member) => {
+          if (members.has(member)) {
+            hasMember = true;
+          }
+        });
+        return hasMember;
+      }
+      if (el.id) {
+        return members.has(el.id);
+      }
+      return false;
+    });
+    this.filteredMembersAndGroups = this.membersAndGroups;
   }
 
   onSubmit() {
@@ -260,6 +356,13 @@ export class EditComponent implements OnInit, OnDestroy {
     let sum = 0;
     let products: Product[] = [];
     let members: Set<string> = new Set();
+
+    const memberArray = this.receiptForm.controls['members'] as FormArray;
+
+    memberArray.controls.forEach((memberControl) => {
+      members.add(memberControl.value.id);
+    });
+
     const productArray = this.receiptForm.controls['products'] as FormArray;
 
     productArray.controls.forEach((productControl) => {
@@ -270,12 +373,12 @@ export class EditComponent implements OnInit, OnDestroy {
         if (el.id) {
           if ('members' in el) {
             el.members.forEach((member) => {
-              pays.add(member);
-              members.add(member);
+              if (members.has(member)) {
+                pays.add(member);
+              }
             });
           } else {
             pays.add(el.id);
-            members.add(el.id);
           }
         }
       });

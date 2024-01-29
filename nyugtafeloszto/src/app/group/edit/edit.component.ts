@@ -24,6 +24,7 @@ export class EditComponent implements OnInit, OnDestroy {
   });
   memberList?: Array<Member>;
   memberSubscription?: Subscription;
+  setMembers = false;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: { group: Group },
@@ -60,26 +61,53 @@ export class EditComponent implements OnInit, OnDestroy {
   }
 
   getControls() {
-    return (this.groupForm.get('members') as FormArray).controls;
+    const controls = (this.groupForm.get('members') as FormArray).controls;
+
+    if (this.memberList && !this.setMembers) {
+      const members = <FormArray>this.groupForm.controls['members'];
+      let existingMembers: Array<Member> = [];
+
+      this.data.group.members.forEach((memberId) => {
+        if (typeof memberId === 'string' && memberId !== '') {
+          const member = this.memberList?.find((el) => el.id === memberId);
+          if (member) {
+            existingMembers.push(member);
+          }
+        }
+      });
+
+      if (existingMembers.length !== 0) {
+        members.setValue(existingMembers);
+      }
+      this.setMembers = true;
+    }
+
+    return controls;
   }
 
   onSubmit(): void {
     const user = localStorage.getItem('user');
 
     if (!user) {
-      this.close();
+      this.close(null);
       return;
     }
 
-    let members = this.groupForm.controls['members'].value;
-    members = new Set(members);
+    let memberIds: string[] = [];
+    this.groupForm.controls['members'].value.forEach((member: Member) => {
+      if (member.id) {
+        memberIds.push(member.id);
+      }
+    });
+
+    let members = new Set(memberIds);
     members.delete('');
-    members = Array.from(members.values());
+    memberIds = Array.from(members.values());
 
     const group: Group = {
       user: JSON.parse(user).uid,
       name: this.groupForm.controls['name'].value,
-      members: members,
+      members: memberIds,
     };
 
     if (this.data) {
@@ -89,7 +117,7 @@ export class EditComponent implements OnInit, OnDestroy {
       this.groupService.create(group);
     }
 
-    this.close();
+    this.close(group);
   }
 
   addMember(): void {
@@ -102,7 +130,12 @@ export class EditComponent implements OnInit, OnDestroy {
     members.removeAt(i);
   }
 
-  close(): void {
-    this.dialogRef.close();
+  close(group: Group | null): void {
+    const members = this.groupForm.controls['members'].value;
+    const updatedValues = {
+      group: group,
+      members: members,
+    };
+    this.dialogRef.close(updatedValues);
   }
 }

@@ -53,6 +53,7 @@ export class RegisterComponent implements OnInit {
           .create(user)
           .then(() => {
             this.authService.logOut();
+            localStorage.removeItem('user');
             this.openDialog();
           })
           .catch((err) => {

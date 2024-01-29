@@ -39,5 +39,6 @@ export class MenuComponent implements OnInit, OnDestroy {
   logOut(): void {
     this.authService.logOut();
     localStorage.removeItem('user');
+    this.router.navigateByUrl('/auth/login');
   }
 }

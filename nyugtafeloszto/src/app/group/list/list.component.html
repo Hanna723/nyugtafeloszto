@@ -5,7 +5,7 @@
   </button>
   <table
     mat-table
-    *ngIf="this.tableData"
+    *ngIf="this.tableData && this.tableData[0]"
     [dataSource]="tableData"
     class="mat-elevation-z8"
   >

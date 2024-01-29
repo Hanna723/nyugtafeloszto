@@ -42,7 +42,8 @@ export class LoginComponent {
         this.loginForm.controls['email'].value,
         this.loginForm.controls['password'].value
       )
-      .then(() => {
+      .then((user) => {
+        localStorage.setItem('user', JSON.stringify(user));
         this.router.navigateByUrl('/home');
       })
       .catch((err) => {

@@ -23,6 +23,7 @@ export class PreviewComponent implements OnInit, OnDestroy {
   groupSubscription?: Subscription;
   memberSubscriptions: Subscription[] = [];
   submitSubscription?: Subscription;
+  editSubscription?: Subscription;
 
   constructor(
     private groupService: GroupService,
@@ -65,6 +66,7 @@ export class PreviewComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.groupSubscription?.unsubscribe();
     this.submitSubscription?.unsubscribe();
+    this.editSubscription?.unsubscribe();
     this.memberSubscriptions.forEach((subscription) => {
       subscription.unsubscribe();
     });
@@ -90,9 +92,18 @@ export class PreviewComponent implements OnInit, OnDestroy {
   }
 
   editGroup() {
-    this.edit.open(EditComponent, {
+    const dialogRef = this.edit.open(EditComponent, {
       disableClose: true,
       data: { group: this.group },
     });
+
+    this.editSubscription = dialogRef
+      .afterClosed()
+      .subscribe((updatedValues) => {
+        if (updatedValues) {
+          this.group = updatedValues.group;
+          this.members = updatedValues.members;
+        }
+      });
   }
 }

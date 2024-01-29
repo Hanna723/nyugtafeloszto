@@ -329,10 +329,8 @@ export class EditComponent implements OnInit, OnDestroy {
     if (this.fetchedMembers && this.fetchedGroups) {
       this.membersAndGroups = [...this.fetchedMembers, ...this.fetchedGroups];
     }
-    console.log('asd', this.membersAndGroups);
     this.membersAndGroups = this.membersAndGroups.filter((el) => {
       if ('members' in el) {
-        console.log(el);
         let hasMember = false;
         el.members.forEach((member) => {
           if (members.has(member)) {
@@ -342,7 +340,6 @@ export class EditComponent implements OnInit, OnDestroy {
         return hasMember;
       }
       if (el.id) {
-        console.log(el);
         return members.has(el.id);
       }
       return false;
@@ -354,8 +351,6 @@ export class EditComponent implements OnInit, OnDestroy {
       name: 'Mindenki',
       members: Array.from(members),
     });
-
-    console.log(this.membersAndGroups);
 
     this.filteredMembersAndGroups = this.membersAndGroups;
   }
@@ -386,9 +381,7 @@ export class EditComponent implements OnInit, OnDestroy {
       productGroup.controls['pays'].value.forEach((el: Member | Group) => {
         if (el.id) {
           if ('members' in el) {
-            console.log(members);
             el.members.forEach((member) => {
-              console.log(member, members.has(member));
               if (members.has(member)) {
                 pays.add(member);
               }

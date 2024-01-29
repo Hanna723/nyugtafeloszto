@@ -9,7 +9,7 @@
         <mat-form-field>
           <mat-label [attr.for]="i">Tag neve</mat-label>
           <mat-select formControlName="{{ i }}">
-            <mat-option *ngFor="let el of memberList" [value]="el.id">{{
+            <mat-option *ngFor="let el of memberList" [value]="el">{{
               el.name
             }}</mat-option>
           </mat-select>
@@ -28,7 +28,7 @@
       </button>
     </fieldset>
     <div class="buttons">
-      <button mat-stroked-button color="accent" (click)="close()" type="button">
+      <button mat-stroked-button color="accent" (click)="close(null)" type="button">
         Mégsem
       </button>
       <button mat-flat-button color="accent" type="submit">Mentés</button>

@@ -10,12 +10,12 @@ import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MAT_DATE_LOCALE, MatNativeDateModule } from '@angular/material/core';
 import { MatChipsModule } from '@angular/material/chips';
+import { MatDialogModule } from '@angular/material/dialog';
 
 import { ListComponent } from './list/list.component';
 import { ReceiptRoutingModule } from './receipt-routing.module';
 import { EditComponent } from './edit/edit.component';
 import { PreviewComponent } from './preview/preview.component';
-import { MatDialogModule } from '@angular/material/dialog';
 
 @NgModule({
   declarations: [ListComponent, EditComponent, PreviewComponent],

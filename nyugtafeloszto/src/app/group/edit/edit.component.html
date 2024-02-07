@@ -1,37 +1,61 @@
-<div class="container">
+<mat-dialog-content class="container">
   <form [formGroup]="groupForm" (ngSubmit)="onSubmit()">
     <mat-form-field>
       <mat-label for="name">Név</mat-label>
       <input matInput type="text" formControlName="name" />
     </mat-form-field>
-    <fieldset id="fieldset" formArrayName="members">
-      <div class="memberField" *ngFor="let member of getControls(); let i = index">
-        <mat-form-field>
-          <mat-label [attr.for]="i">Tag neve</mat-label>
-          <mat-select formControlName="{{ i }}">
-            <mat-option *ngFor="let el of memberList" [value]="el">{{
-              el.name
-            }}</mat-option>
-          </mat-select>
-        </mat-form-field>
-        <mat-icon color="accent" (click)="removeMember(i)">close</mat-icon>
-      </div>
+    <mat-form-field>
+      <mat-label for="members">Résztvevők</mat-label>
+      <mat-chip-grid #chipGrid aria-label="Résztvevők kiválasztása">
+        <mat-chip-row
+          *ngFor="let selected of getMembersFormArray().controls; let i = index"
+          (removed)="removeMember(i)"
+        >
+          {{ selected.value.name }}
+          <button
+            matChipRemove
+            [attr.aria-label]="selected.value.name + ' törlése'"
+          >
+            <mat-icon>cancel</mat-icon>
+          </button>
+        </mat-chip-row>
+      </mat-chip-grid>
+      <input
+        #memberInput
+        [matChipInputFor]="chipGrid"
+        [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+        (matChipInputTokenEnd)="addMember($event)"
+        [matAutocomplete]="autoMember"
+        (input)="filter($event)"
+        (focus)="filter($event)"
+      />
+      <mat-autocomplete
+        #autoMember="matAutocomplete"
+        class="autocomplete"
+        requireSelection
+        (optionSelected)="selectedMember($event)"
+      >
+        <mat-option
+          *ngFor="let el of filteredMembers; trackBy: trackMember"
+          [value]="el"
+        >
+          <span>
+            {{ el.name }}
+          </span>
+        </mat-option>
+        <div>adsfsdfs</div>
+      </mat-autocomplete>
+    </mat-form-field>
+    <div class="buttons">
       <button
-        id="add-member"
         mat-stroked-button
         color="accent"
-        (click)="addMember()"
+        (click)="close(null)"
         type="button"
       >
-        <mat-icon>add</mat-icon>
-        Új tag
-      </button>
-    </fieldset>
-    <div class="buttons">
-      <button mat-stroked-button color="accent" (click)="close(null)" type="button">
         Mégsem
       </button>
       <button mat-flat-button color="accent" type="submit">Mentés</button>
     </div>
   </form>
-</div>
+</mat-dialog-content>

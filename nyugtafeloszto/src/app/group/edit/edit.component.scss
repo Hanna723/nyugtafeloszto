@@ -1,5 +1,8 @@
 .container {
-  width: 350px;
+  width: 500px;
+  height: max-content;
+  max-height: 80vh;
+  overflow-y: visible;
 }
 
 form {
@@ -38,6 +41,16 @@ button {
 
 button[type="submit"] {
   margin-left: 8px;
+}
+
+::ng-deep .mat-mdc-autocomplete-panel {
+  max-height: 190px !important;
+}
+
+@media only screen and (max-width: 640px) {
+  .container {
+    width: 350px;
+  }
 }
 
 @media only screen and (max-width: 440px) {

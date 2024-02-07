@@ -33,8 +33,9 @@
           <mat-option
             *ngFor="let currency of filteredCurrencies; trackBy: trackOption"
             [value]="currency"
-            >{{ currency.name }} ({{ currency.symbol }})</mat-option
           >
+            <span> {{ currency.name }} ({{ currency.symbol }}) </span>
+          </mat-option>
         </mat-autocomplete>
       </mat-form-field>
       <mat-form-field>
@@ -73,8 +74,11 @@
           <mat-option
             *ngFor="let el of filteredMembers; trackBy: trackPayer"
             [value]="el"
-            >{{ el.name }}</mat-option
           >
+            <span>
+              {{ el.name }}
+            </span>
+          </mat-option>
         </mat-autocomplete>
       </mat-form-field>
     </div>
@@ -133,8 +137,11 @@
             <mat-option
               *ngFor="let el of filteredMembersAndGroups; trackBy: trackPayer"
               [value]="el"
-              >{{ el.name }}</mat-option
             >
+              <span>
+                {{ el.name }}
+              </span>
+            </mat-option>
           </mat-autocomplete>
         </mat-form-field>
         <button

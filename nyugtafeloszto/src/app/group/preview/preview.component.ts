@@ -100,7 +100,7 @@ export class PreviewComponent implements OnInit, OnDestroy {
     this.editSubscription = dialogRef
       .afterClosed()
       .subscribe((updatedValues) => {
-        if (updatedValues) {
+        if (updatedValues && updatedValues.group) {
           this.group = updatedValues.group;
           this.members = updatedValues.members;
         }

@@ -75,6 +75,10 @@ div:has(.auth-form) {
   }
 }
 
+.list-container + div {
+  height: 50px;
+}
+
 .header {
   display: flex;
   justify-content: space-between;
@@ -89,6 +93,37 @@ div:has(.auth-form) {
   button {
     margin-top: 0;
   }
+}
+
+mat-option span {
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+mat-chip-row {
+  background-color: mat.get-color-from-palette($accent-palette, 400) !important;
+
+  mat-icon {
+    color: white;
+  }
+}
+
+mat-chip-row:hover {
+  background-color: mat.get-color-from-palette(
+    $accent-palette,
+    default
+  ) !important;
+}
+
+.mat-mdc-standard-chip {
+  --mdc-chip-label-text-color: white !important;
+}
+
+.mat-mdc-standard-chip .mdc-evolution-chip__cell--primary,
+.mat-mdc-standard-chip .mdc-evolution-chip__action--primary,
+.mat-mdc-standard-chip .mat-mdc-chip-action-label {
+  overflow: hidden !important;
 }
 
 @media only screen and (max-width: 550px) {

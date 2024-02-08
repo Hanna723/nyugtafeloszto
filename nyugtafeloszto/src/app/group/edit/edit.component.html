@@ -3,6 +3,16 @@
     <mat-form-field>
       <mat-label for="name">Név</mat-label>
       <input matInput type="text" formControlName="name" />
+      <mat-error
+        *ngIf="groupForm.controls['name'].errors?.['required'] || groupForm.controls['name'].errors?.['pattern']"
+        >Kérem adjon meg egy nevet!</mat-error
+      >
+      <mat-error *ngIf="groupForm.controls['name'].errors?.['maxlength']"
+        >A név maximum 100 karakter hosszú lehet!</mat-error
+      >
+      <mat-error *ngIf="groupForm.controls['name'].errors?.['exists']"
+        >A név már foglalt!</mat-error
+      >
     </mat-form-field>
     <mat-form-field>
       <mat-label for="members">Résztvevők</mat-label>

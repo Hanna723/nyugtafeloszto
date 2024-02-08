@@ -7,16 +7,25 @@ import {
   ViewChild,
 } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { FormArray, FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import {
+  AbstractControl,
+  FormArray,
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  ValidationErrors,
+  ValidatorFn,
+  Validators,
+} from '@angular/forms';
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
+import { MatChipInputEvent } from '@angular/material/chips';
+import { MatAutocompleteActivatedEvent } from '@angular/material/autocomplete';
+import { Subscription } from 'rxjs';
 
 import { Group } from 'src/app/shared/models/Group';
 import { Member } from 'src/app/shared/models/Member';
 import { GroupService } from 'src/app/shared/services/group.service';
 import { MemberService } from 'src/app/shared/services/member.service';
-import { Subscription } from 'rxjs';
-import { MatChipInputEvent } from '@angular/material/chips';
-import { MatAutocompleteActivatedEvent } from '@angular/material/autocomplete';
 
 @Component({
   selector: 'app-edit',
@@ -25,15 +34,22 @@ import { MatAutocompleteActivatedEvent } from '@angular/material/autocomplete';
 })
 export class EditComponent implements OnInit, OnDestroy {
   @ViewChild('memberInput') memberInput!: ElementRef<HTMLInputElement>;
+  separatorKeysCodes: number[] = [ENTER, COMMA];
   groupForm: FormGroup = new FormGroup({
-    name: new FormControl(''),
+    name: new FormControl('', [
+      Validators.required,
+      Validators.maxLength(100),
+      Validators.pattern(/^(\s+\S+\s*)*(?!\s).*$/),
+      this.existenceValidator(),
+    ]),
     members: this.formBuilder.array([]),
   });
   memberList?: Array<Member>;
   filteredMembers?: Array<Member>;
-  memberSubscription?: Subscription;
   setMembers = false;
-  separatorKeysCodes: number[] = [ENTER, COMMA];
+  groupList?: Array<Group>;
+  memberSubscription?: Subscription;
+  groupSubscription?: Subscription;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: { group: Group },
@@ -51,6 +67,12 @@ export class EditComponent implements OnInit, OnDestroy {
         .getAllForOneUser(JSON.parse(user).uid)
         .subscribe((data) => {
           this.memberList = [...data];
+        });
+
+      this.groupSubscription = this.groupService
+        .getAllForOneUser(JSON.parse(user).uid)
+        .subscribe((data) => {
+          this.groupList = [...data];
         });
     }
 
@@ -188,5 +210,24 @@ export class EditComponent implements OnInit, OnDestroy {
       members: members,
     };
     this.dialogRef.close(updatedValues);
+  }
+
+  existenceValidator(): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      const value = control.value.trim();
+
+      if (!value) {
+        return null;
+      }
+
+      let exists = false;
+      this.groupList?.forEach((group) => {
+        if (group.name === value && group.name !== this.data.group.name) {
+          exists = true;
+        }
+      });
+
+      return exists ? { exists: true } : null;
+    };
   }
 }

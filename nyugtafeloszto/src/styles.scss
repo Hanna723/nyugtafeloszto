@@ -53,6 +53,10 @@ div:has(.auth-form) {
   width: 500px;
   margin: 20px auto;
 
+  table {
+    max-width: 500px;
+  }
+
   form {
     display: flex;
     flex-direction: row;

@@ -1,3 +1,10 @@
+.store {
+  max-width: 400px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
 .sub-header {
   font-size: 14px;
   font-weight: lighter;
@@ -5,4 +12,14 @@
 
 table {
   margin-top: 32px;
+}
+
+td {
+  max-width: 400px;
+}
+
+@media only screen and (max-width: 550px) {
+  td, .store {
+    max-width: 60vw;
+  }
 }

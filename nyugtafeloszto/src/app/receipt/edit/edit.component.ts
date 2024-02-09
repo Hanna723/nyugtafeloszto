@@ -8,7 +8,13 @@ import {
   ViewChild,
   ViewChildren,
 } from '@angular/core';
-import { FormArray, FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import {
+  FormArray,
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  Validators,
+} from '@angular/forms';
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
 
 import { Currency } from 'src/app/shared/models/Currency';
@@ -40,9 +46,9 @@ export class EditComponent implements OnInit, OnDestroy {
   id?: string;
   uid?: string;
   receiptForm: FormGroup = new FormGroup({
-    store: new FormControl(''),
+    store: new FormControl('', [Validators.maxLength(100)]),
     date: new FormControl(''),
-    currency: new FormControl(''),
+    currency: new FormControl('', [Validators.required]),
     members: this.formBuilder.array([]),
     products: this.formBuilder.array([]),
   });
@@ -123,7 +129,9 @@ export class EditComponent implements OnInit, OnDestroy {
       .getById(this.id, this.uid)
       .subscribe((data) => {
         this.receiptForm.controls['store'].setValue(data?.store);
-        this.receiptForm.controls['date'].setValue(data?.date.toDate());
+        if (data?.date) {
+          this.receiptForm.controls['date'].setValue(data.date.toDate());
+        }
         if (data?.members) {
           const members = this.receiptForm.controls['members'] as FormArray;
           data.members.forEach((member) => {
@@ -141,9 +149,12 @@ export class EditComponent implements OnInit, OnDestroy {
         data?.products.forEach((product) => {
           products.push(
             this.formBuilder.group({
-              name: new FormControl(product.name),
-              piece: new FormControl(product.piece),
-              price: new FormControl(product.price),
+              name: new FormControl(product.name, [Validators.maxLength(100)]),
+              piece: new FormControl(product.piece, [
+                Validators.min(1),
+                Validators.pattern('^[0-9]*$'),
+              ]),
+              price: new FormControl(product.price, []),
               pays: this.formBuilder.array(product.pays),
             })
           );
@@ -176,12 +187,21 @@ export class EditComponent implements OnInit, OnDestroy {
     return (this.receiptForm.get('products') as FormArray).controls;
   }
 
+  getProductAt(i: number) {
+    return (this.receiptForm.get('products') as FormArray).controls.at(
+      i
+    ) as FormGroup;
+  }
+
   addProduct(): void {
     const products = this.receiptForm.get('products') as FormArray;
     products.push(
       this.formBuilder.group({
-        name: new FormControl(''),
-        piece: new FormControl(''),
+        name: new FormControl('', [Validators.maxLength(100)]),
+        piece: new FormControl('', [
+          Validators.min(1),
+          Validators.pattern('^[0-9]*$'),
+        ]),
         price: new FormControl(''),
         pays: this.formBuilder.array([]),
       })

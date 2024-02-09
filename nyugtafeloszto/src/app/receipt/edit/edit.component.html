@@ -3,6 +3,9 @@
     <mat-form-field>
       <mat-label for="store">Bolt</mat-label>
       <input matInput type="text" formControlName="store" />
+      <mat-error *ngIf="receiptForm.controls['store'].errors?.['maxlength']"
+        >A bolt maximum 100 karakter hosszú lehet!</mat-error
+      >
     </mat-form-field>
     <div class="col-fields">
       <mat-form-field>
@@ -25,6 +28,9 @@
           (input)="filter()"
           (focus)="filter()"
         />
+        <mat-error *ngIf="receiptForm.controls['currency'].errors?.['required']"
+          >Kérem adjon meg egy pénznemet!</mat-error
+        >
         <mat-autocomplete
           requireSelection
           #auto="matAutocomplete"
@@ -90,11 +96,22 @@
         <mat-form-field>
           <mat-label for="name">Név</mat-label>
           <input matInput type="text" formControlName="name" />
+          <mat-error
+            *ngIf="getProductAt(i).controls['name'].errors?.['maxlength']"
+            >A bolt maximum 100 karakter hosszú lehet!</mat-error
+          >
         </mat-form-field>
         <div class="col-fields">
           <mat-form-field class="short">
             <mat-label for="piece">Darab</mat-label>
             <input matInput type="number" formControlName="piece" />
+            <mat-error *ngIf="getProductAt(i).controls['piece'].errors?.['min']"
+              >Kérem 0-nál nagyobb számot adjon meg!</mat-error
+            >
+            <mat-error
+              *ngIf="getProductAt(i).controls['piece'].errors?.['pattern']"
+              >Kérem egész számot adjon meg!</mat-error
+            >
           </mat-form-field>
           <mat-form-field class="short">
             <mat-label for="price">Ár</mat-label>

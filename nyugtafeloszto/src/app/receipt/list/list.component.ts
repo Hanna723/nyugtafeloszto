@@ -38,11 +38,13 @@ export class ListComponent implements OnInit, OnDestroy {
             const currencySubscription = this.currencyService
               .getById(el.currency as unknown as string)
               .subscribe((currency) => {
-                let date = el.date.toDate();
-                el.formattedDate = this.datePipe.transform(
-                  date,
-                  'yyyy. MM. dd.'
-                );
+                if (el.date) {
+                  let date = el.date.toDate();
+                  el.formattedDate = this.datePipe.transform(
+                    date,
+                    'yyyy. MM. dd.'
+                  );
+                }
                 if (currency) {
                   el.currency = currency;
                 }

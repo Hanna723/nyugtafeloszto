@@ -50,13 +50,15 @@ export class PreviewComponent implements OnInit, OnDestroy {
           this.currencySubscription = this.currencyService
             .getById(data?.currency as unknown as string)
             .subscribe((currency) => {
-              let date = data?.date.toDate();
-              if (currency && data) {
-                data.currency = currency;
+              if (data?.date) {
+                let date = data.date.toDate();
                 data.formattedDate = this.datePipe.transform(
                   date,
                   'yyyy. MM. dd.'
                 );
+              }
+              if (currency && data) {
+                data.currency = currency;
               }
             });
           this.calculatePrices();

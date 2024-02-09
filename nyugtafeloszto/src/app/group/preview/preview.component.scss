@@ -1,3 +1,10 @@
+.name {
+  max-width: 400px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
 .empty {
   margin-top: 24px;
 }
@@ -7,8 +14,18 @@ table {
 }
 
 @media only screen and (max-width: 550px) {
+  .name {
+    max-width: 60vw;
+  }
+
   .empty {
     margin-left: 24px;
     margin-right: 24px;
+  }
+}
+
+@media only screen and (max-width: 360px) {
+  .name {
+    max-width: 50vw;
   }
 }

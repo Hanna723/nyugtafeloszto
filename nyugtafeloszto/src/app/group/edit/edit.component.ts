@@ -1,16 +1,31 @@
-import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
 import {
-  MAT_DIALOG_DATA,
-  MatDialog,
-  MatDialogRef,
-} from '@angular/material/dialog';
-import { FormArray, FormBuilder, FormControl, FormGroup } from '@angular/forms';
+  Component,
+  ElementRef,
+  Inject,
+  OnDestroy,
+  OnInit,
+  ViewChild,
+} from '@angular/core';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import {
+  AbstractControl,
+  FormArray,
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  ValidationErrors,
+  ValidatorFn,
+  Validators,
+} from '@angular/forms';
+import { COMMA, ENTER } from '@angular/cdk/keycodes';
+import { MatChipInputEvent } from '@angular/material/chips';
+import { MatAutocompleteActivatedEvent } from '@angular/material/autocomplete';
+import { Subscription } from 'rxjs';
 
 import { Group } from 'src/app/shared/models/Group';
 import { Member } from 'src/app/shared/models/Member';
 import { GroupService } from 'src/app/shared/services/group.service';
 import { MemberService } from 'src/app/shared/services/member.service';
-import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-edit',
@@ -18,13 +33,23 @@ import { Subscription } from 'rxjs';
   styleUrls: ['./edit.component.scss'],
 })
 export class EditComponent implements OnInit, OnDestroy {
+  @ViewChild('memberInput') memberInput!: ElementRef<HTMLInputElement>;
+  separatorKeysCodes: number[] = [ENTER, COMMA];
   groupForm: FormGroup = new FormGroup({
-    name: new FormControl(''),
+    name: new FormControl('', [
+      Validators.required,
+      Validators.maxLength(100),
+      Validators.pattern(/^(\s+\S+\s*)*(?!\s).*$/),
+      this.existenceValidator(),
+    ]),
     members: this.formBuilder.array([]),
   });
   memberList?: Array<Member>;
-  memberSubscription?: Subscription;
+  filteredMembers?: Array<Member>;
   setMembers = false;
+  groupList?: Array<Group>;
+  memberSubscription?: Subscription;
+  groupSubscription?: Subscription;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: { group: Group },
@@ -42,6 +67,12 @@ export class EditComponent implements OnInit, OnDestroy {
         .getAllForOneUser(JSON.parse(user).uid)
         .subscribe((data) => {
           this.memberList = [...data];
+        });
+
+      this.groupSubscription = this.groupService
+        .getAllForOneUser(JSON.parse(user).uid)
+        .subscribe((data) => {
+          this.groupList = [...data];
         });
     }
 
@@ -120,22 +151,83 @@ export class EditComponent implements OnInit, OnDestroy {
     this.close(group);
   }
 
-  addMember(): void {
-    const members = <FormArray>this.groupForm.controls['members'];
-    members.push(new FormControl(''));
+  getMembersFormArray(): FormArray {
+    const members = this.groupForm.get('members') as FormArray;
+
+    members.controls.forEach((control) => {
+      if (typeof control.value === 'string' && this.memberList) {
+        const member = this.memberList.find((el) => el.id === control.value);
+        control.setValue(member);
+      }
+    });
+    return members;
+  }
+
+  addMember(event: MatChipInputEvent): void {
+    const value = (event.value || '').trim();
+
+    if (value) {
+      const selected = this.filteredMembers?.at(0);
+
+      if (selected) {
+        let control = new FormControl<Member>(selected);
+        this.getMembersFormArray()?.push(control);
+        this.filteredMembers = this.memberList;
+      }
+    }
+
+    event.chipInput!.clear();
+  }
+
+  selectedMember(event: MatAutocompleteActivatedEvent): void {
+    let control = new FormControl<Member>(event.option?.value);
+    this.getMembersFormArray()?.push(control);
+    this.memberInput.nativeElement.value = '';
   }
 
   removeMember(i: number): void {
-    const members = <FormArray>this.groupForm.controls['members'];
+    const members = this.groupForm.get('members') as FormArray;
     members.removeAt(i);
   }
 
+  filter(event: Event): void {
+    const filterValue = this.memberInput.nativeElement.value.toLowerCase();
+    this.filteredMembers = this.memberList?.filter((member) =>
+      member.name.toLowerCase().includes(filterValue.toLowerCase())
+    );
+  }
+
+  trackMember(index: number, option: Member) {
+    return option.name;
+  }
+
   close(group: Group | null): void {
-    const members = this.groupForm.controls['members'].value;
+    let members = this.groupForm.controls['members'].value;
+    members = new Set(members);
+    members = Array.from(members);
     const updatedValues = {
       group: group,
       members: members,
     };
     this.dialogRef.close(updatedValues);
+  }
+
+  existenceValidator(): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      const value = control.value.trim();
+
+      if (!value) {
+        return null;
+      }
+
+      let exists = false;
+      this.groupList?.forEach((group) => {
+        if (group.name === value && group.name !== this.data.group.name) {
+          exists = true;
+        }
+      });
+
+      return exists ? { exists: true } : null;
+    };
   }
 }

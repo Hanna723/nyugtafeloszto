@@ -1,28 +1,8 @@
 @use "@angular/material" as mat;
 @import "../../../customTheme.scss";
-@import "../../../styles.scss";
 
 ::ng-deep .mat-datepicker-toggle {
   color: mat.get-color-from-palette($accent-palette, default) !important;
-}
-
-mat-chip-row {
-  background-color: mat.get-color-from-palette($accent-palette, 400) !important;
-
-  mat-icon {
-    color: white;
-  }
-}
-
-mat-chip-row:hover {
-  background-color: mat.get-color-from-palette(
-    $accent-palette,
-    default
-  ) !important;
-}
-
-.mat-mdc-standard-chip {
-  --mdc-chip-label-text-color: white !important;
 }
 
 .container {

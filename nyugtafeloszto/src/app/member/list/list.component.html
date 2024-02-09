@@ -3,9 +3,19 @@
     <mat-form-field>
       <mat-label for="name">Név</mat-label>
       <input matInput type="text" formControlName="name" />
+      <mat-error
+        *ngIf="memberForm.controls['name'].errors?.['required'] || memberForm.controls['name'].errors?.['pattern']"
+        >Kérem adjon meg egy nevet!</mat-error
+      >
+      <mat-error *ngIf="memberForm.controls['name'].errors?.['maxlength']"
+        >A név maximum 100 karakter hosszú lehet!</mat-error
+      >
+      <mat-error *ngIf="memberForm.controls['name'].errors?.['exists']"
+        >A név már foglalt!</mat-error
+      >
     </mat-form-field>
     <button
-    [disabled]="!memberForm.controls['name'].value"
+      [disabled]="!memberForm.valid"
       mat-flat-button
       color="accent"
       type="submit"
@@ -27,5 +37,7 @@
     <tr mat-row *matRowDef="let row; columns: columnsToDisplay"></tr>
   </table>
 </div>
-<div class="list-container" *ngIf="!user">A résztvevők használatához jelentkezz be!</div>
-<div style="height: 48px;"></div>
+<div class="list-container" *ngIf="!user">
+  A résztvevők használatához jelentkezz be!
+</div>
+<div style="height: 48px"></div>

@@ -8,7 +8,9 @@ import { MatListModule } from '@angular/material/list';
 import { MatTableModule } from '@angular/material/table';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
-import {MatSelectModule} from '@angular/material/select';
+import { MatSelectModule } from '@angular/material/select';
+import { MatChipsModule } from '@angular/material/chips';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
 
 import { ListComponent } from './list/list.component';
 import { GroupRoutingModule } from './group-routing.module';
@@ -28,7 +30,9 @@ import { EditComponent } from './edit/edit.component';
     MatButtonModule,
     MatDialogModule,
     MatIconModule,
-    MatSelectModule
+    MatSelectModule,
+    MatChipsModule,
+    MatAutocompleteModule
   ],
 })
 export class GroupModule {}

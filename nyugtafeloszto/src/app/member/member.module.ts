@@ -6,6 +6,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatListModule } from '@angular/material/list';
 import { MatTableModule } from '@angular/material/table';
+import { MatSortModule } from '@angular/material/sort';
 
 import { ListComponent } from './list/list.component';
 import { MemberRoutingModule } from './member-routing.module';
@@ -20,6 +21,7 @@ import { MemberRoutingModule } from './member-routing.module';
     MatFormFieldModule,
     MatInputModule,
     MatButtonModule,
+    MatSortModule,
   ],
 })
 export class MemberModule {}

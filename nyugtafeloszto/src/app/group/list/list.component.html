@@ -5,12 +5,21 @@
   </button>
   <table
     mat-table
-    *ngIf="this.tableData && this.tableData[0]"
+    matSort
     [dataSource]="tableData"
+    *ngIf="tableData.data.length > 0"
+    (matSortChange)="sortData()"
     class="mat-elevation-z8"
   >
     <ng-container matColumnDef="name">
-      <th mat-header-cell *matHeaderCellDef>Név</th>
+      <th
+        mat-header-cell
+        *matHeaderCellDef
+        mat-sort-header="name"
+        sortActionDescription="Rendezés név alapján"
+      >
+        Név
+      </th>
       <td mat-cell *matCellDef="let element">{{ element.name }}</td>
     </ng-container>
     <tr mat-header-row *matHeaderRowDef="columnsToDisplay"></tr>
@@ -21,5 +30,7 @@
     ></tr>
   </table>
 </div>
-<div class="list-container" *ngIf="!user">A csoportok használatához jelentkezz be!</div>
+<div class="list-container" *ngIf="!user">
+  A csoportok használatához jelentkezz be!
+</div>
 <div style="height: 48px"></div>

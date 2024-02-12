@@ -1,4 +1,10 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  OnDestroy,
+  OnInit,
+  ViewChild,
+} from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 
@@ -9,15 +15,19 @@ import { MemberService } from 'src/app/shared/services/member.service';
 import { EditComponent } from '../edit/edit.component';
 import { DialogComponent } from 'src/app/shared/dialog/dialog.component';
 import { Subscription } from 'rxjs';
+import { MatSort } from '@angular/material/sort';
+import { MatTableDataSource } from '@angular/material/table';
 
 @Component({
   selector: 'app-preview',
   templateUrl: './preview.component.html',
   styleUrls: ['./preview.component.scss'],
 })
-export class PreviewComponent implements OnInit, OnDestroy {
+export class PreviewComponent implements OnInit, AfterViewInit, OnDestroy {
+  @ViewChild(MatSort) sort?: MatSort;
   group?: Group;
   members: Array<Member> = [];
+  tableData: MatTableDataSource<Member> = new MatTableDataSource();
   columnsToDisplay = ['name'];
 
   groupSubscription?: Subscription;
@@ -52,7 +62,7 @@ export class PreviewComponent implements OnInit, OnDestroy {
               .getById(memberId, user)
               .subscribe((member) => {
                 if (member) {
-                  this.members?.push(member);
+                  this.members.push(member);
                 }
               });
             this.memberSubscriptions.push(memberSubscription);
@@ -63,6 +73,17 @@ export class PreviewComponent implements OnInit, OnDestroy {
     }
   }
 
+  ngAfterViewInit(): void {
+    setTimeout(() => {
+      this.tableData = new MatTableDataSource(this.members);
+      setTimeout(() => {
+        if (this.sort) {
+          this.sort.sort({ id: 'name', start: 'asc', disableClear: false });
+        }
+      });
+    }, 900);
+  }
+
   ngOnDestroy(): void {
     this.groupSubscription?.unsubscribe();
     this.submitSubscription?.unsubscribe();
@@ -70,6 +91,12 @@ export class PreviewComponent implements OnInit, OnDestroy {
     this.memberSubscriptions.forEach((subscription) => {
       subscription.unsubscribe();
     });
+  }
+
+  sortData() {
+    if (this.sort) {
+      this.tableData.sort = this.sort;
+    }
   }
 
   deleteGroup() {

@@ -1,4 +1,10 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  OnDestroy,
+  OnInit,
+  ViewChild,
+} from '@angular/core';
 import { Router } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 
@@ -6,14 +12,17 @@ import { Group } from 'src/app/shared/models/Group';
 import { GroupService } from 'src/app/shared/services/group.service';
 import { EditComponent } from '../edit/edit.component';
 import { Subscription } from 'rxjs';
+import { MatSort, MatSortable, Sort } from '@angular/material/sort';
+import { MatTableDataSource } from '@angular/material/table';
 
 @Component({
   selector: 'app-list',
   templateUrl: './list.component.html',
   styleUrls: ['./list.component.scss'],
 })
-export class ListComponent implements OnInit, OnDestroy {
-  tableData?: Array<Group>;
+export class ListComponent implements OnInit, AfterViewInit, OnDestroy {
+  @ViewChild(MatSort) sort?: MatSort;
+  tableData: MatTableDataSource<Group> = new MatTableDataSource();
   columnsToDisplay = ['name'];
   user?: string | null;
   groupSubscription?: Subscription;
@@ -31,9 +40,20 @@ export class ListComponent implements OnInit, OnDestroy {
       this.groupSubscription = this.groupService
         .getAllForOneUser(JSON.parse(this.user).uid)
         .subscribe((data) => {
-          this.tableData = [...data];
+          this.tableData = new MatTableDataSource(data);
+          if (this.sort) {
+            this.tableData.sort = this.sort;
+          }
         });
     }
+  }
+
+  ngAfterViewInit(): void {
+    setTimeout(() => {
+      if (this.sort) {
+        this.sort.sort({ id: 'name', start: 'asc', disableClear: false });
+      }
+    }, 1000);
   }
 
   ngOnDestroy(): void {
@@ -46,5 +66,11 @@ export class ListComponent implements OnInit, OnDestroy {
 
   openEdit(): void {
     this.edit.open(EditComponent, { disableClose: true });
+  }
+
+  sortData() {
+    if (this.sort) {
+      this.tableData.sort = this.sort;
+    }
   }
 }

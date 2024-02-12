@@ -1,5 +1,13 @@
 import { DatePipe } from '@angular/common';
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  OnDestroy,
+  OnInit,
+  ViewChild,
+} from '@angular/core';
+import { MatSort } from '@angular/material/sort';
+import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 
@@ -12,8 +20,9 @@ import { ReceiptService } from 'src/app/shared/services/receipt.service';
   templateUrl: './list.component.html',
   styleUrls: ['./list.component.scss'],
 })
-export class ListComponent implements OnInit, OnDestroy {
-  tableData?: Array<Receipt>;
+export class ListComponent implements OnInit, AfterViewInit, OnDestroy {
+  @ViewChild(MatSort) sort?: MatSort;
+  tableData: MatTableDataSource<Receipt> = new MatTableDataSource();
   columnsToDisplay = ['store', 'date', 'sum'];
   user?: string | null;
   receiptSubscription?: Subscription;
@@ -33,7 +42,7 @@ export class ListComponent implements OnInit, OnDestroy {
       this.receiptSubscription = this.receiptService
         .getAllForOneUser(JSON.parse(this.user).uid)
         .subscribe((data) => {
-          this.tableData = [...data];
+          this.tableData = new MatTableDataSource(data);
           data.forEach((el) => {
             const currencySubscription = this.currencyService
               .getById(el.currency as unknown as string)
@@ -55,11 +64,26 @@ export class ListComponent implements OnInit, OnDestroy {
     }
   }
 
+  ngAfterViewInit(): void {
+    setTimeout(() => {
+      if (this.sort) {
+        this.tableData = this.tableData;
+        this.sort.sort({ id: 'date', start: 'desc', disableClear: false });
+      }
+    }, 1000);
+  }
+
   ngOnDestroy(): void {
     this.receiptSubscription?.unsubscribe();
     this.currencySubscriptions.forEach((subscription) => {
       subscription.unsubscribe();
     });
+  }
+
+  sortData() {
+    if (this.sort) {
+      this.tableData.sort = this.sort;
+    }
   }
 
   navigateToPreview(receipt: Receipt): void {

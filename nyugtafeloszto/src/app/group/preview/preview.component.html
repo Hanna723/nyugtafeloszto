@@ -18,12 +18,21 @@
   </div>
   <table
     mat-table
-    *ngIf="members && members[0] && members.length === group.members.length"
-    [dataSource]="members"
+    matSort
+    *ngIf="tableData.data.length > 0"
+    [dataSource]="tableData"
+    (matSortChange)="sortData()"
     class="mat-elevation-z8"
   >
     <ng-container matColumnDef="name">
-      <th mat-header-cell *matHeaderCellDef>Tagok</th>
+      <th
+        mat-header-cell
+        *matHeaderCellDef
+        mat-sort-header="name"
+        sortActionDescription="Rendezés név alapján"
+      >
+        Tagok
+      </th>
       <td mat-cell *matCellDef="let element">{{ element.name }}</td>
     </ng-container>
     <tr mat-header-row *matHeaderRowDef="columnsToDisplay"></tr>

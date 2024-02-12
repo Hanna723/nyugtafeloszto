@@ -30,7 +30,7 @@ export class MemberService {
   getAllForOneUser(userId: string) {
     return this.angularFirestore
       .collection<Member>(this.collectionName, (ref) =>
-        ref.where('user', '==', userId).orderBy('name')
+        ref.where('user', '==', userId)
       )
       .valueChanges();
   }

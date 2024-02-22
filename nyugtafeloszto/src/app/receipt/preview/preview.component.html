@@ -9,6 +9,10 @@
       </div>
     </div>
     <div>
+      <button mat-icon-button aria-label="Download button" (click)="downloadReceipt()">
+        <a #download style="display: none"></a>
+        <mat-icon color="accent">save_alt</mat-icon>
+      </button>
       <button
         mat-icon-button
         (click)="deleteReceipt()"

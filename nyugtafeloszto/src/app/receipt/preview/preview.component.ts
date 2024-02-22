@@ -2,6 +2,7 @@ import { DatePipe } from '@angular/common';
 import {
   AfterViewInit,
   Component,
+  ElementRef,
   OnDestroy,
   OnInit,
   ViewChild,
@@ -9,6 +10,11 @@ import {
 import { MatDialog } from '@angular/material/dialog';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
+import {
+  DomSanitizer,
+  SafeResourceUrl,
+  SafeUrl,
+} from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { DialogComponent } from 'src/app/shared/dialog/dialog.component';
@@ -25,13 +31,15 @@ import { ReceiptService } from 'src/app/shared/services/receipt.service';
   styleUrls: ['./preview.component.scss'],
 })
 export class PreviewComponent implements OnInit, AfterViewInit, OnDestroy {
-  @ViewChild(MatSort) sort?: MatSort;
+  @ViewChild(MatSort) sort!: MatSort;
+  @ViewChild('download') download!: ElementRef<HTMLAnchorElement>;
   user?: string | null;
   receipt?: Receipt;
   needToPay: Map<string, number> = new Map();
   members: Array<Member> = [];
   tableData: MatTableDataSource<Member> = new MatTableDataSource();
   columnsToDisplay = ['name', 'pays'];
+  downloadHref?: SafeUrl;
 
   receiptSubscription?: Subscription;
   currencySubscription?: Subscription;
@@ -45,6 +53,7 @@ export class PreviewComponent implements OnInit, AfterViewInit, OnDestroy {
     private datePipe: DatePipe,
     private route: ActivatedRoute,
     private router: Router,
+    private sanitizer: DomSanitizer,
     public deleteDialog: MatDialog
   ) {}
 
@@ -83,9 +92,7 @@ export class PreviewComponent implements OnInit, AfterViewInit, OnDestroy {
     setTimeout(() => {
       this.tableData = new MatTableDataSource(this.members);
       setTimeout(() => {
-        if (this.sort) {
-          this.sort.sort({ id: 'pays', start: 'asc', disableClear: false });
-        }
+        this.sort.sort({ id: 'pays', start: 'asc', disableClear: false });
       });
     }, 900);
   }
@@ -98,9 +105,7 @@ export class PreviewComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   sortData() {
-    if (this.sort) {
-      this.tableData.sort = this.sort;
-    }
+    this.tableData.sort = this.sort;
   }
 
   getMembersFromReceipt() {
@@ -157,5 +162,31 @@ export class PreviewComponent implements OnInit, AfterViewInit, OnDestroy {
     if (this.receipt?.id) {
       this.router.navigateByUrl(`/receipt/edit/${this.receipt.id}`);
     }
+  }
+
+  downloadReceipt() {
+    let members: Object[] = [];
+    this.tableData.data.forEach((data) => {
+      members.push({
+        név: data.name,
+        fizet: data.pays,
+      });
+    });
+
+    let downloadData = {
+      bolt: this.receipt?.store,
+      dátum: this.receipt?.formattedDate,
+      pénznem: this.receipt?.currency.symbol,
+      végösszeg: this.receipt?.sum,
+      tagok: members,
+    };
+
+    const json = JSON.stringify(downloadData);
+    const uri =
+      'data:application/json;charset=UTF-8,' + encodeURIComponent(json);
+
+    this.download.nativeElement.download = `${downloadData.bolt}_${downloadData.dátum}.json`;
+    this.download.nativeElement.href = uri;
+    this.download?.nativeElement.click();
   }
 }

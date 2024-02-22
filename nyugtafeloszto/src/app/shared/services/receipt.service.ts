@@ -38,7 +38,7 @@ export class ReceiptService {
   getAllForOneUser(userId: string) {
     return this.angularFirestore
       .collection<Receipt>(this.collectionName, (ref) =>
-        ref.where('user', '==', userId).orderBy('date')
+        ref.where('user', '==', userId)
       )
       .valueChanges();
   }
@@ -46,7 +46,7 @@ export class ReceiptService {
   getById(id: string, userId: string) {
     return this.angularFirestore
       .collection<Receipt>(this.collectionName, (ref) =>
-        ref.where('user', '==', userId).orderBy('date')
+        ref.where('user', '==', userId)
       )
       .doc(id)
       .valueChanges()

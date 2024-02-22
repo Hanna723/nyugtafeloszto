@@ -37,7 +37,7 @@ export class GroupService {
   getAllForOneUser(userId: string) {
     return this.angularFirestore
       .collection<Group>(this.collectionName, (ref) =>
-        ref.where('user', '==', userId).orderBy('name')
+        ref.where('user', '==', userId)
       )
       .valueChanges();
   }

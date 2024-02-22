@@ -3,28 +3,66 @@
     <mat-icon>add</mat-icon>
     Új
   </button>
+  <mat-form-field class="search">
+    <mat-label>Keresés</mat-label>
+    <mat-icon matTextPrefix>search</mat-icon>
+    <input matInput type="text" (input)="onSearch($event)" />
+  </mat-form-field>
   <table
     mat-table
-    *ngIf="this.tableData && this.tableData[0]"
-    [dataSource]="tableData"
+    matSort
+    *ngIf="filteredTableData.data.length > 0"
+    [dataSource]="filteredTableData"
+    (matSortChange)="sortData()"
     class="mat-elevation-z8"
   >
     <ng-container matColumnDef="store">
-      <th mat-header-cell *matHeaderCellDef>Bolt</th>
+      <th
+        mat-header-cell
+        *matHeaderCellDef
+        mat-sort-header="store"
+        sortActionDescription="Rendezés bolt alapján"
+      >
+        Bolt
+      </th>
       <td mat-cell *matCellDef="let element">{{ element.store }}</td>
     </ng-container>
     <ng-container matColumnDef="date">
-      <th mat-header-cell *matHeaderCellDef>Dátum</th>
+      <th
+        mat-header-cell
+        *matHeaderCellDef
+        mat-sort-header="date"
+        sortActionDescription="Rendezés dátum alapján"
+      >
+        Dátum
+      </th>
       <td mat-cell *matCellDef="let element">{{ element.formattedDate }}</td>
     </ng-container>
     <ng-container matColumnDef="sum">
-      <th mat-header-cell *matHeaderCellDef>Összeg</th>
+      <th
+        mat-header-cell
+        *matHeaderCellDef
+        mat-sort-header="sum"
+        sortActionDescription="Rendezés összeg alapján"
+      >
+        Összeg
+      </th>
       <td mat-cell *matCellDef="let element">
         {{ element.sum }} {{ element.currency.symbol }}
       </td>
     </ng-container>
     <tr mat-header-row *matHeaderRowDef="columnsToDisplay"></tr>
-    <tr mat-row *matRowDef="let row; columns: columnsToDisplay" (click)="navigateToPreview(row)"></tr>
+    <tr
+      mat-row
+      *matRowDef="let row; columns: columnsToDisplay"
+      (click)="navigateToPreview(row)"
+    ></tr>
   </table>
+</div>
+<div
+  class="list-container"
+  *ngIf="filteredTableData.data.length === 0 && tableData.data.length !== 0"
+>
+  Nincs a keresésnek megfelelő elem!
 </div>
 <div style="height: 48px"></div>

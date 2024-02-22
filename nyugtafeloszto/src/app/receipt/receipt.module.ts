@@ -11,6 +11,7 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MAT_DATE_LOCALE, MatNativeDateModule } from '@angular/material/core';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatDialogModule } from '@angular/material/dialog';
+import { MatSortModule } from '@angular/material/sort';
 
 import { ListComponent } from './list/list.component';
 import { ReceiptRoutingModule } from './receipt-routing.module';
@@ -33,6 +34,7 @@ import { PreviewComponent } from './preview/preview.component';
     MatNativeDateModule,
     MatChipsModule,
     MatDialogModule,
+    MatSortModule,
   ],
   providers: [
     DatePipe,

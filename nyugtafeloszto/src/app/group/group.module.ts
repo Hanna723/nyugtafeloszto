@@ -11,6 +11,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatSelectModule } from '@angular/material/select';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { MatSortModule } from '@angular/material/sort';
 
 import { ListComponent } from './list/list.component';
 import { GroupRoutingModule } from './group-routing.module';
@@ -32,7 +33,8 @@ import { EditComponent } from './edit/edit.component';
     MatIconModule,
     MatSelectModule,
     MatChipsModule,
-    MatAutocompleteModule
+    MatAutocompleteModule,
+    MatSortModule,
   ],
 })
 export class GroupModule {}

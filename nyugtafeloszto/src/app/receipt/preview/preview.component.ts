@@ -1,6 +1,14 @@
 import { DatePipe } from '@angular/common';
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  OnDestroy,
+  OnInit,
+  ViewChild,
+} from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { MatSort } from '@angular/material/sort';
+import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { DialogComponent } from 'src/app/shared/dialog/dialog.component';
@@ -16,11 +24,13 @@ import { ReceiptService } from 'src/app/shared/services/receipt.service';
   templateUrl: './preview.component.html',
   styleUrls: ['./preview.component.scss'],
 })
-export class PreviewComponent implements OnInit, OnDestroy {
+export class PreviewComponent implements OnInit, AfterViewInit, OnDestroy {
+  @ViewChild(MatSort) sort?: MatSort;
   user?: string | null;
   receipt?: Receipt;
   needToPay: Map<string, number> = new Map();
   members: Array<Member> = [];
+  tableData: MatTableDataSource<Member> = new MatTableDataSource();
   columnsToDisplay = ['name', 'pays'];
 
   receiptSubscription?: Subscription;
@@ -69,11 +79,28 @@ export class PreviewComponent implements OnInit, OnDestroy {
     }
   }
 
+  ngAfterViewInit(): void {
+    setTimeout(() => {
+      this.tableData = new MatTableDataSource(this.members);
+      setTimeout(() => {
+        if (this.sort) {
+          this.sort.sort({ id: 'pays', start: 'asc', disableClear: false });
+        }
+      });
+    }, 900);
+  }
+
   ngOnDestroy(): void {
     this.receiptSubscription?.unsubscribe();
     this.currencySubscription?.unsubscribe();
     this.memberSubscription?.unsubscribe();
     this.submitSubscription?.unsubscribe();
+  }
+
+  sortData() {
+    if (this.sort) {
+      this.tableData.sort = this.sort;
+    }
   }
 
   getMembersFromReceipt() {

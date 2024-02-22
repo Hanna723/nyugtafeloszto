@@ -23,19 +23,39 @@
       Hozzáadás
     </button>
   </form>
+  <mat-form-field class="search">
+    <mat-label>Keresés</mat-label>
+    <mat-icon matTextPrefix>search</mat-icon>
+    <input #search matInput type="text" (input)="onSearch($event)" />
+  </mat-form-field>
   <table
     mat-table
-    *ngIf="this.tableData && this.tableData[0]"
-    [dataSource]="tableData"
+    matSort
+    *ngIf="filteredTableData.data.length > 0"
+    [dataSource]="filteredTableData"
+    (matSortChange)="sortData()"
     class="mat-elevation-z8"
   >
     <ng-container matColumnDef="name">
-      <th mat-header-cell *matHeaderCellDef>Név</th>
+      <th
+        mat-header-cell
+        *matHeaderCellDef
+        mat-sort-header="name"
+        sortActionDescription="Rendezés név alapján"
+      >
+        Név
+      </th>
       <td mat-cell *matCellDef="let element">{{ element.name }}</td>
     </ng-container>
     <tr mat-header-row *matHeaderRowDef="columnsToDisplay"></tr>
     <tr mat-row *matRowDef="let row; columns: columnsToDisplay"></tr>
   </table>
+</div>
+<div
+  class="list-container"
+  *ngIf="filteredTableData.data.length === 0 && tableData.data.length !== 0"
+>
+  Nincs a keresésnek megfelelő elem!
 </div>
 <div class="list-container" *ngIf="!user">
   A résztvevők használatához jelentkezz be!

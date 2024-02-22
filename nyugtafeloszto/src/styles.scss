@@ -99,6 +99,15 @@ div:has(.auth-form) {
   }
 }
 
+.search {
+  width: 100%;
+  margin-top: 24px;
+
+  mat-icon {
+    color: mat.get-color-from-palette($accent-palette, default) !important;
+  }
+}
+
 mat-option span {
   white-space: nowrap;
   text-overflow: ellipsis;

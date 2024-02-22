@@ -3,11 +3,16 @@
     <mat-icon>add</mat-icon>
     Új
   </button>
+  <mat-form-field class="search">
+    <mat-label>Keresés</mat-label>
+    <mat-icon matTextPrefix>search</mat-icon>
+    <input #search matInput type="text" (input)="onSearch($event)" />
+  </mat-form-field>
   <table
     mat-table
     matSort
-    [dataSource]="tableData"
-    *ngIf="tableData.data.length > 0"
+    [dataSource]="filteredTableData"
+    *ngIf="filteredTableData.data.length > 0"
     (matSortChange)="sortData()"
     class="mat-elevation-z8"
   >
@@ -29,6 +34,12 @@
       (click)="navigateToPreview(row)"
     ></tr>
   </table>
+</div>
+<div
+  class="list-container"
+  *ngIf="filteredTableData.data.length === 0 && tableData.data.length !== 0"
+>
+  Nincs a keresésnek megfelelő elem!
 </div>
 <div class="list-container" *ngIf="!user">
   A csoportok használatához jelentkezz be!

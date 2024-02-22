@@ -10,6 +10,7 @@ import { MatSortModule } from '@angular/material/sort';
 
 import { ListComponent } from './list/list.component';
 import { MemberRoutingModule } from './member-routing.module';
+import { MatIconModule } from '@angular/material/icon';
 @NgModule({
   declarations: [ListComponent],
   imports: [
@@ -22,6 +23,7 @@ import { MemberRoutingModule } from './member-routing.module';
     MatInputModule,
     MatButtonModule,
     MatSortModule,
+    MatIconModule,
   ],
 })
 export class MemberModule {}

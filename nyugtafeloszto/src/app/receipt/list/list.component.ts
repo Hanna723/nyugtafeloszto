@@ -21,8 +21,9 @@ import { ReceiptService } from 'src/app/shared/services/receipt.service';
   styleUrls: ['./list.component.scss'],
 })
 export class ListComponent implements OnInit, AfterViewInit, OnDestroy {
-  @ViewChild(MatSort) sort?: MatSort;
+  @ViewChild(MatSort) sort!: MatSort;
   tableData: MatTableDataSource<Receipt> = new MatTableDataSource();
+  filteredTableData: MatTableDataSource<Receipt> = new MatTableDataSource();
   columnsToDisplay = ['store', 'date', 'sum'];
   user?: string | null;
   receiptSubscription?: Subscription;
@@ -43,6 +44,7 @@ export class ListComponent implements OnInit, AfterViewInit, OnDestroy {
         .getAllForOneUser(JSON.parse(this.user).uid)
         .subscribe((data) => {
           this.tableData = new MatTableDataSource(data);
+          this.filteredTableData = new MatTableDataSource(data);
           data.forEach((el) => {
             const currencySubscription = this.currencyService
               .getById(el.currency as unknown as string)
@@ -66,10 +68,7 @@ export class ListComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngAfterViewInit(): void {
     setTimeout(() => {
-      if (this.sort) {
-        this.tableData = this.tableData;
-        this.sort.sort({ id: 'date', start: 'desc', disableClear: false });
-      }
+      this.sort.sort({ id: 'date', start: 'desc', disableClear: false });
     }, 1000);
   }
 
@@ -81,9 +80,20 @@ export class ListComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   sortData() {
-    if (this.sort) {
-      this.tableData.sort = this.sort;
+    this.filteredTableData.sort = this.sort;
+  }
+
+  onSearch(event: Event): void {
+    const input = event.target as HTMLInputElement;
+
+    if (!input.value) {
+      this.filteredTableData.data = [...this.tableData.data];
+      return;
     }
+
+    this.filteredTableData.data = this.tableData.data.filter((el) =>
+      el.store.toLowerCase().includes(input.value.toLowerCase())
+    );
   }
 
   navigateToPreview(receipt: Receipt): void {

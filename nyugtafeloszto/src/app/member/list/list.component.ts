@@ -31,7 +31,7 @@ export class ListComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('search') search!: ElementRef;
   tableData: MatTableDataSource<Member> = new MatTableDataSource();
   filteredTableData: MatTableDataSource<Member> = new MatTableDataSource();
-  columnsToDisplay = ['name'];
+  columnsToDisplay = ['name', 'delete'];
   memberForm: FormGroup = new FormGroup({
     name: new FormControl('', [
       Validators.required,
@@ -124,5 +124,11 @@ export class ListComponent implements OnInit, AfterViewInit, OnDestroy {
 
       return exists ? { exists: true } : null;
     };
+  }
+
+  deleteMember(member: Member) {
+    if (member.id) {
+      this.memberService.delete(member.id);
+    }
   }
 }

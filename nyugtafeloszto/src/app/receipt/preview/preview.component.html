@@ -9,10 +9,18 @@
       </div>
     </div>
     <div>
-      <button mat-icon-button aria-label="Download button" (click)="downloadReceipt()">
+      <button
+        [matMenuTriggerFor]="menu"
+        mat-icon-button
+        aria-label="Download button"
+      >
         <a #download style="display: none"></a>
         <mat-icon color="accent">save_alt</mat-icon>
       </button>
+      <mat-menu #menu="matMenu">
+        <button mat-menu-item (click)="downloadReceipt('csv')">.csv</button>
+        <button mat-menu-item (click)="downloadReceipt('json')">.json</button>
+      </mat-menu>
       <button
         mat-icon-button
         (click)="deleteReceipt()"

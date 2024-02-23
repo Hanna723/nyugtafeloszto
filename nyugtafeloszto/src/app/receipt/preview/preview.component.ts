@@ -164,7 +164,7 @@ export class PreviewComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
-  downloadReceipt() {
+  downloadReceipt(type: string) {
     let members: Object[] = [];
     this.tableData.data.forEach((data) => {
       members.push({
@@ -181,12 +181,44 @@ export class PreviewComponent implements OnInit, AfterViewInit, OnDestroy {
       tagok: members,
     };
 
-    const json = JSON.stringify(downloadData);
-    const uri =
-      'data:application/json;charset=UTF-8,' + encodeURIComponent(json);
+    let url;
 
-    this.download.nativeElement.download = `${downloadData.bolt}_${downloadData.dátum}.json`;
-    this.download.nativeElement.href = uri;
+    if (type === 'csv') {
+      url =
+        'data:text/csv;charset=UTF-8,%EF%BB%BF' +
+        encodeURIComponent(this.createCsv(downloadData));
+    } else {
+      const json = JSON.stringify(downloadData);
+      url = 'data:application/json;charset=UTF-8,' + encodeURIComponent(json);
+    }
+
+    this.download.nativeElement.href = url;
+    this.download.nativeElement.download = `${downloadData.bolt}_${downloadData.dátum}.${type}`;
     this.download?.nativeElement.click();
+  }
+
+  createCsv(data: Object) {
+    let rows = [];
+
+    const headers = Object.keys(data).map(
+      (el) => el.charAt(0).toUpperCase() + el.slice(1)
+    );
+    rows.push(headers.slice(0, -1).join(';'));
+
+    const values = Object.values(data).slice(0, -1).join(';');
+    rows.push(values);
+    rows.push('');
+
+    const members = Object.values(data).at(-1);
+    const memberHeaders = Object.keys(members[0]).map(
+      (el) => el.charAt(0).toUpperCase() + el.slice(1)
+    );
+    rows.push(memberHeaders.join(';'));
+
+    Object.values(members).forEach((el) => {
+      const memberValues = Object.values(el as Object).join(';');
+      rows.push(memberValues);
+    });
+    return rows.join('\n');
   }
 }

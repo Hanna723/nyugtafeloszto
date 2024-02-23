@@ -130,6 +130,7 @@ export class PreviewComponent implements OnInit, AfterViewInit, OnDestroy {
         if (updatedValues && updatedValues.group) {
           this.group = updatedValues.group;
           this.members = updatedValues.members;
+          this.tableData.data = this.members;
         }
       });
   }

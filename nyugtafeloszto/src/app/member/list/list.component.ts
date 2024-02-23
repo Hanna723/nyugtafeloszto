@@ -20,6 +20,7 @@ import { Subscription } from 'rxjs';
 
 import { Member } from '../../shared/models/Member';
 import { MemberService } from 'src/app/shared/services/member.service';
+import { GroupService } from 'src/app/shared/services/group.service';
 
 @Component({
   selector: 'app-list',
@@ -31,19 +32,23 @@ export class ListComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('search') search!: ElementRef;
   tableData: MatTableDataSource<Member> = new MatTableDataSource();
   filteredTableData: MatTableDataSource<Member> = new MatTableDataSource();
-  columnsToDisplay = ['name'];
+  columnsToDisplay = ['name', 'delete'];
   memberForm: FormGroup = new FormGroup({
     name: new FormControl('', [
       Validators.required,
       Validators.maxLength(100),
       Validators.pattern(/^(\s+\S+\s*)*(?!\s).*$/),
+      this.deletedMemberValidator(),
       this.existenceValidator(),
     ]),
   });
   user?: string | null;
   memberSubscription?: Subscription;
 
-  constructor(private memberService: MemberService) {}
+  constructor(
+    private memberService: MemberService,
+    private groupService: GroupService
+  ) {}
 
   ngOnInit(): void {
     this.user = localStorage.getItem('user');
@@ -124,5 +129,33 @@ export class ListComponent implements OnInit, AfterViewInit, OnDestroy {
 
       return exists ? { exists: true } : null;
     };
+  }
+
+  deletedMemberValidator(): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      const value = control.value.trim();
+
+      if (!value) {
+        return null;
+      }
+
+      return value === '*Törölt résztvevő*' ? { deleted: true } : null;
+    };
+  }
+
+  deleteMember(member: Member) {
+    if (member.id && this.user) {
+      this.memberService.delete(member.id);
+
+      this.groupService
+        .getByMember(JSON.parse(this.user).uid, member.id)
+        .subscribe((data) => {
+          data.forEach((group) => {
+            group.members = group.members.filter((el) => el !== member.id);
+            this.groupService.update(group);
+          });
+        });
+    }
+
   }
 }

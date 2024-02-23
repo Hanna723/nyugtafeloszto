@@ -220,9 +220,14 @@ export class EditComponent implements OnInit, OnDestroy {
 
     productArray.controls.forEach((control) => {
       if (typeof control.value === 'string' && this.fetchedMembers) {
-        const member = this.fetchedMembers.find(
-          (el) => el.id === control.value
-        );
+        let member = this.fetchedMembers.find((el) => el.id === control.value);
+        if (!member && this.uid) {
+          member = {
+            id: control.value,
+            user: this.uid,
+            name: '*Törölt résztvevő*',
+          };
+        }
         control.setValue(member);
       }
     });
@@ -278,9 +283,14 @@ export class EditComponent implements OnInit, OnDestroy {
 
     members.controls.forEach((control) => {
       if (typeof control.value === 'string' && this.fetchedMembers) {
-        const member = this.fetchedMembers.find(
-          (el) => el.id === control.value
-        );
+        let member = this.fetchedMembers.find((el) => el.id === control.value);
+        if (!member && this.uid) {
+          member = {
+            id: control.value,
+            user: this.uid,
+            name: '*Törölt résztvevő*',
+          };
+        }
         control.setValue(member);
         this.filterMembersAndGroups();
       }

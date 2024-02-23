@@ -10,11 +10,7 @@ import {
 import { MatDialog } from '@angular/material/dialog';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
-import {
-  DomSanitizer,
-  SafeResourceUrl,
-  SafeUrl,
-} from '@angular/platform-browser';
+import { SafeUrl } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { DialogComponent } from 'src/app/shared/dialog/dialog.component';
@@ -53,7 +49,6 @@ export class PreviewComponent implements OnInit, AfterViewInit, OnDestroy {
     private datePipe: DatePipe,
     private route: ActivatedRoute,
     private router: Router,
-    private sanitizer: DomSanitizer,
     public deleteDialog: MatDialog
   ) {}
 
@@ -117,6 +112,14 @@ export class PreviewComponent implements OnInit, AfterViewInit, OnDestroy {
             if (member && member.id) {
               member.pays = this.needToPay.get(member.id) || 0;
               this.members.push(member);
+            } else if (this.user) {
+              let deletedMember: Member = {
+                id: memberId,
+                user: this.user,
+                name: '*Törölt résztvevő*',
+                pays: this.needToPay.get(memberId) || 0,
+              };
+              this.members.push(deletedMember);
             }
           });
       }

@@ -42,6 +42,14 @@ export class GroupService {
       .valueChanges();
   }
 
+  getByMember(userId: string, memberId: string) {
+    return this.angularFirestore
+      .collection<Group>(this.collectionName, (ref) =>
+        ref.where('user', '==', userId).where('members', 'array-contains', memberId)
+      )
+      .valueChanges();
+  }
+
   getById(id: string, userId: string) {
     return this.angularFirestore
       .collection<Group>(this.collectionName, (ref) =>

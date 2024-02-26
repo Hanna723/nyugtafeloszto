@@ -23,7 +23,7 @@ mat-sidenav-content {
   display: flex;
   flex-direction: column;
   padding-top: 16px;
-  
+
   a {
     padding: 8px 24px;
   }
@@ -37,9 +37,31 @@ mat-icon {
   color: $primary-white;
 }
 
+img {
+  height: 40px;
+  width: 40px;
+  border-radius: 100%;
+  object-fit: cover;
+  cursor: pointer;
+}
+
 @media only screen and (max-width: 700px) {
   mat-toolbar {
     column-gap: 16px;
     font-size: 1.1rem;
+  }
+}
+
+@media only screen and (max-width: 600px) {
+  mat-toolbar {
+    padding: 0;
+  }
+
+  img {
+    margin-right: 16px;
+  }
+
+  mat-sidenav-content mat-toolbar {
+    column-gap: 0;
   }
 }

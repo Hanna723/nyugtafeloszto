@@ -4,6 +4,8 @@ import { Router } from '@angular/router';
 import { MatSidenav } from '@angular/material/sidenav';
 import { AuthService } from '../services/auth.service';
 import { Subscription } from 'rxjs';
+import { ImageService } from '../services/image.service';
+import { UserService } from '../services/user.service';
 
 @Component({
   selector: 'app-menu',
@@ -13,16 +15,38 @@ import { Subscription } from 'rxjs';
 export class MenuComponent implements OnInit, OnDestroy {
   @ViewChild('sidenav') sidenav?: MatSidenav;
   user?: firebase.default.User | null;
+  image?: string;
   authSubscription?: Subscription;
+  userSubscription?: Subscription;
+  imageSubscription?: Subscription;
   routerSubscription?: Subscription;
 
-  constructor(private router: Router, private authService: AuthService) {}
+  constructor(
+    private router: Router,
+    private authService: AuthService,
+    private userService: UserService,
+    private imageService: ImageService
+  ) {}
 
   ngOnInit(): void {
     this.authSubscription = this.authService.isLoggedIn().subscribe((user) => {
       this.user = user;
       if (user) {
         localStorage.setItem('user', JSON.stringify(this.user));
+
+        this.userSubscription = this.userService
+          .getById(user?.uid)
+          .subscribe((loggedInUser) => {
+            this.imageSubscription = this.imageService
+              .getImage(
+                `/profile/${
+                  loggedInUser?.profilePicture
+                }`
+              )
+              .subscribe((image) => {
+                this.image = image;
+              });
+          });
       }
     });
 
@@ -33,6 +57,8 @@ export class MenuComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.authSubscription?.unsubscribe();
+    this.userSubscription?.unsubscribe();
+    this.imageSubscription?.unsubscribe();
     this.routerSubscription?.unsubscribe();
   }
 

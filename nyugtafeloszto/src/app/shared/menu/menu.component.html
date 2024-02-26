@@ -4,6 +4,7 @@
       <a *ngIf="user" routerLink="/member/list">Résztvevők</a>
       <a *ngIf="user" routerLink="/group/list">Csoportok</a>
       <a routerLink="/receipt/list">Nyugták</a>
+      <a *ngIf="user" routerLink="/profile">Profil</a>
       <a *ngIf="!user" routerLink="/auth/login">Bejelentkezés</a>
       <a *ngIf="user" routerLink="/home" (click)="logOut()">Kijelentkezés</a>
     </div>
@@ -15,6 +16,7 @@
       <a *ngIf="user" routerLink="/member/list" fxHide.xs>Résztvevők</a>
       <a *ngIf="user" routerLink="/group/list" fxHide.xs>Csoportok</a>
       <a routerLink="/receipt/list" fxHide.xs>Nyugták</a>
+      <a *ngIf="user" routerLink="/profile" fxHide.xs>Profil</a>
       <a *ngIf="!user" routerLink="/auth/login" fxHide.xs>Bejelentkezés</a>
       <a *ngIf="user" routerLink="/home" (click)="logOut()" fxHide.xs>Kijelentkezés</a>
       <button fxHide.gt-xs mat-icon-button (click)="sidenav.toggle()">

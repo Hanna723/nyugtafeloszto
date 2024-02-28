@@ -1,1 +1,63 @@
-<p>edit works!</p>
+<mat-dialog-content class="dialog-container">
+  <form [formGroup]="editForm" (ngSubmit)="onSubmit()">
+    <mat-form-field>
+      <mat-label for="oldPassword">Régi jelszó</mat-label>
+      <input
+        matInput
+        [type]="hideOld ? 'password' : 'text'"
+        formControlName="oldPassword"
+      />
+      <button
+        mat-icon-button
+        matSuffix
+        (click)="hideOld = !hideOld"
+        [attr.aria-label]="'Régi jelszó elrejtése'"
+        [attr.aria-pressed]="hideOld"
+        tabindex="-1"
+        type="button"
+      >
+        <mat-icon>{{ hideOld ? "visibility_off" : "visibility" }}</mat-icon>
+      </button>
+      <mat-error *ngIf="editForm.controls['oldPassword'].errors?.['required']"
+        >Kérem adja meg a jelszavát!</mat-error
+      >
+      <mat-error *ngIf="editForm.controls['oldPassword'].errors?.['incorrect']"
+        >Helytelen jelszó!</mat-error
+      >
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label for="newPassword">Új jelszó</mat-label>
+      <input
+        matInput
+        [type]="hideNew ? 'password' : 'text'"
+        formControlName="newPassword"
+      />
+      <button
+        mat-icon-button
+        matSuffix
+        (click)="hideNew = !hideNew"
+        [attr.aria-label]="'Új jelszó elrejtése'"
+        [attr.aria-pressed]="hideNew"
+        tabindex="-1"
+        type="button"
+      >
+        <mat-icon>{{ hideNew ? "visibility_off" : "visibility" }}</mat-icon>
+      </button>
+      <mat-error *ngIf="editForm.controls['newPassword'].errors?.['required']"
+        >Kérem adjon meg egy jelszót!</mat-error
+      >
+      <mat-error *ngIf="editForm.controls['newPassword'].errors?.['minlength']"
+        >Legalább 6 karakter hosszú jelszót adjon meg!</mat-error
+      >
+      <mat-error *ngIf="editForm.controls['newPassword'].errors?.['incorrect']"
+        >Helytelen jelszó!</mat-error
+      >
+    </mat-form-field>
+    <div class="buttons">
+      <button mat-stroked-button color="accent" (click)="close()" type="button">
+        Mégsem
+      </button>
+      <button mat-flat-button color="accent" type="submit">Mentés</button>
+    </div>
+  </form>
+</mat-dialog-content>

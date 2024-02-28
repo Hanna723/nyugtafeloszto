@@ -4,6 +4,8 @@ import { Subscription } from 'rxjs';
 import { User } from 'src/app/shared/models/User';
 import { ImageService } from 'src/app/shared/services/image.service';
 import { UserService } from 'src/app/shared/services/user.service';
+import { EditComponent } from '../edit/edit.component';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-preview',
@@ -18,7 +20,8 @@ export class PreviewComponent implements OnInit, OnDestroy {
 
   constructor(
     private userService: UserService,
-    private imageService: ImageService
+    private imageService: ImageService,
+    public edit: MatDialog
   ) {}
 
   ngOnInit(): void {
@@ -41,5 +44,19 @@ export class PreviewComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.userSupscription?.unsubscribe();
+  }
+
+  changePassword() {
+    this.edit.open(EditComponent, {
+      disableClose: true,
+    });
+  }
+
+  changePicture() {
+    console.log('picture');
+  }
+
+  deleteProfile() {
+    console.log('delete');
   }
 }

@@ -1,4 +1,4 @@
-<mat-dialog-content class="container">
+<mat-dialog-content class="dialog-container">
   <form [formGroup]="groupForm" (ngSubmit)="onSubmit()">
     <mat-form-field>
       <mat-label for="name">Név</mat-label>
@@ -53,7 +53,6 @@
             {{ el.name }}
           </span>
         </mat-option>
-        <div>adsfsdfs</div>
       </mat-autocomplete>
     </mat-form-field>
     <div class="buttons">
@@ -65,7 +64,7 @@
       >
         Mégsem
       </button>
-      <button mat-flat-button color="accent" type="submit">Mentés</button>
+      <button mat-flat-button color="accent" type="submit" [disabled]="!groupForm.valid">Mentés</button>
     </div>
   </form>
 </mat-dialog-content>

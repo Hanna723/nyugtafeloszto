@@ -1,0 +1,70 @@
+.list-container {
+  width: 600px;
+  margin: 50px auto;
+}
+
+mat-card {
+  padding: 24px;
+}
+
+mat-card-title {
+  max-width: 520px;
+  overflow-wrap: break-word;
+}
+
+mat-card-content {
+  display: flex;
+  flex-wrap: wrap;
+  column-gap: 20px;
+  margin-top: 20px;
+}
+
+button {
+  margin-top: 0;
+  margin-bottom: 20px;
+}
+
+img {
+  object-fit: cover;
+}
+
+@media only screen and (max-width: 620px) {
+  .list-container {
+    width: 100%;
+  }
+
+  mat-card-title {
+    max-width: 85vw;
+  }
+
+  img {
+    width: 200px;
+    height: 200px;
+  }
+
+  mat-card-content {
+    padding-right: 0;
+  }
+}
+
+@media only screen and (max-width: 510px) {
+  img {
+    width: 150px;
+    height: 150px;
+  }
+}
+
+@media only screen and (max-width: 440px) {
+  button {
+    margin-top: 20px;
+    margin-bottom: 0;
+  }
+
+  .list-container {
+    margin: 0;
+  }
+
+  mat-card-title {
+    max-width: 75vw;
+  }
+}

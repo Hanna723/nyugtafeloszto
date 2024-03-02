@@ -182,7 +182,7 @@
       </button>
     </div>
     <div class="buttons">
-      <button mat-flat-button color="accent" type="submit">Mentés</button>
+      <button mat-flat-button color="accent" type="submit" [disabled]="!receiptForm.valid">Mentés</button>
     </div>
   </form>
 </div>

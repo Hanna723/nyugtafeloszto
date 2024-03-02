@@ -1,0 +1,38 @@
+<mat-dialog-content class="dialog-container">
+  <form [formGroup]="deleteForm" (ngSubmit)="onSubmit()">
+    <h4>A profil törléséhez kérem írja be újra a jelszavát!</h4>
+    <mat-form-field>
+      <mat-label for="password">Jelszó</mat-label>
+      <input
+        matInput
+        [type]="hide ? 'password' : 'text'"
+        formControlName="password"
+      />
+      <button
+        mat-icon-button
+        matSuffix
+        (click)="hide = !hide"
+        [attr.aria-label]="'Új jelszó elrejtése'"
+        [attr.aria-pressed]="hide"
+        tabindex="-1"
+        type="button"
+      >
+        <mat-icon>{{ hide ? "visibility_off" : "visibility" }}</mat-icon>
+      </button>
+      <mat-error *ngIf="deleteForm.controls['password'].errors?.['required']"
+        >Kérem adjon meg egy jelszót!</mat-error
+      >
+      <mat-error *ngIf="deleteForm.controls['password'].errors?.['incorrect']"
+        >Helytelen jelszó!</mat-error
+      >
+    </mat-form-field>
+    <div class="buttons">
+      <button mat-stroked-button color="accent" (click)="close()" type="button">
+        Mégsem
+      </button>
+      <button mat-flat-button color="accent" type="submit" [disabled]="!deleteForm.valid">
+        Profil törlése
+      </button>
+    </div>
+  </form>
+</mat-dialog-content>

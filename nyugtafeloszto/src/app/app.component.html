@@ -1,2 +1,2 @@
-<app-menu></app-menu>
-<router-outlet></router-outlet>
+<app-menu [image]="image"></app-menu>
+<router-outlet (activate)="setImage($event)"></router-outlet>

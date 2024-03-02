@@ -22,4 +22,10 @@ export class AuthService {
   logOut() {
     return this.auth.signOut();
   }
+
+  delete() {
+    return this.auth.currentUser.then((user) => {
+      user?.delete();
+    })
+  }
 }

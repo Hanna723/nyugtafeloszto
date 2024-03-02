@@ -1,25 +1,36 @@
 <mat-sidenav-container [hasBackdrop]="true">
-  <mat-sidenav id="sidenav" #sidenav mode="side" position="end" fixedInViewport="true">
+  <mat-sidenav
+    id="sidenav"
+    #sidenav
+    mode="side"
+    position="start"
+    fixedInViewport="true"
+  >
     <div>
       <a *ngIf="user" routerLink="/member/list">Résztvevők</a>
       <a *ngIf="user" routerLink="/group/list">Csoportok</a>
       <a routerLink="/receipt/list">Nyugták</a>
       <a *ngIf="!user" routerLink="/auth/login">Bejelentkezés</a>
-      <a *ngIf="user" routerLink="/home" (click)="logOut()">Kijelentkezés</a>
     </div>
   </mat-sidenav>
   <mat-sidenav-content>
     <mat-toolbar color="primary">
+      <button fxHide.gt-xs mat-icon-button (click)="sidenav.toggle()">
+        <mat-icon>menu</mat-icon>
+      </button>
       <a routerLink="/home">Nyugtafelosztó</a>
       <span></span>
       <a *ngIf="user" routerLink="/member/list" fxHide.xs>Résztvevők</a>
       <a *ngIf="user" routerLink="/group/list" fxHide.xs>Csoportok</a>
       <a routerLink="/receipt/list" fxHide.xs>Nyugták</a>
       <a *ngIf="!user" routerLink="/auth/login" fxHide.xs>Bejelentkezés</a>
-      <a *ngIf="user" routerLink="/home" (click)="logOut()" fxHide.xs>Kijelentkezés</a>
-      <button fxHide.gt-xs mat-icon-button (click)="sidenav.toggle()">
-        <mat-icon>menu</mat-icon>
-      </button>
+      <img *ngIf="user" [matMenuTriggerFor]="menu" [src]="image" />
+      <mat-menu #menu="matMenu">
+        <button mat-menu-item routerLink="/profile">Profil</button>
+        <button mat-menu-item routerLink="/home" (click)="logOut()">
+          Kijelentkezés
+        </button>
+      </mat-menu>
     </mat-toolbar>
   </mat-sidenav-content>
 </mat-sidenav-container>

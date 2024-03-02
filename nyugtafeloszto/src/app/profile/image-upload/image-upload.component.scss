@@ -1,0 +1,24 @@
+h4 {
+  margin-top: 8px;
+  margin-bottom: 16px;
+}
+
+image-cropper {
+  padding: 0;
+  max-height: 300px;
+}
+
+.buttons button:last-child {
+  margin-left: 8px;
+}
+
+@media only screen and (max-width: 296px) {
+  button {
+    margin-bottom: 8px;
+  }
+
+  image-cropper {
+    padding: 0;
+    max-height: 250px;
+  }
+}

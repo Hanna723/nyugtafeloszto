@@ -19,6 +19,7 @@ import { MatTableModule } from '@angular/material/table';
 import { ListComponent } from './list/list.component';
 import { MatSortModule } from '@angular/material/sort';
 import { MAT_DATE_LOCALE } from '@angular/material/core';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 
 @NgModule({
   declarations: [
@@ -42,6 +43,7 @@ import { MAT_DATE_LOCALE } from '@angular/material/core';
     ImageCropperModule,
     MatTableModule,
     MatSortModule,
+    MatCheckboxModule,
   ],
   providers: [
     DatePipe,

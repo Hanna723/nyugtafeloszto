@@ -46,7 +46,12 @@
         Admin
       </th>
       <td mat-cell *matCellDef="let element">
-        <mat-icon *ngIf="element.admin">done</mat-icon>
+        <mat-checkbox
+          color="accent"
+          [checked]="element.admin"
+          [disabled]="element.id === user?.id"
+          (click)="changeAdmin($event, element)"
+        ></mat-checkbox>
       </td>
     </ng-container>
     <tr mat-header-row *matHeaderRowDef="columnsToDisplay"></tr>

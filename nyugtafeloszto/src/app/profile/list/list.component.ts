@@ -50,6 +50,7 @@ export class ListComponent implements OnInit, AfterViewInit, OnDestroy {
 
             this.tableData = new MatTableDataSource(data);
             this.filteredTableData = new MatTableDataSource(data);
+            this.filteredTableData.sort = this.sort;
           });
         }
       });
@@ -84,5 +85,16 @@ export class ListComponent implements OnInit, AfterViewInit, OnDestroy {
     this.filteredTableData.data = this.tableData.data.filter((el) =>
       el.email.toLowerCase().includes(input.value.toLowerCase())
     );
+  }
+
+  changeAdmin(event: Event, user: User) {
+    if (user.id === this.user?.id) {
+      return;
+    }
+
+    const checkbox = event.target as HTMLInputElement;
+
+    user.admin = checkbox.checked;
+    this.userService.update(user);
   }
 }

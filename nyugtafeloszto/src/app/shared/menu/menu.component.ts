@@ -37,8 +37,11 @@ export class MenuComponent implements OnInit, OnDestroy {
         this.userSubscription = this.userService
           .getById(user?.uid)
           .subscribe((loggedInUser) => {
+            const imageName = loggedInUser?.hasProfilePicture
+              ? loggedInUser.id
+              : 'default';
             this.imageSubscription = this.imageService
-              .getImage(`/profile/${loggedInUser?.profilePicture}`)
+              .getImage(`profile/${imageName}.png`)
               .subscribe((image) => {
                 this.image = image;
               });

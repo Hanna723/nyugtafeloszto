@@ -66,7 +66,9 @@ export class ListComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngAfterViewInit(): void {
     setTimeout(() => {
-      this.sort.sort({ id: 'name', start: 'asc', disableClear: false });
+      if (this.sort) {
+        this.sort.sort({ id: 'name', start: 'asc', disableClear: false });
+      }
     }, 1000);
   }
 

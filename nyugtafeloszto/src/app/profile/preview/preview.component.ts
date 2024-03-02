@@ -42,7 +42,8 @@ export class PreviewComponent implements OnInit, OnDestroy {
         .getById(JSON.parse(localUser).uid)
         .subscribe((user) => {
           this.user = user;
-          this.fetchImage(user?.profilePicture || '', false);
+          const imageName = user?.hasProfilePicture ? user.id : 'default';
+          this.fetchImage(`${imageName}.png`, false);
         });
     }
   }
@@ -94,16 +95,12 @@ export class PreviewComponent implements OnInit, OnDestroy {
           const imageName = `${this.user.id}.png`;
 
           this.imageService
-            .uploadImage(`profile/${imageName}`, image)
+            .uploadImage(`/profile/${imageName}`, image)
             .then(() => {
               this.fetchImage(imageName, true);
 
-              if (this.user && this.user.profilePicture !== imageName) {
-                this.imageService.deleteImage(
-                  `/profile/${this.user?.profilePicture}`
-                );
-
-                this.user.profilePicture = imageName;
+              if (this.user && !this.user.hasProfilePicture) {
+                this.user.hasProfilePicture = true;
                 this.userService.update(this.user);
               }
             });

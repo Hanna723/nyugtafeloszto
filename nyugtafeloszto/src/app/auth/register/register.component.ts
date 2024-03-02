@@ -48,7 +48,7 @@ export class RegisterComponent implements OnInit {
         const user: User = {
           id: credentials.user?.uid as string,
           email: this.registrationForm.controls['email'].value,
-          profilePicture: 'default.png',
+          hasProfilePicture: false,
         };
         this.userService
           .create(user)

@@ -11,3 +11,14 @@ image-cropper {
 .buttons button:last-child {
   margin-left: 8px;
 }
+
+@media only screen and (max-width: 296px) {
+  button {
+    margin-bottom: 8px;
+  }
+
+  image-cropper {
+    padding: 0;
+    max-height: 250px;
+  }
+}

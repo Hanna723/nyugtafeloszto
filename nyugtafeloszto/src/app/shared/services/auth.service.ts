@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
-import firebase from 'firebase/compat';
 
 @Injectable({
   providedIn: 'root',
@@ -22,5 +21,11 @@ export class AuthService {
 
   logOut() {
     return this.auth.signOut();
+  }
+
+  delete() {
+    return this.auth.currentUser.then((user) => {
+      user?.delete();
+    })
   }
 }

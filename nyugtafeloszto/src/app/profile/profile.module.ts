@@ -14,9 +14,10 @@ import { ProfileRoutingModule } from './profile-routing.module';
 import { PreviewComponent } from './preview/preview.component';
 import { PasswordChangeComponent } from './password-change/password-change.component';
 import { ImageUploadComponent } from './image-upload/image-upload.component';
+import { AccountDeleteComponent } from './account-delete/account-delete.component';
 
 @NgModule({
-  declarations: [PreviewComponent, PasswordChangeComponent, ImageUploadComponent],
+  declarations: [PreviewComponent, PasswordChangeComponent, ImageUploadComponent, AccountDeleteComponent],
   imports: [
     CommonModule,
     ProfileRoutingModule,

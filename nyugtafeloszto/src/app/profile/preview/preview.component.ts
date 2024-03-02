@@ -6,13 +6,14 @@ import {
   Output,
 } from '@angular/core';
 import { Subscription } from 'rxjs';
+import { MatDialog } from '@angular/material/dialog';
 
 import { User } from 'src/app/shared/models/User';
 import { ImageService } from 'src/app/shared/services/image.service';
 import { UserService } from 'src/app/shared/services/user.service';
 import { PasswordChangeComponent } from '../password-change/password-change.component';
-import { MatDialog } from '@angular/material/dialog';
 import { ImageUploadComponent } from '../image-upload/image-upload.component';
+import { AccountDeleteComponent } from '../account-delete/account-delete.component';
 
 @Component({
   selector: 'app-preview',
@@ -31,7 +32,8 @@ export class PreviewComponent implements OnInit, OnDestroy {
     private userService: UserService,
     private imageService: ImageService,
     public passwordChange: MatDialog,
-    public imageUpload: MatDialog
+    public imageUpload: MatDialog,
+    public deleteProfileDialog: MatDialog,
   ) {}
 
   ngOnInit(): void {
@@ -109,6 +111,11 @@ export class PreviewComponent implements OnInit, OnDestroy {
   }
 
   deleteProfile() {
-    console.log('delete');
+    this.deleteProfileDialog.open(AccountDeleteComponent, {
+      disableClose: true,
+      data: {
+        hasProfilePicture: this.user?.hasProfilePicture
+      },
+    });
   }
 }

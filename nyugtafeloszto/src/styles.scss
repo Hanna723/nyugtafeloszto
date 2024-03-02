@@ -60,11 +60,11 @@ div:has(.auth-form) {
   form {
     display: flex;
     flex-direction: row;
-  }
 
-  mat-form-field {
-    flex: 1;
-    margin-right: 24px;
+    mat-form-field {
+      flex: 1;
+      margin-right: 24px;
+    }
   }
 
   button {

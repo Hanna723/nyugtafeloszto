@@ -24,7 +24,7 @@ export class PreviewComponent implements OnInit, OnDestroy {
   @Output() uploadedImage: EventEmitter<string> = new EventEmitter();
   user?: User;
   image?: string;
-  userSupscription?: Subscription;
+  userSubscription?: Subscription;
   imageUploadSubscription?: Subscription;
   imageSubscriptions: Subscription[] = [];
 
@@ -40,7 +40,7 @@ export class PreviewComponent implements OnInit, OnDestroy {
     const localUser = localStorage.getItem('user');
 
     if (localUser) {
-      this.userSupscription = this.userService
+      this.userSubscription = this.userService
         .getById(JSON.parse(localUser).uid)
         .subscribe((user) => {
           this.user = user;
@@ -51,7 +51,7 @@ export class PreviewComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.userSupscription?.unsubscribe();
+    this.userSubscription?.unsubscribe();
     this.imageUploadSubscription?.unsubscribe();
     this.imageSubscriptions.forEach((imageSubscription) => {
       imageSubscription.unsubscribe();

@@ -1,9 +1,9 @@
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
-
 import { MatSidenav } from '@angular/material/sidenav';
-import { AuthService } from '../services/auth.service';
 import { Subscription } from 'rxjs';
+
+import { AuthService } from '../services/auth.service';
 import { ImageService } from '../services/image.service';
 import { UserService } from '../services/user.service';
 
@@ -14,8 +14,8 @@ import { UserService } from '../services/user.service';
 })
 export class MenuComponent implements OnInit, OnDestroy {
   @ViewChild('sidenav') sidenav?: MatSidenav;
+  @Input() image?: string;
   user?: firebase.default.User | null;
-  image?: string;
   authSubscription?: Subscription;
   userSubscription?: Subscription;
   imageSubscription?: Subscription;
@@ -38,11 +38,7 @@ export class MenuComponent implements OnInit, OnDestroy {
           .getById(user?.uid)
           .subscribe((loggedInUser) => {
             this.imageSubscription = this.imageService
-              .getImage(
-                `/profile/${
-                  loggedInUser?.profilePicture
-                }`
-              )
+              .getImage(`/profile/${loggedInUser?.profilePicture}`)
               .subscribe((image) => {
                 this.image = image;
               });

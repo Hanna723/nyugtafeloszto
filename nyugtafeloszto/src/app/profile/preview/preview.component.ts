@@ -1,4 +1,10 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  OnDestroy,
+  OnInit,
+  Output,
+} from '@angular/core';
 import { Subscription } from 'rxjs';
 
 import { User } from 'src/app/shared/models/User';
@@ -13,10 +19,11 @@ import { MatDialog } from '@angular/material/dialog';
   styleUrls: ['./preview.component.scss'],
 })
 export class PreviewComponent implements OnInit, OnDestroy {
+  @Output() uploadedImage: EventEmitter<string> = new EventEmitter();
   user?: User;
   image?: string;
   userSupscription?: Subscription;
-  imageSubscription?: Subscription;
+  imageSubscriptions: Subscription[] = [];
 
   constructor(
     private userService: UserService,
@@ -32,18 +39,30 @@ export class PreviewComponent implements OnInit, OnDestroy {
         .getById(JSON.parse(localUser).uid)
         .subscribe((user) => {
           this.user = user;
-
-          this.imageSubscription = this.imageService
-            .getImage(`/profile/${user?.profilePicture}`)
-            .subscribe((image) => {
-              this.image = image;
-            });
+          this.fetchImage(user?.profilePicture || '', false);
         });
     }
   }
 
   ngOnDestroy(): void {
     this.userSupscription?.unsubscribe();
+    this.imageSubscriptions.forEach((imageSubscription) => {
+      imageSubscription.unsubscribe();
+    });
+  }
+
+  fetchImage(imageName: string, uploaded: boolean) {
+    const imageSubscription = this.imageService
+      .getImage(`/profile/${imageName}`)
+      .subscribe((image) => {
+        this.image = image;
+
+        if (uploaded) {
+          this.uploadedImage.emit(this.image);
+        }
+      });
+
+    this.imageSubscriptions.push(imageSubscription);
   }
 
   changePassword() {
@@ -52,8 +71,29 @@ export class PreviewComponent implements OnInit, OnDestroy {
     });
   }
 
-  changePicture() {
-    console.log('picture');
+  changePicture(event: Event) {
+    const target = event.target as HTMLInputElement;
+    const uploadedImage = target?.files?.item(0);
+    const type = uploadedImage?.name.split('.').at(-1);
+
+    if (this.user && uploadedImage) {
+      const imageName = `${this.user.id}.${type}`;
+
+      this.imageService
+        .uploadImage(`profile/${imageName}`, uploadedImage)
+        .then(() => {
+          this.fetchImage(imageName, true);
+
+          if (this.user && this.user.profilePicture !== imageName) {
+            this.imageService.deleteImage(
+              `/profile/${this.user?.profilePicture}`
+            );
+
+            this.user.profilePicture = imageName;
+            this.userService.update(this.user);
+          }
+        });
+    }
   }
 
   deleteProfile() {

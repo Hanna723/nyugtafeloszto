@@ -10,4 +10,12 @@ export class ImageService {
   getImage(url: string) {
     return this.storage.ref(url).getDownloadURL();
   }
+
+  uploadImage(path: string, data: any) {
+    return this.storage.upload(path, data);
+  }
+
+  deleteImage(url: string) {
+    return this.storage.ref(url).delete();
+  }
 }

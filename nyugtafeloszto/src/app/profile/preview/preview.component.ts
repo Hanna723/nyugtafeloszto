@@ -10,8 +10,9 @@ import { Subscription } from 'rxjs';
 import { User } from 'src/app/shared/models/User';
 import { ImageService } from 'src/app/shared/services/image.service';
 import { UserService } from 'src/app/shared/services/user.service';
-import { EditComponent } from '../edit/edit.component';
+import { PasswordChangeComponent } from '../password-change/password-change.component';
 import { MatDialog } from '@angular/material/dialog';
+import { ImageUploadComponent } from '../image-upload/image-upload.component';
 
 @Component({
   selector: 'app-preview',
@@ -23,12 +24,14 @@ export class PreviewComponent implements OnInit, OnDestroy {
   user?: User;
   image?: string;
   userSupscription?: Subscription;
+  imageUploadSubscription?: Subscription;
   imageSubscriptions: Subscription[] = [];
 
   constructor(
     private userService: UserService,
     private imageService: ImageService,
-    public edit: MatDialog
+    public passwordChange: MatDialog,
+    public imageUpload: MatDialog
   ) {}
 
   ngOnInit(): void {
@@ -46,6 +49,7 @@ export class PreviewComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.userSupscription?.unsubscribe();
+    this.imageUploadSubscription?.unsubscribe();
     this.imageSubscriptions.forEach((imageSubscription) => {
       imageSubscription.unsubscribe();
     });
@@ -66,34 +70,45 @@ export class PreviewComponent implements OnInit, OnDestroy {
   }
 
   changePassword() {
-    this.edit.open(EditComponent, {
+    this.passwordChange.open(PasswordChangeComponent, {
       disableClose: true,
     });
   }
 
   changePicture(event: Event) {
-    const target = event.target as HTMLInputElement;
-    const uploadedImage = target?.files?.item(0);
-    const type = uploadedImage?.name.split('.').at(-1);
+    const dialogRef = this.imageUpload.open(ImageUploadComponent, {
+      disableClose: true,
+      data: {
+        imageChangedEvent: event,
+      },
+    });
 
-    if (this.user && uploadedImage) {
-      const imageName = `${this.user.id}.${type}`;
+    this.imageUploadSubscription = dialogRef
+      .afterClosed()
+      .subscribe((image) => {
+        if (!image) {
+          return;
+        }
 
-      this.imageService
-        .uploadImage(`profile/${imageName}`, uploadedImage)
-        .then(() => {
-          this.fetchImage(imageName, true);
+        if (this.user) {
+          const imageName = `${this.user.id}.png`;
 
-          if (this.user && this.user.profilePicture !== imageName) {
-            this.imageService.deleteImage(
-              `/profile/${this.user?.profilePicture}`
-            );
+          this.imageService
+            .uploadImage(`profile/${imageName}`, image)
+            .then(() => {
+              this.fetchImage(imageName, true);
 
-            this.user.profilePicture = imageName;
-            this.userService.update(this.user);
-          }
-        });
-    }
+              if (this.user && this.user.profilePicture !== imageName) {
+                this.imageService.deleteImage(
+                  `/profile/${this.user?.profilePicture}`
+                );
+
+                this.user.profilePicture = imageName;
+                this.userService.update(this.user);
+              }
+            });
+        }
+      });
   }
 
   deleteProfile() {

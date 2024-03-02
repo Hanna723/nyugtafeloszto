@@ -1,0 +1,19 @@
+<mat-dialog-content class="dialog-container">
+  <div class="text-center col-md-8">
+    <h4>Kép kivágása</h4>
+    <image-cropper
+      [imageChangedEvent]="data.imageChangedEvent"
+      [maintainAspectRatio]="true"
+      [aspectRatio]="4 / 4"
+      [resizeToWidth]="256"
+      format="png"
+      (imageCropped)="imageCropped($event)"
+    ></image-cropper>
+  </div>
+  <div class="buttons">
+    <button mat-stroked-button color="accent" (click)="close()" type="button">
+      Mégsem
+    </button>
+    <button mat-flat-button color="accent" (click)="saveCroppedImage()">Mentés</button>
+  </div>
+</mat-dialog-content>

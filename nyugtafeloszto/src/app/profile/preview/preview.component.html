@@ -1,22 +1,38 @@
 <div class="list-container">
   <mat-card>
     <mat-card-header>
-        <mat-card-title>{{ user?.email }}</mat-card-title>
+      <mat-card-title>{{ user?.email }}</mat-card-title>
     </mat-card-header>
     <mat-card-content>
-        <img mat-card-xl-image [src]="image" />
-        <div>
-            <mat-card-subtitle>
-              <button mat-stroked-button color="accent" (click)="fileUpload.click()">Profilkép módosítása</button>
-              <input #fileUpload type="file" hidden="true" onclick="this.value=null" (change)="changePicture($event)">
-            </mat-card-subtitle>
-            <mat-card-subtitle>
-              <button mat-stroked-button color="accent" (click)="changePassword()">Jelszó módosítása</button>
-            </mat-card-subtitle>
-            <mat-card-subtitle>
-              <button mat-stroked-button color="warn" (click)="deleteProfile()">Profil törlése</button>
-            </mat-card-subtitle>
-        </div>
+      <img mat-card-xl-image [src]="image" />
+      <div>
+        <mat-card-subtitle>
+          <button
+            mat-stroked-button
+            color="accent"
+            (click)="fileUpload.click()"
+          >
+            Profilkép módosítása
+          </button>
+          <input
+            #fileUpload
+            type="file"
+            hidden="true"
+            onclick="this.value=null"
+            (change)="changePicture($event)"
+          />
+        </mat-card-subtitle>
+        <mat-card-subtitle>
+          <button mat-stroked-button color="accent" (click)="changePassword()">
+            Jelszó módosítása
+          </button>
+        </mat-card-subtitle>
+        <mat-card-subtitle>
+          <button mat-stroked-button color="warn" (click)="deleteProfile()">
+            Profil törlése
+          </button>
+        </mat-card-subtitle>
+      </div>
     </mat-card-content>
   </mat-card>
 </div>

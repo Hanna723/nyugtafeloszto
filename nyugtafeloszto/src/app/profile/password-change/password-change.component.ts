@@ -7,10 +7,10 @@ import { AuthService } from 'src/app/shared/services/auth.service';
 
 @Component({
   selector: 'app-edit',
-  templateUrl: './edit.component.html',
-  styleUrls: ['./edit.component.scss'],
+  templateUrl: './password-change.component.html',
+  styleUrls: ['./password-change.component.scss'],
 })
-export class EditComponent implements OnInit {
+export class PasswordChangeComponent implements OnInit {
   hideOld: boolean = true;
   hideNew: boolean = true;
   user?: firebase.User;
@@ -24,7 +24,7 @@ export class EditComponent implements OnInit {
 
   constructor(
     private authService: AuthService,
-    public dialogRef: MatDialogRef<EditComponent>
+    public dialogRef: MatDialogRef<PasswordChangeComponent>
   ) {}
 
   ngOnInit(): void {

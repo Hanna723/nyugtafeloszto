@@ -11,10 +11,10 @@ import { MatInputModule } from '@angular/material/input';
 
 import { ProfileRoutingModule } from './profile-routing.module';
 import { PreviewComponent } from './preview/preview.component';
-import { EditComponent } from './edit/edit.component';
+import { PasswordChangeComponent } from './password-change/password-change.component';
 
 @NgModule({
-  declarations: [PreviewComponent, EditComponent],
+  declarations: [PreviewComponent, PasswordChangeComponent],
   imports: [
     CommonModule,
     ProfileRoutingModule,

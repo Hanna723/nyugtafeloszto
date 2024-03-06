@@ -39,31 +39,33 @@ export class ListComponent implements OnInit, AfterViewInit, OnDestroy {
   ngOnInit(): void {
     this.user = localStorage.getItem('user');
 
-    if (this.user) {
-      this.receiptSubscription = this.receiptService
-        .getAllForOneUser(JSON.parse(this.user).uid)
-        .subscribe((data) => {
-          this.tableData = new MatTableDataSource(data);
-          this.filteredTableData = new MatTableDataSource(data);
-          data.forEach((el) => {
-            const currencySubscription = this.currencyService
-              .getById(el.currency as unknown as string)
-              .subscribe((currency) => {
-                if (el.date) {
-                  let date = el.date.toDate();
-                  el.formattedDate = this.datePipe.transform(
-                    date,
-                    'yyyy. MM. dd.'
-                  );
-                }
-                if (currency) {
-                  el.currency = currency;
-                }
-              });
-            this.currencySubscriptions.push(currencySubscription);
-          });
-        });
+    if (!this.user) {
+      return;
     }
+
+    this.receiptSubscription = this.receiptService
+      .getAllForOneUser(JSON.parse(this.user).uid)
+      .subscribe((data) => {
+        this.tableData = new MatTableDataSource(data);
+        this.filteredTableData = new MatTableDataSource(data);
+        data.forEach((el) => {
+          const currencySubscription = this.currencyService
+            .getById(el.currency as unknown as string)
+            .subscribe((currency) => {
+              if (el.date) {
+                let date = el.date.toDate();
+                el.formattedDate = this.datePipe.transform(
+                  date,
+                  'yyyy. MM. dd.'
+                );
+              }
+              if (currency) {
+                el.currency = currency;
+              }
+            });
+          this.currencySubscriptions.push(currencySubscription);
+        });
+      });
   }
 
   ngAfterViewInit(): void {

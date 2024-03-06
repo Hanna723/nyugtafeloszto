@@ -103,20 +103,21 @@ export class PreviewComponent implements OnInit, OnDestroy {
           return;
         }
 
-        if (this.user) {
-          const imageName = `${this.user.id}.png`;
-
-          this.imageService
-            .uploadImage(`/profile/${imageName}`, image)
-            .then(() => {
-              this.fetchImage(imageName, true);
-
-              if (this.user && !this.user.hasProfilePicture) {
-                this.user.hasProfilePicture = true;
-                this.userService.update(this.user);
-              }
-            });
+        if (!this.user) {
+          return;
         }
+        const imageName = `${this.user.id}.png`;
+
+        this.imageService
+          .uploadImage(`/profile/${imageName}`, image)
+          .then(() => {
+            this.fetchImage(imageName, true);
+
+            if (this.user && !this.user.hasProfilePicture) {
+              this.user.hasProfilePicture = true;
+              this.userService.update(this.user);
+            }
+          });
       });
   }
 

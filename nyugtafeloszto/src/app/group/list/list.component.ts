@@ -40,15 +40,17 @@ export class ListComponent implements OnInit, AfterViewInit, OnDestroy {
   ngOnInit(): void {
     this.user = localStorage.getItem('user');
 
-    if (this.user) {
-      this.groupSubscription = this.groupService
-        .getAllForOneUser(JSON.parse(this.user).uid)
-        .subscribe((data) => {
-          this.tableData = new MatTableDataSource(data);
-          this.filteredTableData = new MatTableDataSource(data);
-          this.filteredTableData.sort = this.sort;
-        });
+    if (!this.user) {
+      return;
     }
+
+    this.groupSubscription = this.groupService
+      .getAllForOneUser(JSON.parse(this.user).uid)
+      .subscribe((data) => {
+        this.tableData = new MatTableDataSource(data);
+        this.filteredTableData = new MatTableDataSource(data);
+        this.filteredTableData.sort = this.sort;
+      });
   }
 
   ngAfterViewInit(): void {

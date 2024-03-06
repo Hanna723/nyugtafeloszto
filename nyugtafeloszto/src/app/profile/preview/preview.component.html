@@ -18,6 +18,7 @@
             <input
               #fileUpload
               type="file"
+              accept="image/*"
               hidden="true"
               onclick="this.value=null"
               (change)="changePicture($event)"

@@ -93,8 +93,14 @@ export class ListComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     const checkbox = event.target as HTMLInputElement;
+    const updatedUser: User = {
+      id: user.id,
+      email: user.email,
+      hasProfilePicture: user.hasProfilePicture,
+      admin: checkbox.checked,
+      lastLogin: user.lastLogin,
+    };
 
-    user.admin = checkbox.checked;
-    this.userService.update(user);
+    this.userService.update(updatedUser);
   }
 }

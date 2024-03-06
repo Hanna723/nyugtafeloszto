@@ -8,7 +8,7 @@
         {{ receipt.formattedDate }}
       </div>
     </div>
-    <div>
+    <div *ngIf="user">
       <button
         [matMenuTriggerFor]="menu"
         mat-icon-button
@@ -50,7 +50,9 @@
       >
         Név
       </th>
-      <td mat-cell *matCellDef="let element">{{ element.name }}</td>
+      <td mat-cell *matCellDef="let element">
+        {{ element.name }}
+      </td>
       <td mat-footer-cell *matFooterCellDef>Összesen</td>
     </ng-container>
     <ng-container matColumnDef="pays">

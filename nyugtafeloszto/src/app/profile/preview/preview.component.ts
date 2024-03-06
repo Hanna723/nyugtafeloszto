@@ -79,7 +79,7 @@ export class PreviewComponent implements OnInit, OnDestroy {
 
   changePicture(event: Event) {
     const target = event.target as HTMLInputElement;
-    console.log(target.files);
+
     if (!target.files || !target.files[0].type.includes('image/')) {
       this.dialog.open(DialogComponent, {
         data: {

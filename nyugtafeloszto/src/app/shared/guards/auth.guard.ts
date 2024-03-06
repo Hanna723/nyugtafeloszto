@@ -7,8 +7,6 @@ export const authGuard: CanActivateFn = (route, state) => {
   const authService = inject(AuthService);
   const router = inject(Router);
 
-  console.log('auth guard!');
-
   return authService.isLoggedIn().pipe(
     map((user) => {
       if (!user) {

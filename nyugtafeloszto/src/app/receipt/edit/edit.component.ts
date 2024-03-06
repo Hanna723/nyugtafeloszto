@@ -1,5 +1,4 @@
 import {
-  AfterViewInit,
   Component,
   ElementRef,
   OnDestroy,
@@ -59,6 +58,7 @@ export class EditComponent implements OnInit, OnDestroy {
   separatorKeysCodes: number[] = [ENTER, COMMA];
   membersAndGroups: Array<Member | Group> = [];
   filteredMembersAndGroups: Array<Member | Group> = [];
+  filteredMembersWithoutUser: Array<string> = [];
   fetchedMembers?: Array<Member>;
   filteredMembers?: Array<Member>;
   fetchedGroups?: Array<Group>;
@@ -79,19 +79,19 @@ export class EditComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    const user = localStorage.getItem('user');
-    if (!user) {
-      return;
-    }
-    this.uid = JSON.parse(user).uid;
-    this.id = this.route.snapshot.params['id'];
-
     this.currencySubscription = this.currencyService
       .getAll()
       .subscribe((data) => {
         this.currencies = [...data];
         this.filteredCurrencies = [...data];
       });
+
+    const user = localStorage.getItem('user');
+    if (!user) {
+      return;
+    }
+    this.uid = JSON.parse(user).uid;
+    this.id = this.route.snapshot.params['id'];
 
     if (this.uid) {
       this.memberSubscription = this.memberService
@@ -218,6 +218,10 @@ export class EditComponent implements OnInit, OnDestroy {
     const product = products.at(i) as FormGroup;
     const productArray = product.get('pays') as FormArray;
 
+    if (!this.uid) {
+      return productArray;
+    }
+
     productArray.controls.forEach((control) => {
       if (typeof control.value === 'string' && this.fetchedMembers) {
         let member = this.fetchedMembers.find((el) => el.id === control.value);
@@ -239,12 +243,24 @@ export class EditComponent implements OnInit, OnDestroy {
     const value = (event.value || '').trim();
 
     if (value) {
-      const selected = this.filteredMembersAndGroups.at(0);
+      let selected;
 
-      if (selected) {
-        let control = new FormControl<Member | Group>(selected);
-        this.getPayersFormArray(i)?.push(control);
-        this.filteredMembersAndGroups = this.membersAndGroups;
+      if (!this.uid) {
+        selected = this.filteredMembersWithoutUser.at(0);
+
+        if (selected) {
+          let control = new FormControl<string>(selected);
+          this.getPayersFormArray(i)?.push(control);
+          this.filteredMembersWithoutUser = this.getMembersFormArray().value;
+        }
+      } else {
+        selected = this.filteredMembersAndGroups.at(0);
+
+        if (selected) {
+          let control = new FormControl<Member | Group>(selected);
+          this.getPayersFormArray(i)?.push(control);
+          this.filteredMembersAndGroups = this.membersAndGroups;
+        }
       }
     }
 
@@ -260,7 +276,14 @@ export class EditComponent implements OnInit, OnDestroy {
   }
 
   selectedPayer(event: MatAutocompleteActivatedEvent, i: number): void {
-    let control = new FormControl<Member | Group>(event.option?.value);
+    let control;
+
+    if (!this.uid) {
+      control = new FormControl<string>(event.option?.value);
+    } else {
+      control = new FormControl<Member | Group>(event.option?.value);
+    }
+
     this.getPayersFormArray(i)?.push(control);
     this.payerInputs.toArray()[i].nativeElement.value = '';
   }
@@ -269,17 +292,34 @@ export class EditComponent implements OnInit, OnDestroy {
     const input = event.target as HTMLInputElement;
     const filterValue = input.value.toLowerCase();
 
-    this.filteredMembersAndGroups = this.membersAndGroups.filter((el) =>
-      el.name.toLowerCase().includes(filterValue.toLowerCase())
-    );
+    if (!this.uid) {
+      this.filteredMembersWithoutUser = this.getMembersFormArray().value.filter(
+        (el: string) => el.toLowerCase().includes(filterValue.toLowerCase())
+      );
+    } else {
+      this.filteredMembersAndGroups = this.membersAndGroups.filter((el) =>
+        el.name.toLowerCase().includes(filterValue.toLowerCase())
+      );
+    }
   }
 
   trackPayer(index: number, option: Member | Group) {
+    if (!this.uid) {
+      return option;
+    }
     return option.name;
+  }
+
+  trackPayerWithoutUser(index: number, option: string) {
+    return option;
   }
 
   getMembersFormArray(): FormArray {
     const members = this.receiptForm.get('members') as FormArray;
+
+    if (!this.uid) {
+      return members;
+    }
 
     members.controls.forEach((control) => {
       if (typeof control.value === 'string' && this.fetchedMembers) {
@@ -322,7 +362,10 @@ export class EditComponent implements OnInit, OnDestroy {
     if (members && i >= 0 && i < members?.length) {
       members.removeAt(i);
     }
-    this.filterMembersAndGroups();
+
+    if (this.uid) {
+      this.filterMembersAndGroups();
+    }
   }
 
   selectedMember(event: MatAutocompleteActivatedEvent): void {
@@ -385,13 +428,18 @@ export class EditComponent implements OnInit, OnDestroy {
     this.filteredMembersAndGroups = this.membersAndGroups;
   }
 
-  onSubmit() {
-    const user = localStorage.getItem('user');
-    if (!user) {
-      return;
-    }
-    const uid = JSON.parse(user).uid;
+  addMemberWithoutUser(event: MatChipInputEvent): void {
+    const value = (event.value || '').trim();
 
+    if (value) {
+      let control = new FormControl<string>(value);
+      this.getMembersFormArray()?.push(control);
+    }
+
+    event.chipInput!.clear();
+  }
+
+  onSubmit() {
     let sum = 0;
     let products: Product[] = [];
     let members: Set<string> = new Set();
@@ -399,7 +447,11 @@ export class EditComponent implements OnInit, OnDestroy {
     const memberArray = this.receiptForm.controls['members'] as FormArray;
 
     memberArray.controls.forEach((memberControl) => {
-      members.add(memberControl.value.id);
+      if (!this.uid) {
+        members.add(memberControl.value);
+      } else {
+        members.add(memberControl.value.id);
+      }
     });
 
     const productArray = this.receiptForm.controls['products'] as FormArray;
@@ -419,6 +471,8 @@ export class EditComponent implements OnInit, OnDestroy {
           } else {
             pays.add(el.id);
           }
+        } else {
+          pays.add(el as unknown as string);
         }
       });
 
@@ -434,7 +488,7 @@ export class EditComponent implements OnInit, OnDestroy {
     });
 
     const receipt: Receipt = {
-      user: uid,
+      user: this.uid || '',
       store: this.receiptForm.controls['store'].value,
       date: this.receiptForm.controls['date'].value,
       currency: this.receiptForm.controls['currency'].value.id,
@@ -442,6 +496,12 @@ export class EditComponent implements OnInit, OnDestroy {
       products: products,
       members: Array.from(members),
     };
+
+    if (!this.uid) {
+      localStorage.setItem('receipt', JSON.stringify(receipt));
+      this.router.navigateByUrl(`/receipt/guest`);
+      return;
+    }
 
     if (this.id) {
       receipt.id = this.id;

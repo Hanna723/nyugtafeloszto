@@ -1,6 +1,8 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
+import { authGuard } from './shared/guards/auth.guard';
+
 const routes: Routes = [
   {
     path: 'home',
@@ -12,24 +14,26 @@ const routes: Routes = [
   },
   {
     path: 'group',
-    loadChildren: () => import('./group/group.module').then((m) => m.GroupModule),
+    loadChildren: () =>
+      import('./group/group.module').then((m) => m.GroupModule),
+    canActivate: [authGuard],
   },
   {
     path: 'member',
-    loadChildren: () => import('./member/member.module').then((m) => m.MemberModule),
+    loadChildren: () =>
+      import('./member/member.module').then((m) => m.MemberModule),
+    canActivate: [authGuard],
   },
   {
     path: 'receipt',
-    loadChildren: () => import('./receipt/receipt.module').then((m) => m.ReceiptModule),
+    loadChildren: () =>
+      import('./receipt/receipt.module').then((m) => m.ReceiptModule),
   },
   {
     path: 'profile',
-    loadChildren: () => import('./profile/profile.module').then((m) => m.ProfileModule),
-  },
-  {
-    path: '',
-    redirectTo: '/home',
-    pathMatch: 'full',
+    loadChildren: () =>
+      import('./profile/profile.module').then((m) => m.ProfileModule),
+    canActivate: [authGuard],
   },
   {
     path: '**',

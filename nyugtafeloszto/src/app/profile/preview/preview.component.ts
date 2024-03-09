@@ -14,6 +14,7 @@ import { UserService } from 'src/app/shared/services/user.service';
 import { PasswordChangeComponent } from '../password-change/password-change.component';
 import { ImageUploadComponent } from '../image-upload/image-upload.component';
 import { AccountDeleteComponent } from '../account-delete/account-delete.component';
+import { DialogComponent } from 'src/app/shared/dialog/dialog.component';
 
 @Component({
   selector: 'app-preview',
@@ -31,9 +32,7 @@ export class PreviewComponent implements OnInit, OnDestroy {
   constructor(
     private userService: UserService,
     private imageService: ImageService,
-    public passwordChange: MatDialog,
-    public imageUpload: MatDialog,
-    public deleteProfileDialog: MatDialog,
+    public dialog: MatDialog
   ) {}
 
   ngOnInit(): void {
@@ -73,13 +72,24 @@ export class PreviewComponent implements OnInit, OnDestroy {
   }
 
   changePassword() {
-    this.passwordChange.open(PasswordChangeComponent, {
+    this.dialog.open(PasswordChangeComponent, {
       disableClose: true,
     });
   }
 
   changePicture(event: Event) {
-    const dialogRef = this.imageUpload.open(ImageUploadComponent, {
+    const target = event.target as HTMLInputElement;
+
+    if (!target.files || !target.files[0].type.includes('image/')) {
+      this.dialog.open(DialogComponent, {
+        data: {
+          title: 'Sikertelen fájlfeltöltés!',
+          button: 'Ok',
+        },
+      });
+      return;
+    }
+    const dialogRef = this.dialog.open(ImageUploadComponent, {
       disableClose: true,
       data: {
         imageChangedEvent: event,
@@ -93,28 +103,29 @@ export class PreviewComponent implements OnInit, OnDestroy {
           return;
         }
 
-        if (this.user) {
-          const imageName = `${this.user.id}.png`;
-
-          this.imageService
-            .uploadImage(`/profile/${imageName}`, image)
-            .then(() => {
-              this.fetchImage(imageName, true);
-
-              if (this.user && !this.user.hasProfilePicture) {
-                this.user.hasProfilePicture = true;
-                this.userService.update(this.user);
-              }
-            });
+        if (!this.user) {
+          return;
         }
+        const imageName = `${this.user.id}.png`;
+
+        this.imageService
+          .uploadImage(`/profile/${imageName}`, image)
+          .then(() => {
+            this.fetchImage(imageName, true);
+
+            if (this.user && !this.user.hasProfilePicture) {
+              this.user.hasProfilePicture = true;
+              this.userService.update(this.user);
+            }
+          });
       });
   }
 
   deleteProfile() {
-    this.deleteProfileDialog.open(AccountDeleteComponent, {
+    this.dialog.open(AccountDeleteComponent, {
       disableClose: true,
       data: {
-        hasProfilePicture: this.user?.hasProfilePicture
+        hasProfilePicture: this.user?.hasProfilePicture,
       },
     });
   }

@@ -60,6 +60,9 @@ export class PreviewComponent implements OnInit, AfterViewInit, OnDestroy {
       this.receiptSubscription = this.receiptService
         .getById(id, this.user)
         .subscribe((data) => {
+          if (!data) {
+            this.router.navigateByUrl('/receipt/list');
+          }
           this.receipt = data;
           this.currencySubscription = this.currencyService
             .getById(data?.currency as unknown as string)
@@ -78,8 +81,20 @@ export class PreviewComponent implements OnInit, AfterViewInit, OnDestroy {
           this.calculatePrices();
           this.getMembersFromReceipt();
         });
+    } else if (!this.user && id === 'guest') {
+      let receipt = localStorage.getItem('receipt');
+
+      if (!receipt) {
+        this.router.navigateByUrl('/receipt/new');
+        return;
+      }
+
+      receipt = JSON.parse(receipt);
+      this.receipt = receipt as unknown as Receipt;
+      this.calculatePrices();
+      this.getMembersFromReceipt();
     } else {
-      this.router.navigateByUrl('/receipt/list');
+      this.router.navigateByUrl('/receipt/new');
     }
   }
 
@@ -106,6 +121,19 @@ export class PreviewComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   getMembersFromReceipt() {
+    if (!this.user && this.receipt?.members) {
+      this.receipt.members.forEach((memberName) => {
+        const member: Member = {
+          id: '',
+          user: '',
+          name: memberName,
+          pays: this.needToPay.get(memberName) || 0,
+        };
+        this.members.push(member);
+      });
+      return;
+    }
+
     this.receipt?.members.forEach((memberId) => {
       if (this.user) {
         this.memberSubscription = this.memberService
@@ -172,10 +200,12 @@ export class PreviewComponent implements OnInit, AfterViewInit, OnDestroy {
   downloadReceipt(type: string) {
     let members: Object[] = [];
     this.tableData.data.forEach((data) => {
-      members.push({
-        név: data.name,
-        fizet: data.pays,
-      });
+      if (typeof data !== 'string') {
+        members.push({
+          név: data.name,
+          fizet: data.pays,
+        });
+      }
     });
 
     let downloadData = {

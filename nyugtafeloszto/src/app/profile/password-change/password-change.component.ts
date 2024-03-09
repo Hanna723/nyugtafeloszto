@@ -47,18 +47,20 @@ export class PasswordChangeComponent implements OnInit {
 
     this.user.reauthenticateWithCredential(credentials).then(
       (success) => {
-        if (this.user) {
-          this.user
-            .updatePassword(this.editForm.controls['newPassword'].value)
-            .then(() => {
-              this.close();
-            })
-            .catch(() => {
-              this.editForm.controls['newPassword'].setErrors({
-                incorrect: 'true',
-              });
-            });
+        if (!this.user) {
+          return;
         }
+
+        this.user
+          .updatePassword(this.editForm.controls['newPassword'].value)
+          .then(() => {
+            this.close();
+          })
+          .catch(() => {
+            this.editForm.controls['newPassword'].setErrors({
+              incorrect: 'true',
+            });
+          });
       },
       (error) => {
         if (error.code === 'auth/invalid-login-credentials') {

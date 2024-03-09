@@ -54,16 +54,19 @@
             "
             (removed)="removeMember(i)"
           >
-            {{ selected.value.name }}
+            {{ uid ? selected.value.name : selected.value }}
             <button
               matChipRemove
-              [attr.aria-label]="selected.value.name + ' törlése'"
+              [attr.aria-label]="
+                uid ? selected.value.name : selected.value + ' törlése'
+              "
             >
               <mat-icon>cancel</mat-icon>
             </button>
           </mat-chip-row>
         </mat-chip-grid>
         <input
+          *ngIf="uid"
           #memberInput
           [matChipInputFor]="chipGrid"
           [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
@@ -71,6 +74,13 @@
           [matAutocomplete]="autoMember"
           (input)="filterMember($event)"
           (focus)="filterMember($event)"
+        />
+        <input
+          *ngIf="!uid"
+          #memberInput
+          [matChipInputFor]="chipGrid"
+          [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+          (matChipInputTokenEnd)="addMemberWithoutUser($event)"
         />
         <mat-autocomplete
           #autoMember="matAutocomplete"
@@ -128,10 +138,12 @@
               "
               (removed)="removePayer(i, j)"
             >
-              {{ selected.value.name }}
+              {{ uid ? selected.value.name : selected.value }}
               <button
                 matChipRemove
-                [attr.aria-label]="selected.value.name + ' törlése'"
+                [attr.aria-label]="
+                  uid ? selected.value.name : selected.value + ' törlése'
+                "
               >
                 <mat-icon>cancel</mat-icon>
               </button>
@@ -159,6 +171,14 @@
                 {{ el.name }}
               </span>
             </mat-option>
+            <mat-option
+              *ngFor="let el of filteredMembersWithoutUser; trackBy: trackPayerWithoutUser"
+              [value]="el"
+            >
+              <span>
+                {{ el }}
+              </span>
+            </mat-option>
           </mat-autocomplete>
         </mat-form-field>
         <button
@@ -182,7 +202,14 @@
       </button>
     </div>
     <div class="buttons">
-      <button mat-flat-button color="accent" type="submit" [disabled]="!receiptForm.valid">Mentés</button>
+      <button
+        mat-flat-button
+        color="accent"
+        type="submit"
+        [disabled]="!receiptForm.valid"
+      >
+        Mentés
+      </button>
     </div>
   </form>
 </div>

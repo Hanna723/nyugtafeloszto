@@ -9,7 +9,8 @@
     <div>
       <a *ngIf="user" routerLink="/member/list">Résztvevők</a>
       <a *ngIf="user" routerLink="/group/list">Csoportok</a>
-      <a routerLink="/receipt/list">Nyugták</a>
+      <a *ngIf="user" routerLink="/receipt/list">Nyugták</a>
+      <a *ngIf="!user" routerLink="/receipt/new">Új nyugta</a>
       <a *ngIf="!user" routerLink="/auth/login">Bejelentkezés</a>
     </div>
   </mat-sidenav>
@@ -22,7 +23,8 @@
       <span></span>
       <a *ngIf="user" routerLink="/member/list" fxHide.xs>Résztvevők</a>
       <a *ngIf="user" routerLink="/group/list" fxHide.xs>Csoportok</a>
-      <a routerLink="/receipt/list" fxHide.xs>Nyugták</a>
+      <a *ngIf="user" routerLink="/receipt/list" fxHide.xs>Nyugták</a>
+      <a *ngIf="!user" routerLink="/receipt/new" fxHide.xs>Új nyugta</a>
       <a *ngIf="!user" routerLink="/auth/login" fxHide.xs>Bejelentkezés</a>
       <img *ngIf="user" [matMenuTriggerFor]="menu" [src]="image" />
       <mat-menu #menu="matMenu">

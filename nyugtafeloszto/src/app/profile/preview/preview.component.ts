@@ -89,6 +89,7 @@ export class PreviewComponent implements OnInit, OnDestroy {
       });
       return;
     }
+
     const dialogRef = this.dialog.open(ImageUploadComponent, {
       disableClose: true,
       data: {

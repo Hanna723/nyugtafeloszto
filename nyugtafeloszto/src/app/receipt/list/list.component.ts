@@ -6,10 +6,12 @@ import {
   OnInit,
   ViewChild,
 } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
+import { DialogComponent } from 'src/app/shared/dialog/dialog.component';
 
 import { Receipt } from 'src/app/shared/models/Receipt';
 import { CurrencyService } from 'src/app/shared/services/currency.service';
@@ -33,7 +35,8 @@ export class ListComponent implements OnInit, AfterViewInit, OnDestroy {
     private receiptService: ReceiptService,
     private currencyService: CurrencyService,
     private datePipe: DatePipe,
-    private router: Router
+    private router: Router,
+    public dialog: MatDialog
   ) {}
 
   ngOnInit(): void {
@@ -98,6 +101,22 @@ export class ListComponent implements OnInit, AfterViewInit, OnDestroy {
     this.filteredTableData.data = this.tableData.data.filter((el) =>
       el.store.toLowerCase().includes(input.value.toLowerCase())
     );
+  }
+
+  uploadImage(event: Event) {
+    const target = event.target as HTMLInputElement;
+
+    if (!target.files || !target.files[0].type.includes('image/')) {
+      this.dialog.open(DialogComponent, {
+        data: {
+          title: 'Sikertelen fájlfeltöltés!',
+          button: 'Ok',
+        },
+      });
+      return;
+    }
+
+    console.log(target.files);
   }
 
   navigateToPreview(receipt: Receipt): void {

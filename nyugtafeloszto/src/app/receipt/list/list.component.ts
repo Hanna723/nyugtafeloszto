@@ -11,11 +11,15 @@ import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
-import { DialogComponent } from 'src/app/shared/dialog/dialog.component';
+import { createWorker } from 'tesseract.js';
 
 import { Receipt } from 'src/app/shared/models/Receipt';
 import { CurrencyService } from 'src/app/shared/services/currency.service';
 import { ReceiptService } from 'src/app/shared/services/receipt.service';
+import { DialogComponent } from 'src/app/shared/dialog/dialog.component';
+import { Product } from 'src/app/shared/models/Product';
+import { Currency } from 'src/app/shared/models/Currency';
+import { Timestamp } from 'firebase/firestore';
 
 @Component({
   selector: 'app-list',
@@ -28,6 +32,7 @@ export class ListComponent implements OnInit, AfterViewInit, OnDestroy {
   filteredTableData: MatTableDataSource<Receipt> = new MatTableDataSource();
   columnsToDisplay = ['store', 'date', 'sum'];
   user?: string | null;
+  currencies: Array<Currency> = [];
   receiptSubscription?: Subscription;
   currencySubscriptions: Subscription[] = [];
 
@@ -45,6 +50,14 @@ export class ListComponent implements OnInit, AfterViewInit, OnDestroy {
     if (!this.user) {
       return;
     }
+
+    const allCurrencySubscription = this.currencyService
+      .getAll()
+      .subscribe((data) => {
+        this.currencies = data;
+      });
+
+    this.currencySubscriptions.push(allCurrencySubscription);
 
     this.receiptSubscription = this.receiptService
       .getAllForOneUser(JSON.parse(this.user).uid)
@@ -103,7 +116,11 @@ export class ListComponent implements OnInit, AfterViewInit, OnDestroy {
     );
   }
 
-  uploadImage(event: Event) {
+  async uploadImage(event: Event) {
+    if (!this.user) {
+      return;
+    }
+
     const target = event.target as HTMLInputElement;
 
     if (!target.files || !target.files[0].type.includes('image/')) {
@@ -116,7 +133,153 @@ export class ListComponent implements OnInit, AfterViewInit, OnDestroy {
       return;
     }
 
-    console.log(target.files);
+    let receipt: Receipt = {
+      store: '',
+      user: JSON.parse(this.user).uid,
+      products: [],
+      sum: 0,
+      members: [],
+    };
+
+    const worker = await createWorker('hun');
+
+    if (target.files?.item(0)) {
+      const ret = await worker.recognize(target.files[0]);
+
+      let piece = 1;
+      let beginning = ret.data.text.toLowerCase().includes('nyugta');
+      let end = false;
+
+      ret.data.lines.forEach((line) => {
+        if (receipt.store === '') {
+          receipt.store = line.text.replace('\n', '');
+          return;
+        }
+
+        if (line.text.includes('.')) {
+          const convertedDate = this.convertToDate(line.words);
+
+          if (convertedDate) {
+            receipt.date = convertedDate;
+          }
+        }
+
+        if (
+          line.text.toLowerCase().includes('összesen') ||
+          line.text.toLowerCase().includes('fizetendő') ||
+          line.text.toLowerCase().includes('összeg')
+        ) {
+          end = true;
+          const sumAndCurrency = this.convertToSumAndCurrency(
+            line.text.toLowerCase()
+          );
+
+          if (sumAndCurrency.sum) {
+            receipt.sum = parseInt(sumAndCurrency.sum);
+          }
+
+          if (sumAndCurrency.currency) {
+            receipt.currency = sumAndCurrency.currency;
+          }
+
+          return;
+        }
+
+        if (
+          line.text.toLowerCase().includes('cikkszám') ||
+          line.text.toLowerCase().includes('sorszám') ||
+          line.text.toLowerCase().includes('részösszeg')
+        ) {
+          return;
+        }
+
+        if (line.text.toLowerCase().includes('nyugta')) {
+          beginning = false;
+          return;
+        }
+
+        if (!end && !beginning) {
+          if (Number(line.words[0].text)) {
+            piece = parseInt(line.words[0].text);
+          } else {
+            const product = this.convertToProduct(line, piece);
+
+            if (product) {
+              receipt.products.push(product);
+              piece = 1;
+            }
+          }
+        }
+      });
+    }
+    await worker.terminate().then(() => {
+      console.log(receipt);
+    });
+  }
+
+  convertToDate(words: any) {
+    let date = '';
+    words.forEach((word: any) => {
+      if (word.text.includes('.')) {
+        date += word.text;
+      }
+    });
+    const convertedDate = new Date(date);
+    return Timestamp.fromDate(convertedDate);
+  }
+
+  convertToSumAndCurrency(text: string) {
+    text = text.replace(':', '');
+    text = text.replace('\n', '');
+    text = text.replace(/\s{2,}/g, ' ');
+
+    let words = text.split(' ');
+    let number = '';
+    let convertedCurrency;
+
+    for (let i = 0; i < words.length; i++) {
+      if (Number(words[i])) {
+        number += words[i];
+      } else {
+        convertedCurrency = this.currencies.find(
+          (el) =>
+            el.name.toLowerCase() === words[i] ||
+            el.symbol.toLowerCase() === words[i]
+        );
+      }
+    }
+
+    return {
+      sum: number,
+      currency: convertedCurrency,
+    };
+  }
+
+  convertToProduct(line: any, piece: number): Product | null {
+    let number: string[] = [];
+
+    for (let i = line.words.length - 1; i >= 0; i--) {
+      if (Number(line.words[i].text) || line.words[i].text === '-') {
+        number.unshift(line.words[i].text);
+      } else if (!Number(line.words[i].text) && number.length !== 0) {
+        break;
+      }
+    }
+
+    const name = line.text.substring(0, line.text.indexOf(number.join()));
+
+    if (!name || number.length === 0) {
+      return null;
+    }
+
+    const product: Product = {
+      name: name,
+      piece: piece,
+      price: parseInt(number.join()),
+      pays: [],
+    };
+
+    return product;
   }
 
   navigateToPreview(receipt: Receipt): void {

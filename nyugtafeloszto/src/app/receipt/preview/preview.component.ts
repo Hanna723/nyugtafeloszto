@@ -211,7 +211,7 @@ export class PreviewComponent implements OnInit, AfterViewInit, OnDestroy {
     let downloadData = {
       bolt: this.receipt?.store,
       dátum: this.receipt?.formattedDate,
-      pénznem: this.receipt?.currency.symbol,
+      pénznem: this.receipt?.currency?.symbol,
       végösszeg: this.receipt?.sum,
       tagok: members,
     };

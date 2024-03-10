@@ -65,10 +65,10 @@
         Fizet
       </th>
       <td mat-cell *matCellDef="let element">
-        {{ element.pays }} {{ receipt.currency.symbol }}
+        {{ element.pays }} {{ receipt.currency?.symbol }}
       </td>
       <td mat-footer-cell *matFooterCellDef>
-        {{ receipt.sum }} {{ receipt.currency.symbol }}
+        {{ receipt.sum }} {{ receipt.currency?.symbol }}
       </td>
     </ng-container>
     <tr mat-header-row *matHeaderRowDef="columnsToDisplay"></tr>

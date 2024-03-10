@@ -153,6 +153,10 @@ export class ListComponent implements OnInit, AfterViewInit, OnDestroy {
       ret.data.lines.forEach((line) => {
         if (receipt.store === '') {
           receipt.store = line.text.replace('\n', '');
+
+          if (line.text.toLowerCase().includes('nyugta')) {
+            beginning = false;
+          }
           return;
         }
 
@@ -213,7 +217,8 @@ export class ListComponent implements OnInit, AfterViewInit, OnDestroy {
       });
     }
     await worker.terminate().then(() => {
-      console.log(receipt);
+      localStorage.setItem('receipt', JSON.stringify(receipt));
+      this.router.navigateByUrl('/receipt/upload');
     });
   }
 

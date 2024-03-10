@@ -29,6 +29,7 @@ import { Product } from 'src/app/shared/models/Product';
 import { ReceiptService } from 'src/app/shared/services/receipt.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
+import { Timestamp } from 'firebase/firestore';
 
 @Component({
   selector: 'app-edit',
@@ -92,6 +93,7 @@ export class EditComponent implements OnInit, OnDestroy {
     }
     this.uid = JSON.parse(user).uid;
     this.id = this.route.snapshot.params['id'];
+    let url = this.router.url;
 
     if (this.uid) {
       this.memberSubscription = this.memberService
@@ -111,6 +113,10 @@ export class EditComponent implements OnInit, OnDestroy {
 
     if (this.id) {
       this.setExistingReceiptData();
+    }
+
+    if (url === '/receipt/upload') {
+      this.setUploadedReceiptData();
     }
   }
 
@@ -161,6 +167,40 @@ export class EditComponent implements OnInit, OnDestroy {
         });
         this.filterMembersAndGroups();
       });
+  }
+
+  setUploadedReceiptData() {
+    let receipt = localStorage.getItem('receipt');
+    localStorage.removeItem('receipt');
+    if (receipt) {
+      const data: Receipt = JSON.parse(receipt);
+
+      this.receiptForm.controls['store'].setValue(data.store);
+      if (data.date) {
+        this.receiptForm.controls['date'].setValue(
+          new Date(data.date.seconds * 1000)
+        );
+      }
+      if (data.currency) {
+        this.receiptForm.controls['currency'].setValue(data.currency);
+      }
+
+      const products = <FormArray>this.receiptForm.controls['products'];
+      data.products.forEach((product) => {
+        products.push(
+          this.formBuilder.group({
+            name: new FormControl(product.name, [Validators.maxLength(100)]),
+            piece: new FormControl(product.piece, [
+              Validators.min(1),
+              Validators.pattern('^[0-9]*$'),
+            ]),
+            price: new FormControl(product.price, []),
+            pays: this.formBuilder.array(product.pays),
+          })
+        );
+      });
+      this.filterMembersAndGroups();
+    }
   }
 
   filter(): void {

@@ -18,6 +18,10 @@ const routes: Routes = [
         component: EditComponent,
       },
       {
+        path: 'upload',
+        component: EditComponent,
+      },
+      {
         path: ':id',
         component: PreviewComponent,
       },

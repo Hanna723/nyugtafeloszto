@@ -56,6 +56,7 @@ export class LoginComponent implements OnInit, OnDestroy {
       )
       .then((user) => {
         localStorage.setItem('user', JSON.stringify(user));
+        localStorage.removeItem('receipt');
         if (user.user) {
           this.userSubscription = this.userService
             .getById(user.user?.uid)

@@ -2,6 +2,7 @@ import { DatePipe } from '@angular/common';
 import {
   AfterViewInit,
   Component,
+  ElementRef,
   OnDestroy,
   OnInit,
   ViewChild,
@@ -28,12 +29,15 @@ import { Timestamp } from 'firebase/firestore';
 })
 export class ListComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild(MatSort) sort!: MatSort;
+  @ViewChild('fileUpload') fileUpload!: ElementRef<HTMLInputElement>;
+
   tableData: MatTableDataSource<Receipt> = new MatTableDataSource();
   filteredTableData: MatTableDataSource<Receipt> = new MatTableDataSource();
   columnsToDisplay = ['store', 'date', 'sum'];
   user?: string | null;
   currencies: Array<Currency> = [];
   receiptSubscription?: Subscription;
+  dialogSubscription?: Subscription;
   currencySubscriptions: Subscription[] = [];
 
   constructor(
@@ -94,6 +98,7 @@ export class ListComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.receiptSubscription?.unsubscribe();
+    this.dialogSubscription?.unsubscribe();
     this.currencySubscriptions.forEach((subscription) => {
       subscription.unsubscribe();
     });
@@ -113,6 +118,30 @@ export class ListComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.filteredTableData.data = this.tableData.data.filter((el) =>
       el.store.toLowerCase().includes(input.value.toLowerCase())
+    );
+  }
+
+  openDialog(event: Event) {
+    const dialogRef = this.dialog.open(DialogComponent, {
+      data: {
+        title: 'Figyelem!',
+        text: `A képről felismert szöveg hibás, esetleg hiányos lehet, 
+        ezért kérem minden esetben ellenőrizze az így bevitt adatokat.<br>
+        Emellett a feltöltött kép esetén ügyeljen az alábbiakra:
+        <ul>
+        <li>A kép ne legyen elforgatva</li>
+        <li>A képen látható szöveg legyen olvasható</li>
+        <li>A képen ne szerepeljen más szöveg a nyugtán kívül</li>
+        </ul>`,
+        button: 'Mégsem',
+        submitButton: 'Képfeltöltés',
+      },
+    });
+
+    this.dialogSubscription = dialogRef.componentInstance.submitEvent.subscribe(
+      () => {
+        this.fileUpload.nativeElement.click();
+      }
     );
   }
 

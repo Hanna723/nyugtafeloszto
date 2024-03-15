@@ -7,6 +7,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatListModule } from '@angular/material/list';
 import { MatTableModule } from '@angular/material/table';
 import { MatSortModule } from '@angular/material/sort';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
 
 import { ListComponent } from './list/list.component';
 import { MemberRoutingModule } from './member-routing.module';
@@ -24,6 +25,7 @@ import { MatIconModule } from '@angular/material/icon';
     MatButtonModule,
     MatSortModule,
     MatIconModule,
+    MatProgressBarModule,
   ],
 })
 export class MemberModule {}

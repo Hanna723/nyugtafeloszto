@@ -24,6 +24,8 @@ import { EditComponent } from '../edit/edit.component';
 export class ListComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild(MatSort) sort!: MatSort;
   @ViewChild('search') search!: ElementRef;
+
+  progressBar: boolean = false;
   tableData: MatTableDataSource<Group> = new MatTableDataSource();
   filteredTableData: MatTableDataSource<Group> = new MatTableDataSource();
   columnsToDisplay = ['name'];
@@ -44,6 +46,7 @@ export class ListComponent implements OnInit, AfterViewInit, OnDestroy {
       return;
     }
 
+    this.progressBar = true;
     this.groupSubscription = this.groupService
       .getAllForOneUser(JSON.parse(this.user).uid)
       .subscribe((data) => {
@@ -57,6 +60,7 @@ export class ListComponent implements OnInit, AfterViewInit, OnDestroy {
     setTimeout(() => {
       if (this.sort) {
         this.sort.sort({ id: 'name', start: 'asc', disableClear: false });
+        this.progressBar = false;
       }
     }, 1000);
   }

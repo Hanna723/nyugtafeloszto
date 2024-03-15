@@ -16,6 +16,7 @@ import { Router } from '@angular/router';
 })
 export class RegisterComponent implements OnInit {
   hide: boolean = true;
+  progressBar: boolean = false;
   registrationForm: FormGroup = new FormGroup({
     email: new FormControl('', [Validators.email, Validators.required]),
     password: new FormControl('', [
@@ -39,6 +40,8 @@ export class RegisterComponent implements OnInit {
   }
 
   onSubmit(): void {
+    this.progressBar = true;
+
     this.authService
       .signup(
         this.registrationForm.controls['email'].value,
@@ -55,6 +58,7 @@ export class RegisterComponent implements OnInit {
         this.userService
           .create(user)
           .then(() => {
+            this.progressBar = false;
             this.authService.logOut();
             localStorage.removeItem('user');
             this.openDialog();
@@ -79,6 +83,8 @@ export class RegisterComponent implements OnInit {
   }
 
   handleError(err: { code: any }): void {
+    this.progressBar = false;
+    
     let errorName = 'error';
     if (err instanceof FirebaseError) {
       switch (err.code) {

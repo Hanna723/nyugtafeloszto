@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, EventEmitter, Inject, OnInit, Output } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
@@ -17,6 +17,7 @@ import { UserService } from 'src/app/shared/services/user.service';
   styleUrls: ['./account-delete.component.scss'],
 })
 export class AccountDeleteComponent implements OnInit {
+  @Output() progressEvent = new EventEmitter();
   hide: boolean = true;
   user?: firebase.User;
   deleteForm: FormGroup = new FormGroup({
@@ -59,6 +60,8 @@ export class AccountDeleteComponent implements OnInit {
           return;
         }
 
+        this.progressEvent.emit(true);
+
         this.receiptService
           .getAllForOneUser(this.user.uid)
           .subscribe((data) => {
@@ -93,13 +96,15 @@ export class AccountDeleteComponent implements OnInit {
             this.authService.logOut().then(() => {
               localStorage.removeItem('user');
               this.close();
+              this.progressEvent.emit(false);
               this.router.navigateByUrl('/auth/login');
-            })
+            });
           });
-        })
+        });
       },
       (error) => {
         if (error.code === 'auth/invalid-login-credentials') {
+          this.progressEvent.emit(false);
           this.deleteForm.controls['password'].setErrors({
             incorrect: 'true',
           });

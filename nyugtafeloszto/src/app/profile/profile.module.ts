@@ -8,6 +8,11 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
+import { MatTableModule } from '@angular/material/table';
+import { MatSortModule } from '@angular/material/sort';
+import { MAT_DATE_LOCALE } from '@angular/material/core';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { ImageCropperModule } from 'ngx-image-cropper';
 
 import { ProfileRoutingModule } from './profile-routing.module';
@@ -15,11 +20,7 @@ import { PreviewComponent } from './preview/preview.component';
 import { PasswordChangeComponent } from './password-change/password-change.component';
 import { ImageUploadComponent } from './image-upload/image-upload.component';
 import { AccountDeleteComponent } from './account-delete/account-delete.component';
-import { MatTableModule } from '@angular/material/table';
 import { ListComponent } from './list/list.component';
-import { MatSortModule } from '@angular/material/sort';
-import { MAT_DATE_LOCALE } from '@angular/material/core';
-import { MatCheckboxModule } from '@angular/material/checkbox';
 
 @NgModule({
   declarations: [
@@ -44,6 +45,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
     MatTableModule,
     MatSortModule,
     MatCheckboxModule,
+    MatProgressBarModule,
   ],
   providers: [
     DatePipe,

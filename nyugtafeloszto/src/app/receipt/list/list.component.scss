@@ -10,9 +10,10 @@ tr[mat-row]:hover {
   background-color: whitesmoke;
 }
 
-button {
-  display: block;
-  margin: 24px auto;
+.buttons {
+  display: flex;
+  justify-content: center;
+  column-gap: 24px;
 }
 
 mat-icon {
@@ -20,7 +21,7 @@ mat-icon {
 }
 
 @media only screen and (max-width: 550px) {
-    td {
-        max-width: 30vw;
-    }
+  td {
+    max-width: 30vw;
+  }
 }

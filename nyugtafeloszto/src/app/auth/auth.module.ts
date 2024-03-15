@@ -13,6 +13,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatDialogModule } from '@angular/material/dialog';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
 
 @NgModule({
   declarations: [LoginComponent, RegisterComponent],
@@ -27,6 +28,7 @@ import { MatDialogModule } from '@angular/material/dialog';
     MatDividerModule,
     MatCheckboxModule,
     MatDialogModule,
+    MatProgressBarModule,
   ],
 })
 export class AuthModule {}

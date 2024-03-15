@@ -30,6 +30,8 @@ import { GroupService } from 'src/app/shared/services/group.service';
 export class ListComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild(MatSort) sort!: MatSort;
   @ViewChild('search') search!: ElementRef;
+
+  progressBar: boolean = false;
   tableData: MatTableDataSource<Member> = new MatTableDataSource();
   filteredTableData: MatTableDataSource<Member> = new MatTableDataSource();
   columnsToDisplay = ['name', 'delete'];
@@ -56,7 +58,8 @@ export class ListComponent implements OnInit, AfterViewInit, OnDestroy {
     if (!this.user) {
       return;
     }
-    
+
+    this.progressBar = true;
     this.memberSubscription = this.memberService
       .getAllForOneUser(JSON.parse(this.user).uid)
       .subscribe((data) => {
@@ -70,6 +73,7 @@ export class ListComponent implements OnInit, AfterViewInit, OnDestroy {
     setTimeout(() => {
       if (this.sort) {
         this.sort.sort({ id: 'name', start: 'asc', disableClear: false });
+        this.progressBar = false;
       }
     }, 1000);
   }

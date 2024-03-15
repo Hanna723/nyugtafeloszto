@@ -4,8 +4,8 @@ import { Product } from "./Product";
 
 export interface Receipt {
     id?: string;
-    currency: Currency;
-    date: Timestamp;
+    currency?: Currency;
+    date?: Timestamp;
     formattedDate?: string | null;
     store: string;
     user: string;

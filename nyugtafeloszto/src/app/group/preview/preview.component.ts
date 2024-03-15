@@ -25,6 +25,7 @@ import { MatTableDataSource } from '@angular/material/table';
 })
 export class PreviewComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild(MatSort) sort?: MatSort;
+  progressBar: boolean = false;
   group?: Group;
   members: Array<Member> = [];
   tableData: MatTableDataSource<Member> = new MatTableDataSource();
@@ -49,6 +50,8 @@ export class PreviewComponent implements OnInit, AfterViewInit, OnDestroy {
     const id = this.route.snapshot.params['id'];
 
     if (user && id) {
+      this.progressBar = true;
+
       this.groupSubscription = this.groupService
         .getById(id, user)
         .subscribe((data) => {
@@ -80,6 +83,7 @@ export class PreviewComponent implements OnInit, AfterViewInit, OnDestroy {
         if (this.sort) {
           if (this.sort) {
             this.sort.sort({ id: 'name', start: 'asc', disableClear: false });
+            this.progressBar = false;
           }
         }
       });

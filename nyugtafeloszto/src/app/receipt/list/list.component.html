@@ -1,8 +1,23 @@
+<mat-progress-bar mode="indeterminate" color="accent" *ngIf="progressBar"></mat-progress-bar>
 <div class="list-container" *ngIf="user">
-  <button mat-flat-button color="accent" routerLink="/receipt/new">
-    <mat-icon>add</mat-icon>
-    Új
-  </button>
+  <div class="buttons">
+    <button mat-flat-button color="accent" routerLink="/receipt/new">
+      <mat-icon>add</mat-icon>
+      Új
+    </button>
+    <button mat-flat-button color="accent" (click)="openDialog($event)">
+      <mat-icon>add</mat-icon>
+      Képfeltöltés
+    </button>
+    <input
+      #fileUpload
+      type="file"
+      accept="image/*"
+      hidden="true"
+      onclick="this.value=null"
+      (change)="uploadImage($event)"
+    />
+  </div>
   <mat-form-field class="search">
     <mat-label>Keresés</mat-label>
     <mat-icon matTextPrefix>search</mat-icon>

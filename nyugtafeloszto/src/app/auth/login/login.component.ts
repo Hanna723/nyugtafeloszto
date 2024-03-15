@@ -14,6 +14,7 @@ import { Timestamp } from 'firebase/firestore';
 })
 export class LoginComponent implements OnInit, OnDestroy {
   hide: boolean = true;
+  progressBar: boolean = false;
   loginForm: FormGroup = new FormGroup({
     email: new FormControl('', [Validators.required]),
     password: new FormControl('', [Validators.required]),
@@ -45,6 +46,8 @@ export class LoginComponent implements OnInit, OnDestroy {
   }
 
   onSubmit(): void {
+    this.progressBar = true;
+
     if (this.loginForm.controls['rememberMe'].value) {
       localStorage.setItem('email', this.loginForm.controls['email'].value);
     }
@@ -56,6 +59,7 @@ export class LoginComponent implements OnInit, OnDestroy {
       )
       .then((user) => {
         localStorage.setItem('user', JSON.stringify(user));
+        localStorage.removeItem('receipt');
         if (user.user) {
           this.userSubscription = this.userService
             .getById(user.user?.uid)
@@ -63,12 +67,14 @@ export class LoginComponent implements OnInit, OnDestroy {
               if (loggedInUser) {
                 loggedInUser.lastLogin = Timestamp.fromDate(new Date());
                 this.userService.update(loggedInUser);
+                this.progressBar = false;
                 this.router.navigateByUrl('/home');
               }
             });
         }
       })
       .catch((err) => {
+        this.progressBar = false;
         this.loginForm.controls['password'].setErrors({ wrong: true });
       });
   }

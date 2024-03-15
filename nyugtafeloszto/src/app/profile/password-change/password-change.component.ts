@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
 import firebase from 'firebase/compat/app';
@@ -11,6 +11,7 @@ import { AuthService } from 'src/app/shared/services/auth.service';
   styleUrls: ['./password-change.component.scss'],
 })
 export class PasswordChangeComponent implements OnInit {
+  @Output() progressEvent = new EventEmitter();
   hideOld: boolean = true;
   hideNew: boolean = true;
   user?: firebase.User;
@@ -50,13 +51,17 @@ export class PasswordChangeComponent implements OnInit {
         if (!this.user) {
           return;
         }
+        this.progressEvent.emit(true);
 
         this.user
           .updatePassword(this.editForm.controls['newPassword'].value)
           .then(() => {
+            this.progressEvent.emit(false);
             this.close();
           })
           .catch(() => {
+            this.progressEvent.emit(false);
+            
             this.editForm.controls['newPassword'].setErrors({
               incorrect: 'true',
             });

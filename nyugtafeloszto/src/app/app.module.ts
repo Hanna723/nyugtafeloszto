@@ -21,6 +21,7 @@ import { getStorage, provideStorage } from '@angular/fire/storage';
 
 import { environment } from '../environments/environment';
 import { DialogComponent } from './shared/dialog/dialog.component';
+import { MatDialogModule } from '@angular/material/dialog';
 
 @NgModule({
   declarations: [AppComponent, MenuComponent, DialogComponent],
@@ -34,6 +35,7 @@ import { DialogComponent } from './shared/dialog/dialog.component';
     MatIconModule,
     MatButtonModule,
     MatMenuModule,
+    MatDialogModule,
     AngularFireModule.initializeApp(environment.firebase),
     provideAuth(() => getAuth()),
     provideFirestore(() => getFirestore()),

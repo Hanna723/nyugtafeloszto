@@ -1,4 +1,5 @@
 import {
+  AfterViewInit,
   Component,
   ElementRef,
   OnDestroy,
@@ -29,19 +30,21 @@ import { Product } from 'src/app/shared/models/Product';
 import { ReceiptService } from 'src/app/shared/services/receipt.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
+import { Timestamp } from 'firebase/firestore';
 
 @Component({
   selector: 'app-edit',
   templateUrl: './edit.component.html',
   styleUrls: ['./edit.component.scss'],
 })
-export class EditComponent implements OnInit, OnDestroy {
+export class EditComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('currencyInput') currencyInput!: ElementRef<HTMLInputElement>;
   @ViewChild('memberInput') memberInput!: ElementRef<HTMLInputElement>;
   @ViewChildren('payerInput') payerInputs!: QueryList<
     ElementRef<HTMLInputElement>
   >;
 
+  progressBar: boolean = false;
   id?: string;
   uid?: string;
   receiptForm: FormGroup = new FormGroup({
@@ -92,6 +95,7 @@ export class EditComponent implements OnInit, OnDestroy {
     }
     this.uid = JSON.parse(user).uid;
     this.id = this.route.snapshot.params['id'];
+    let url = this.router.url;
 
     if (this.uid) {
       this.memberSubscription = this.memberService
@@ -110,8 +114,20 @@ export class EditComponent implements OnInit, OnDestroy {
     }
 
     if (this.id) {
+      this.progressBar = true;
       this.setExistingReceiptData();
     }
+
+    if (url === '/receipt/upload') {
+      this.progressBar = true;
+      this.setUploadedReceiptData();
+    }
+  }
+
+  ngAfterViewInit(): void {
+    setTimeout(() => {
+      this.progressBar = false;
+    }, 1000);
   }
 
   ngOnDestroy(): void {
@@ -161,6 +177,40 @@ export class EditComponent implements OnInit, OnDestroy {
         });
         this.filterMembersAndGroups();
       });
+  }
+
+  setUploadedReceiptData() {
+    let receipt = localStorage.getItem('receipt');
+    localStorage.removeItem('receipt');
+    if (receipt) {
+      const data: Receipt = JSON.parse(receipt);
+
+      this.receiptForm.controls['store'].setValue(data.store);
+      if (data.date) {
+        this.receiptForm.controls['date'].setValue(
+          new Date(data.date.seconds * 1000)
+        );
+      }
+      if (data.currency) {
+        this.receiptForm.controls['currency'].setValue(data.currency);
+      }
+
+      const products = <FormArray>this.receiptForm.controls['products'];
+      data.products.forEach((product) => {
+        products.push(
+          this.formBuilder.group({
+            name: new FormControl(product.name, [Validators.maxLength(100)]),
+            piece: new FormControl(product.piece, [
+              Validators.min(1),
+              Validators.pattern('^[0-9]*$'),
+            ]),
+            price: new FormControl(product.price, []),
+            pays: this.formBuilder.array(product.pays),
+          })
+        );
+      });
+      this.filterMembersAndGroups();
+    }
   }
 
   filter(): void {

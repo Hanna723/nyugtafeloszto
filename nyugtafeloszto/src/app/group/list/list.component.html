@@ -1,3 +1,8 @@
+<mat-progress-bar
+  mode="indeterminate"
+  color="accent"
+  *ngIf="progressBar"
+></mat-progress-bar>
 <div class="list-container" *ngIf="user">
   <button mat-flat-button color="accent" (click)="openEdit()">
     <mat-icon>add</mat-icon>

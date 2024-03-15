@@ -1,4 +1,5 @@
 import {
+  AfterViewInit,
   Component,
   EventEmitter,
   OnDestroy,
@@ -21,13 +22,15 @@ import { DialogComponent } from 'src/app/shared/dialog/dialog.component';
   templateUrl: './preview.component.html',
   styleUrls: ['./preview.component.scss'],
 })
-export class PreviewComponent implements OnInit, OnDestroy {
+export class PreviewComponent implements OnInit, AfterViewInit, OnDestroy {
   @Output() uploadedImage: EventEmitter<string> = new EventEmitter();
+  progressBar: boolean = false;
   user?: User;
   image?: string;
   userSubscription?: Subscription;
   imageUploadSubscription?: Subscription;
   imageSubscriptions: Subscription[] = [];
+  dialogSubscriptions: Subscription[] = [];
 
   constructor(
     private userService: UserService,
@@ -39,6 +42,7 @@ export class PreviewComponent implements OnInit, OnDestroy {
     const localUser = localStorage.getItem('user');
 
     if (localUser) {
+      this.progressBar = true;
       this.userSubscription = this.userService
         .getById(JSON.parse(localUser).uid)
         .subscribe((user) => {
@@ -49,11 +53,21 @@ export class PreviewComponent implements OnInit, OnDestroy {
     }
   }
 
+  ngAfterViewInit(): void {
+    setTimeout(() => {
+      this.progressBar = false;
+    }, 1000);
+  }
+
   ngOnDestroy(): void {
     this.userSubscription?.unsubscribe();
     this.imageUploadSubscription?.unsubscribe();
+
     this.imageSubscriptions.forEach((imageSubscription) => {
       imageSubscription.unsubscribe();
+    });
+    this.dialogSubscriptions.forEach((dialogSubscription) => {
+      dialogSubscription.unsubscribe();
     });
   }
 
@@ -72,9 +86,15 @@ export class PreviewComponent implements OnInit, OnDestroy {
   }
 
   changePassword() {
-    this.dialog.open(PasswordChangeComponent, {
+    const dialogRef = this.dialog.open(PasswordChangeComponent, {
       disableClose: true,
     });
+
+    const changePasswordSubscription =
+      dialogRef.componentInstance.progressEvent.subscribe((progress) => {
+        this.progressBar = progress;
+      });
+    this.dialogSubscriptions.push(changePasswordSubscription);
   }
 
   changePicture(event: Event) {
@@ -107,12 +127,15 @@ export class PreviewComponent implements OnInit, OnDestroy {
         if (!this.user) {
           return;
         }
+
+        this.progressBar = true;
         const imageName = `${this.user.id}.png`;
 
         this.imageService
           .uploadImage(`/profile/${imageName}`, image)
           .then(() => {
             this.fetchImage(imageName, true);
+            this.progressBar = false;
 
             if (this.user && !this.user.hasProfilePicture) {
               this.user.hasProfilePicture = true;
@@ -123,11 +146,18 @@ export class PreviewComponent implements OnInit, OnDestroy {
   }
 
   deleteProfile() {
-    this.dialog.open(AccountDeleteComponent, {
+    const dialogRef = this.dialog.open(AccountDeleteComponent, {
       disableClose: true,
       data: {
         hasProfilePicture: this.user?.hasProfilePicture,
       },
     });
+
+    const deleteDialogSubscription =
+      dialogRef.componentInstance.progressEvent.subscribe((progress) => {
+        this.progressBar = progress;
+      });
+
+    this.dialogSubscriptions.push(deleteDialogSubscription);
   }
 }

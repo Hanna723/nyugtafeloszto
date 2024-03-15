@@ -31,6 +31,7 @@ export class ListComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild(MatSort) sort!: MatSort;
   @ViewChild('fileUpload') fileUpload!: ElementRef<HTMLInputElement>;
 
+  progressBar: boolean = false;
   tableData: MatTableDataSource<Receipt> = new MatTableDataSource();
   filteredTableData: MatTableDataSource<Receipt> = new MatTableDataSource();
   columnsToDisplay = ['store', 'date', 'sum'];
@@ -49,6 +50,7 @@ export class ListComponent implements OnInit, AfterViewInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
+    this.progressBar = true;
     this.user = localStorage.getItem('user');
 
     if (!this.user) {
@@ -92,6 +94,7 @@ export class ListComponent implements OnInit, AfterViewInit, OnDestroy {
     setTimeout(() => {
       if (this.sort) {
         this.sort.sort({ id: 'date', start: 'desc', disableClear: false });
+        this.progressBar = false;
       }
     }, 1000);
   }
@@ -162,6 +165,7 @@ export class ListComponent implements OnInit, AfterViewInit, OnDestroy {
       return;
     }
 
+    this.progressBar = true;
     let receipt: Receipt = {
       store: '',
       user: JSON.parse(this.user).uid,
@@ -247,6 +251,7 @@ export class ListComponent implements OnInit, AfterViewInit, OnDestroy {
     }
     await worker.terminate().then(() => {
       localStorage.setItem('receipt', JSON.stringify(receipt));
+      this.progressBar = false;
       this.router.navigateByUrl('/receipt/upload');
     });
   }

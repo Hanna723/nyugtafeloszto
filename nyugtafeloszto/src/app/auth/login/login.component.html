@@ -1,3 +1,4 @@
+<mat-progress-bar mode="indeterminate" color="accent" *ngIf="progressBar"></mat-progress-bar>
 <div>
   <div class="form-header">Bejelentkezés</div>
   <form class="auth-form" [formGroup]="loginForm" (ngSubmit)="onSubmit()">

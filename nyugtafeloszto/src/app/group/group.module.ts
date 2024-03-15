@@ -12,6 +12,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatSortModule } from '@angular/material/sort';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
 
 import { ListComponent } from './list/list.component';
 import { GroupRoutingModule } from './group-routing.module';
@@ -35,6 +36,7 @@ import { EditComponent } from './edit/edit.component';
     MatChipsModule,
     MatAutocompleteModule,
     MatSortModule,
+    MatProgressBarModule,
   ],
 })
 export class GroupModule {}

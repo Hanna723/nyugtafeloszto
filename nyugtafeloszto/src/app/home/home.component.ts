@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { AfterViewInit, Component, OnDestroy, OnInit } from '@angular/core';
 import { ImageService } from '../shared/services/image.service';
 import { Subscription } from 'rxjs';
 
@@ -7,7 +7,8 @@ import { Subscription } from 'rxjs';
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss'],
 })
-export class HomeComponent implements OnInit, OnDestroy {
+export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
+  progressBar: boolean = false;
   user?: string | null;
   images = {
     member: undefined,
@@ -19,6 +20,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   constructor(private imageService: ImageService) {}
 
   ngOnInit(): void {
+    this.progressBar = true;
     this.user = localStorage.getItem('user');
 
     for (const key in this.images) {
@@ -32,6 +34,12 @@ export class HomeComponent implements OnInit, OnDestroy {
         this.imageSubscriptions.push(imageSubscription);
       }
     }
+  }
+
+  ngAfterViewInit(): void {
+    setTimeout(() => {
+      this.progressBar = false;
+    }, 1000);
   }
 
   ngOnDestroy(): void {

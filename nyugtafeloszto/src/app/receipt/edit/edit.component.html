@@ -1,3 +1,8 @@
+<mat-progress-bar
+  mode="indeterminate"
+  color="accent"
+  *ngIf="progressBar"
+></mat-progress-bar>
 <div class="container">
   <form [formGroup]="receiptForm" (ngSubmit)="onSubmit()">
     <mat-form-field>
@@ -172,7 +177,10 @@
               </span>
             </mat-option>
             <mat-option
-              *ngFor="let el of filteredMembersWithoutUser; trackBy: trackPayerWithoutUser"
+              *ngFor="
+                let el of filteredMembersWithoutUser;
+                trackBy: trackPayerWithoutUser
+              "
               [value]="el"
             >
               <span>

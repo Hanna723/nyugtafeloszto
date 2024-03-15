@@ -1,4 +1,5 @@
 import {
+  AfterViewInit,
   Component,
   ElementRef,
   OnDestroy,
@@ -36,13 +37,14 @@ import { Timestamp } from 'firebase/firestore';
   templateUrl: './edit.component.html',
   styleUrls: ['./edit.component.scss'],
 })
-export class EditComponent implements OnInit, OnDestroy {
+export class EditComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('currencyInput') currencyInput!: ElementRef<HTMLInputElement>;
   @ViewChild('memberInput') memberInput!: ElementRef<HTMLInputElement>;
   @ViewChildren('payerInput') payerInputs!: QueryList<
     ElementRef<HTMLInputElement>
   >;
 
+  progressBar: boolean = false;
   id?: string;
   uid?: string;
   receiptForm: FormGroup = new FormGroup({
@@ -112,12 +114,20 @@ export class EditComponent implements OnInit, OnDestroy {
     }
 
     if (this.id) {
+      this.progressBar = true;
       this.setExistingReceiptData();
     }
 
     if (url === '/receipt/upload') {
+      this.progressBar = true;
       this.setUploadedReceiptData();
     }
+  }
+
+  ngAfterViewInit(): void {
+    setTimeout(() => {
+      this.progressBar = false;
+    }, 1000);
   }
 
   ngOnDestroy(): void {

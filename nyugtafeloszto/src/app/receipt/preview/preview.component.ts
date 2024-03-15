@@ -29,6 +29,8 @@ import { ReceiptService } from 'src/app/shared/services/receipt.service';
 export class PreviewComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild(MatSort) sort!: MatSort;
   @ViewChild('download') download!: ElementRef<HTMLAnchorElement>;
+
+  progressBar: boolean = false;
   user?: string | null;
   receipt?: Receipt;
   needToPay: Map<string, number> = new Map();
@@ -57,6 +59,7 @@ export class PreviewComponent implements OnInit, AfterViewInit, OnDestroy {
     const id = this.route.snapshot.params['id'];
 
     if (this.user && id) {
+      this.progressBar = true;
       this.receiptSubscription = this.receiptService
         .getById(id, this.user)
         .subscribe((data) => {
@@ -104,6 +107,7 @@ export class PreviewComponent implements OnInit, AfterViewInit, OnDestroy {
       setTimeout(() => {
         if (this.sort) {
           this.sort.sort({ id: 'pays', start: 'asc', disableClear: false });
+          this.progressBar = false;
         }
       });
     }, 900);

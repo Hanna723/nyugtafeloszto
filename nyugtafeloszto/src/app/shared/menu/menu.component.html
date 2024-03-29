@@ -21,12 +21,12 @@
       </button>
       <a routerLink="/home">Nyugtafelosztó</a>
       <span></span>
-      <a *ngIf="user" routerLink="/member/list" fxHide.xs>Résztvevők</a>
-      <a *ngIf="user" routerLink="/group/list" fxHide.xs>Csoportok</a>
-      <a *ngIf="user" routerLink="/receipt/list" fxHide.xs>Nyugták</a>
-      <a *ngIf="!user" routerLink="/receipt/new" fxHide.xs>Új nyugta</a>
-      <a *ngIf="!user" routerLink="/auth/login" fxHide.xs>Bejelentkezés</a>
-      <img *ngIf="user" [matMenuTriggerFor]="menu" [src]="image" />
+      <a *ngIf="user && user.emailVerified" routerLink="/member/list" fxHide.xs>Résztvevők</a>
+      <a *ngIf="user && user.emailVerified" routerLink="/group/list" fxHide.xs>Csoportok</a>
+      <a *ngIf="user && user.emailVerified" routerLink="/receipt/list" fxHide.xs>Nyugták</a>
+      <a *ngIf="!user || !user.emailVerified" routerLink="/receipt/new" fxHide.xs>Új nyugta</a>
+      <a *ngIf="!user || !user.emailVerified" routerLink="/auth/login" fxHide.xs>Bejelentkezés</a>
+      <img *ngIf="user && user.emailVerified" [matMenuTriggerFor]="menu" [src]="image" />
       <mat-menu #menu="matMenu">
         <button mat-menu-item routerLink="/profile">Profil</button>
         <button mat-menu-item routerLink="/home" (click)="logOut()">

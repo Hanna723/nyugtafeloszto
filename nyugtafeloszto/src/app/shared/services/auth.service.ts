@@ -7,6 +7,12 @@ import { AngularFireAuth } from '@angular/fire/compat/auth';
 export class AuthService {
   constructor(private auth: AngularFireAuth) {}
 
+  sendVerificationEmail() {
+    return this.auth.currentUser.then((user) => {
+      return user?.sendEmailVerification();
+    });
+  }
+
   login(email: string, password: string) {
     return this.auth.signInWithEmailAndPassword(email, password);
   }
@@ -26,6 +32,6 @@ export class AuthService {
   delete() {
     return this.auth.currentUser.then((user) => {
       user?.delete();
-    })
+    });
   }
 }

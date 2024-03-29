@@ -48,6 +48,7 @@ export class RegisterComponent implements OnInit {
         this.registrationForm.controls['password'].value
       )
       .then((credentials) => {
+        this.authService.sendVerificationEmail();
         const user: User = {
           id: credentials.user?.uid as string,
           email: this.registrationForm.controls['email'].value,
@@ -76,6 +77,7 @@ export class RegisterComponent implements OnInit {
     this.dialog.open(DialogComponent, {
       data: {
         title: 'Sikeres regisztráció!',
+        text: 'Az alkalmazás használatához kérem erősítse meg az e-mail címét.',
         button: 'Ok',
         link: 'auth/login',
       },

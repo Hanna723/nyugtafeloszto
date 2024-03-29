@@ -8,6 +8,9 @@
       <mat-error *ngIf="loginForm.controls['email'].errors?.['required']"
         >Kérem adja meg az e-mail címét!</mat-error
       >
+      <mat-error *ngIf="loginForm.controls['email'].errors?.['unverified']"
+        >Kérem igazolja az e-mail címét!</mat-error
+      >
     </mat-form-field>
     <mat-form-field>
       <mat-label for="password">Jelszó</mat-label>

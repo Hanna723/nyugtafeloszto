@@ -2,7 +2,12 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Timestamp } from 'firebase/firestore';
-import { Auth, applyActionCode, getAuth } from 'firebase/auth';
+import {
+  Auth,
+  applyActionCode,
+  getAuth,
+  verifyPasswordResetCode,
+} from 'firebase/auth';
 import { Subscription } from 'rxjs';
 import firebase from 'firebase/compat/app';
 
@@ -10,6 +15,8 @@ import { AuthService } from 'src/app/shared/services/auth.service';
 import { UserService } from 'src/app/shared/services/user.service';
 import { MatDialog } from '@angular/material/dialog';
 import { DialogComponent } from 'src/app/shared/dialog/dialog.component';
+import { PasswordResetComponent } from '../password-reset/password-reset.component';
+import { PasswordChangeComponent } from 'src/app/profile/password-change/password-change.component';
 
 @Component({
   selector: 'app-login',
@@ -81,7 +88,26 @@ export class LoginComponent implements OnInit, OnDestroy {
     }
   }
 
-  handleResetPassword() {}
+  handleResetPassword() {
+    verifyPasswordResetCode(this.auth, this.actionCode)
+      .then(() => {
+        this.progressBar = false;
+        const dialogRef = this.dialog.open(PasswordChangeComponent, {
+          data: {
+            auth: this.auth,
+            actionCode: this.actionCode
+          },
+          disableClose: true,
+        });
+
+        dialogRef.componentInstance.progressEvent.subscribe((progress) => {
+          this.progressBar = progress;
+        });
+      })
+      .catch((err) => {
+        this.openErrorDialog();
+      });
+  }
 
   handleVerifyEmail() {
     applyActionCode(this.auth, this.actionCode)
@@ -100,6 +126,17 @@ export class LoginComponent implements OnInit, OnDestroy {
       })
       .catch((error) => {
         this.openErrorDialog();
+      });
+  }
+
+  sendPasswordResetEmail(): void {
+    const dialogRef = this.dialog.open(PasswordResetComponent, {
+      disableClose: true,
+    });
+
+    this.dialogSubscription =
+      dialogRef.componentInstance.progressEvent.subscribe((progress) => {
+        this.progressBar = progress;
       });
   }
 

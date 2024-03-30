@@ -1,6 +1,7 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Inject, OnInit, Output } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { confirmPasswordReset } from 'firebase/auth';
 import firebase from 'firebase/compat/app';
 
 import { AuthService } from 'src/app/shared/services/auth.service';
@@ -16,7 +17,7 @@ export class PasswordChangeComponent implements OnInit {
   hideNew: boolean = true;
   user?: firebase.User;
   editForm: FormGroup = new FormGroup({
-    oldPassword: new FormControl('', [Validators.required]),
+    oldPassword: new FormControl('', []),
     newPassword: new FormControl('', [
       Validators.required,
       Validators.minLength(6),
@@ -25,19 +26,34 @@ export class PasswordChangeComponent implements OnInit {
 
   constructor(
     private authService: AuthService,
-    public dialogRef: MatDialogRef<PasswordChangeComponent>
+    public dialogRef: MatDialogRef<PasswordChangeComponent>,
+    @Inject(MAT_DIALOG_DATA) public data: any
   ) {}
 
   ngOnInit(): void {
     this.authService.isLoggedIn().subscribe((user) => {
       if (user) {
         this.user = user;
+        this.editForm.controls['oldPassword'].addValidators(
+          Validators.required
+        );
       }
     });
   }
 
   onSubmit() {
     if (!this.user) {
+      confirmPasswordReset(
+        this.data.auth,
+        this.data.actionCode,
+        this.editForm.controls['newPassword'].value
+      )
+        .then(() => {
+          this.close();
+        })
+        .catch(() => {
+          this.editForm.controls['newPassword'].setErrors({ error: true });
+        });
       return;
     }
 
@@ -61,7 +77,7 @@ export class PasswordChangeComponent implements OnInit {
           })
           .catch(() => {
             this.progressEvent.emit(false);
-            
+
             this.editForm.controls['newPassword'].setErrors({
               incorrect: 'true',
             });

@@ -13,6 +13,10 @@ export class AuthService {
     });
   }
 
+  sendPasswordResetEmail(email: string) {
+    return this.auth.sendPasswordResetEmail(email);
+  }
+
   login(email: string, password: string) {
     return this.auth.signInWithEmailAndPassword(email, password);
   }

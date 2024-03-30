@@ -1,4 +1,8 @@
-<mat-progress-bar mode="indeterminate" color="accent" *ngIf="progressBar"></mat-progress-bar>
+<mat-progress-bar
+  mode="indeterminate"
+  color="accent"
+  *ngIf="progressBar"
+></mat-progress-bar>
 <div>
   <div class="form-header">Bejelentkezés</div>
   <form class="auth-form" [formGroup]="loginForm" (ngSubmit)="onSubmit()">
@@ -37,6 +41,9 @@
         >Helytelen e-mail cím vagy jelszó!</mat-error
       >
     </mat-form-field>
+    <button mat-button color="accent" type="button" id="forgot-password" (click)="sendPasswordResetEmail()">
+      Elfelejtett jelszó?
+    </button>
     <mat-checkbox formControlName="rememberMe">Emlékezz rám!</mat-checkbox>
     <button
       [disabled]="!loginForm.valid"

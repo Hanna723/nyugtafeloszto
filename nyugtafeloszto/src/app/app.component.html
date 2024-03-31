@@ -1,2 +1,2 @@
-<app-menu [image]="image" [user]="user"></app-menu>
-<router-outlet (activate)="setImage($event)"></router-outlet>
+<app-menu #menu [image]="image" [user]="user"></app-menu>
+<router-outlet (activate)="onComponentChange($event)"></router-outlet>

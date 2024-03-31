@@ -16,7 +16,7 @@ export class MenuComponent implements OnInit, OnDestroy {
   @ViewChild('sidenav') sidenav?: MatSidenav;
   @Input() image?: string;
   @Input() user?: User;
-  localUser?: string | null;
+  @Input() localUser?: string | null;
   routerSubscription?: Subscription;
   imageSubscription?: Subscription;
 
@@ -54,7 +54,7 @@ export class MenuComponent implements OnInit, OnDestroy {
 
   logOut(): void {
     this.authService.logOut();
-    this.user = undefined;
+    this.localUser = undefined;
     localStorage.removeItem('user');
     localStorage.removeItem('profilePicture');
     this.router.navigateByUrl('/auth/login');

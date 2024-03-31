@@ -1,10 +1,12 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { PreviewComponent } from './profile/preview/preview.component';
 import { Subscription } from 'rxjs';
 
 import { AuthService } from './shared/services/auth.service';
 import { UserService } from './shared/services/user.service';
 import { User } from './shared/models/User';
+import { HomeComponent } from './home/home.component';
+import { MenuComponent } from './shared/menu/menu.component';
 
 @Component({
   selector: 'app-root',
@@ -12,10 +14,12 @@ import { User } from './shared/models/User';
   styleUrls: ['./app.component.scss'],
 })
 export class AppComponent implements OnInit, OnDestroy {
+  @ViewChild('menu') menu!: MenuComponent;
   title = 'nyugtafeloszto';
 
   firebaseUser?: firebase.default.User | null;
   user?: User;
+  localUser?: string | null;
   image?: string;
   componentRef?: any;
 
@@ -50,7 +54,11 @@ export class AppComponent implements OnInit, OnDestroy {
     this.userSubscription?.unsubscribe();
   }
 
-  setImage(componentRef: any): void {
+  onComponentChange(componentRef: any): void {
+    if (componentRef instanceof HomeComponent) {
+      this.menu.localUser = localStorage.getItem('user');
+    }
+
     if (!(componentRef instanceof PreviewComponent)) {
       return;
     }

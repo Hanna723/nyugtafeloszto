@@ -94,8 +94,8 @@ export class ListComponent implements OnInit, AfterViewInit, OnDestroy {
     setTimeout(() => {
       if (this.sort) {
         this.sort.sort({ id: 'date', start: 'desc', disableClear: false });
-        this.progressBar = false;
       }
+      this.progressBar = false;
     }, 1000);
   }
 

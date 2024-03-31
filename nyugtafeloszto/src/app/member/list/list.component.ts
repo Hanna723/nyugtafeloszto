@@ -61,7 +61,7 @@ export class ListComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.progressBar = true;
     this.memberSubscription = this.memberService
-      .getAllForOneUser(JSON.parse(this.user).uid)
+      .getAllForOneUser(JSON.parse(this.user))
       .subscribe((data) => {
         this.tableData = new MatTableDataSource(data);
         this.filteredTableData = new MatTableDataSource(data);
@@ -92,7 +92,7 @@ export class ListComponent implements OnInit, AfterViewInit, OnDestroy {
     const name: string = this.memberForm.controls['name'].value;
 
     const member: Member = {
-      user: JSON.parse(user).uid,
+      user: JSON.parse(user),
       name: name.trim(),
     };
     this.memberService.create(member);
@@ -156,7 +156,7 @@ export class ListComponent implements OnInit, AfterViewInit, OnDestroy {
       this.memberService.delete(member.id);
 
       this.groupService
-        .getByMember(JSON.parse(this.user).uid, member.id)
+        .getByMember(JSON.parse(this.user), member.id)
         .subscribe((data) => {
           data.forEach((group) => {
             group.members = group.members.filter((el) => el !== member.id);

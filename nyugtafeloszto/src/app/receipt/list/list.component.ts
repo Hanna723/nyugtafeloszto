@@ -66,7 +66,7 @@ export class ListComponent implements OnInit, AfterViewInit, OnDestroy {
     this.currencySubscriptions.push(allCurrencySubscription);
 
     this.receiptSubscription = this.receiptService
-      .getAllForOneUser(JSON.parse(this.user).uid)
+      .getAllForOneUser(JSON.parse(this.user))
       .subscribe((data) => {
         this.tableData = new MatTableDataSource(data);
         this.filteredTableData = new MatTableDataSource(data);
@@ -168,7 +168,7 @@ export class ListComponent implements OnInit, AfterViewInit, OnDestroy {
     this.progressBar = true;
     let receipt: Receipt = {
       store: '',
-      user: JSON.parse(this.user).uid,
+      user: JSON.parse(this.user),
       products: [],
       sum: 0,
       members: [],

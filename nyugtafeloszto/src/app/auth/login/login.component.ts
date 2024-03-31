@@ -180,7 +180,7 @@ export class LoginComponent implements OnInit, OnDestroy {
             this.authService.logOut();
           });
         } else {
-          localStorage.setItem('user', JSON.stringify(user));
+          localStorage.setItem('user', JSON.stringify(user.user.uid));
           localStorage.removeItem('receipt');
           if (user.user) {
             this.userSubscription = this.userService

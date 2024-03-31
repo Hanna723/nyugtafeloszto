@@ -23,6 +23,12 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     this.progressBar = true;
     this.user = localStorage.getItem('user');
 
+    const images = localStorage.getItem('images');
+    if (images) {
+      this.images = JSON.parse(images);
+      return;
+    }
+
     for (const key in this.images) {
       if (this.images.hasOwnProperty(key)) {
         const imageKey = key as keyof typeof this.images;
@@ -30,6 +36,8 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
           .getImage(`/home/${key}.png`)
           .subscribe((image) => {
             this.images[imageKey] = image;
+            console.log(this.images);
+            localStorage.setItem('images', JSON.stringify(this.images));
           });
         this.imageSubscriptions.push(imageSubscription);
       }

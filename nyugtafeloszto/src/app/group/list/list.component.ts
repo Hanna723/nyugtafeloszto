@@ -48,7 +48,7 @@ export class ListComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.progressBar = true;
     this.groupSubscription = this.groupService
-      .getAllForOneUser(JSON.parse(this.user).uid)
+      .getAllForOneUser(JSON.parse(this.user))
       .subscribe((data) => {
         this.tableData = new MatTableDataSource(data);
         this.filteredTableData = new MatTableDataSource(data);

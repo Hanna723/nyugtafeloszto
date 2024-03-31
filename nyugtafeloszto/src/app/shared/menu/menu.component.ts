@@ -5,7 +5,7 @@ import { Subscription } from 'rxjs';
 
 import { AuthService } from '../services/auth.service';
 import { ImageService } from '../services/image.service';
-import { UserService } from '../services/user.service';
+import { User } from '../models/User';
 
 @Component({
   selector: 'app-menu',
@@ -15,39 +15,32 @@ import { UserService } from '../services/user.service';
 export class MenuComponent implements OnInit, OnDestroy {
   @ViewChild('sidenav') sidenav?: MatSidenav;
   @Input() image?: string;
-  user?: firebase.default.User | null;
-  authSubscription?: Subscription;
-  userSubscription?: Subscription;
-  imageSubscription?: Subscription;
+  @Input() user?: User;
+  localUser?: string | null;
   routerSubscription?: Subscription;
+  imageSubscription?: Subscription;
 
   constructor(
     private router: Router,
     private authService: AuthService,
-    private userService: UserService,
     private imageService: ImageService
   ) {}
 
   ngOnInit(): void {
-    this.authSubscription = this.authService.isLoggedIn().subscribe((user) => {
-      this.user = user;
-      if (user && user.emailVerified) {
-        localStorage.setItem('user', JSON.stringify(this.user));
+    this.localUser = localStorage.getItem('user');
+    const image = localStorage.getItem('profilePicture');
 
-        this.userSubscription = this.userService
-          .getById(user?.uid)
-          .subscribe((loggedInUser) => {
-            const imageName = loggedInUser?.hasProfilePicture
-              ? loggedInUser.id
-              : 'default';
-            this.imageSubscription = this.imageService
-              .getImage(`profile/${imageName}.png`)
-              .subscribe((image) => {
-                this.image = image;
-              });
-          });
-      }
-    });
+    if (image) {
+      this.image = image;
+    } else {
+      const imageName = this.user?.hasProfilePicture ? this.user.id : 'default';
+      this.imageSubscription = this.imageService
+        .getImage(`profile/${imageName}.png`)
+        .subscribe((image) => {
+          this.image = image;
+          localStorage.setItem('profilePicture', image);
+        });
+    }
 
     this.routerSubscription = this.router.events.subscribe((event) => {
       this.sidenav?.close();
@@ -55,15 +48,15 @@ export class MenuComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.authSubscription?.unsubscribe();
-    this.userSubscription?.unsubscribe();
-    this.imageSubscription?.unsubscribe();
     this.routerSubscription?.unsubscribe();
+    this.imageSubscription?.unsubscribe();
   }
 
   logOut(): void {
     this.authService.logOut();
+    this.user = undefined;
     localStorage.removeItem('user');
+    localStorage.removeItem('profilePicture');
     this.router.navigateByUrl('/auth/login');
   }
 }

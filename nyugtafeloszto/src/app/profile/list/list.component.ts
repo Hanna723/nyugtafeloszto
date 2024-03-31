@@ -32,7 +32,7 @@ export class ListComponent implements OnInit, AfterViewInit, OnDestroy {
     const localUser = localStorage.getItem('user');
 
     if (localUser) {
-      this.userService.getById(JSON.parse(localUser).uid).subscribe((user) => {
+      this.userService.getById(JSON.parse(localUser)).subscribe((user) => {
         this.user = user;
         if (this.user?.admin) {
           this.userService.getAll().subscribe((data) => {

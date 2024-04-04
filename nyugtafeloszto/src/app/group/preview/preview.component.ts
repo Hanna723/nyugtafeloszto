@@ -81,11 +81,9 @@ export class PreviewComponent implements OnInit, AfterViewInit, OnDestroy {
       this.tableData = new MatTableDataSource(this.members);
       setTimeout(() => {
         if (this.sort) {
-          if (this.sort) {
-            this.sort.sort({ id: 'name', start: 'asc', disableClear: false });
-            this.progressBar = false;
-          }
+          this.sort.sort({ id: 'name', start: 'asc', disableClear: false });
         }
+        this.progressBar = false;
       });
     }, 900);
   }

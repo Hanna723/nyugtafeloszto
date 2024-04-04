@@ -64,13 +64,13 @@ export class EditComponent implements OnInit, OnDestroy {
 
     if (user) {
       this.memberSubscription = this.memberService
-        .getAllForOneUser(JSON.parse(user).uid)
+        .getAllForOneUser(JSON.parse(user))
         .subscribe((data) => {
           this.memberList = [...data];
         });
 
       this.groupSubscription = this.groupService
-        .getAllForOneUser(JSON.parse(user).uid)
+        .getAllForOneUser(JSON.parse(user))
         .subscribe((data) => {
           this.groupList = [...data];
         });
@@ -136,7 +136,7 @@ export class EditComponent implements OnInit, OnDestroy {
     memberIds = Array.from(members.values());
 
     const group: Group = {
-      user: JSON.parse(user).uid,
+      user: JSON.parse(user),
       name: this.groupForm.controls['name'].value,
       members: memberIds,
     };

@@ -13,7 +13,7 @@
       {{ data.button }}
     </button>
     <button
-      *ngIf="data.submitButton"
+      *ngIf="data.submitButton && data.button"
       mat-stroked-button
       color="accent"
       (click)="onCancel()"

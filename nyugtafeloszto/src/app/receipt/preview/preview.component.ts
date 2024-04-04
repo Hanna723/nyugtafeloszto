@@ -107,8 +107,8 @@ export class PreviewComponent implements OnInit, AfterViewInit, OnDestroy {
       setTimeout(() => {
         if (this.sort) {
           this.sort.sort({ id: 'pays', start: 'asc', disableClear: false });
-          this.progressBar = false;
         }
+        this.progressBar = false;
       });
     }, 900);
   }

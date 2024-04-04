@@ -48,7 +48,7 @@ export class ListComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.progressBar = true;
     this.groupSubscription = this.groupService
-      .getAllForOneUser(JSON.parse(this.user).uid)
+      .getAllForOneUser(JSON.parse(this.user))
       .subscribe((data) => {
         this.tableData = new MatTableDataSource(data);
         this.filteredTableData = new MatTableDataSource(data);
@@ -60,8 +60,8 @@ export class ListComponent implements OnInit, AfterViewInit, OnDestroy {
     setTimeout(() => {
       if (this.sort) {
         this.sort.sort({ id: 'name', start: 'asc', disableClear: false });
-        this.progressBar = false;
       }
+      this.progressBar = false;
     }, 1000);
   }
 

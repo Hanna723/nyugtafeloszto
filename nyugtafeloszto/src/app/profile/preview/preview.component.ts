@@ -44,7 +44,7 @@ export class PreviewComponent implements OnInit, AfterViewInit, OnDestroy {
     if (localUser) {
       this.progressBar = true;
       this.userSubscription = this.userService
-        .getById(JSON.parse(localUser).uid)
+        .getById(JSON.parse(localUser))
         .subscribe((user) => {
           this.user = user;
           const imageName = user?.hasProfilePicture ? user.id : 'default';
@@ -72,10 +72,18 @@ export class PreviewComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   fetchImage(imageName: string, uploaded: boolean) {
+    const image = localStorage.getItem('profilePicture');
+
+    if (image && !uploaded) {
+      this.image = image;
+      return;
+    }
+
     const imageSubscription = this.imageService
       .getImage(`/profile/${imageName}`)
       .subscribe((image) => {
         this.image = image;
+        localStorage.setItem('profilePicture', image);
 
         if (uploaded) {
           this.uploadedImage.emit(this.image);

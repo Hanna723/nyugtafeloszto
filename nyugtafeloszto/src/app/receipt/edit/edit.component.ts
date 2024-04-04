@@ -93,7 +93,7 @@ export class EditComponent implements OnInit, AfterViewInit, OnDestroy {
     if (!user) {
       return;
     }
-    this.uid = JSON.parse(user).uid;
+    this.uid = JSON.parse(user);
     this.id = this.route.snapshot.params['id'];
     let url = this.router.url;
 

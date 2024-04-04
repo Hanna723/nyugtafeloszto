@@ -116,7 +116,7 @@ export class ListComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     this.filteredTableData.data = this.tableData.data.filter((el) =>
-      el.name.toLowerCase().includes(input.value.toLowerCase())
+      el.name?.toLowerCase().includes(input.value.toLowerCase())
     );
   }
 

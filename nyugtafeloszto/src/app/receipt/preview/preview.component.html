@@ -41,7 +41,10 @@
   <table
     mat-table
     matSort
-    *ngIf="tableData.data.length > 0"
+    *ngIf="
+      tableData.data.length > 0 &&
+      tableData.data.length === receipt.members.length
+    "
     [dataSource]="tableData"
     (matSortChange)="sortData()"
     class="mat-elevation-z8"
@@ -78,11 +81,9 @@
         *matCellDef="let element"
         [ngStyle]="{ color: element.pays !== element.paid ? 'red' : 'initial' }"
       >
-        {{ element.pays }} {{ receipt.currency?.symbol }}
+        {{ element.pays }} {{ symbol }}
       </td>
-      <td mat-footer-cell *matFooterCellDef>
-        {{ receipt.sum }} {{ receipt.currency?.symbol }}
-      </td>
+      <td mat-footer-cell *matFooterCellDef>{{ receipt.sum }} {{ symbol }}</td>
     </ng-container>
     <ng-container matColumnDef="paid">
       <th
@@ -98,11 +99,25 @@
         *matCellDef="let element"
         [ngStyle]="{ color: element.pays !== element.paid ? 'red' : 'initial' }"
       >
-        {{ element.paid }} {{ receipt.currency?.symbol }}
+        {{ element.paid }}
+        {{ symbol }}
       </td>
-      <td mat-footer-cell *matFooterCellDef>
-        {{ paidSum }} {{ receipt.currency?.symbol }}
+      <td mat-footer-cell *matFooterCellDef>{{ paidSum }} {{ symbol }}</td>
+    </ng-container>
+    <ng-container matColumnDef="edit">
+      <th mat-header-cell *matHeaderCellDef>
+        <mat-icon color="accent">edit</mat-icon>
+      </th>
+      <th mat-header-cell *matHeaderCellDef></th>
+      <td mat-cell *matCellDef="let element">
+        <mat-checkbox
+          color="accent"
+          [checked]="element.paid === element.pays"
+          [disabled]="element.paid === element.pays"
+          (change)="payForMember(element)"
+        ></mat-checkbox>
       </td>
+      <td mat-footer-cell *matFooterCellDef></td>
     </ng-container>
     <tr mat-header-row *matHeaderRowDef="columnsToDisplay"></tr>
     <tr mat-row *matRowDef="let row; columns: columnsToDisplay"></tr>

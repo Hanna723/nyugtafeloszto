@@ -19,6 +19,7 @@ import { ListComponent } from './list/list.component';
 import { ReceiptRoutingModule } from './receipt-routing.module';
 import { EditComponent } from './edit/edit.component';
 import { PreviewComponent } from './preview/preview.component';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 
 @NgModule({
   declarations: [ListComponent, EditComponent, PreviewComponent],
@@ -39,6 +40,7 @@ import { PreviewComponent } from './preview/preview.component';
     MatSortModule,
     MatMenuModule,
     MatProgressBarModule,
+    MatCheckboxModule,
   ],
   providers: [
     DatePipe,

@@ -36,9 +36,10 @@ export class PreviewComponent implements OnInit, AfterViewInit, OnDestroy {
   needToPay: Map<string, number> = new Map();
   members: Array<Member> = [];
   tableData: MatTableDataSource<Member> = new MatTableDataSource();
-  columnsToDisplay = ['name', 'pays', 'paid'];
+  columnsToDisplay = ['name', 'pays', 'paid', 'edit'];
   downloadHref?: SafeUrl;
   paidSum: number = 0;
+  symbol: string = '';
 
   receiptSubscription?: Subscription;
   currencySubscription?: Subscription;
@@ -80,6 +81,7 @@ export class PreviewComponent implements OnInit, AfterViewInit, OnDestroy {
               }
               if (currency && data) {
                 data.currency = currency;
+                this.symbol = currency.symbol;
               }
             });
           this.calculatePrices();
@@ -140,9 +142,12 @@ export class PreviewComponent implements OnInit, AfterViewInit, OnDestroy {
         if (typeof memberData === 'string') {
           return;
         }
-        memberData.pays = this.needToPay.get(memberData.name) || 0;
-        this.members.push(memberData);
-        this.paidSum += memberData.paid || 0;
+
+        if (memberData.name) {
+          memberData.pays = this.needToPay.get(memberData.name) || 0;
+          this.members.push(memberData);
+          this.paidSum += memberData.paid || 0;
+        }
       });
       return;
     }
@@ -225,7 +230,10 @@ export class PreviewComponent implements OnInit, AfterViewInit, OnDestroy {
     let downloadData = {
       bolt: this.receipt?.store,
       dátum: this.receipt?.formattedDate,
-      pénznem: this.receipt?.currency?.symbol,
+      pénznem:
+        typeof this.receipt?.currency === 'string'
+          ? ''
+          : this.receipt?.currency?.symbol,
       végösszeg: this.receipt?.sum,
       tagok: members,
     };
@@ -269,5 +277,46 @@ export class PreviewComponent implements OnInit, AfterViewInit, OnDestroy {
       rows.push(memberValues);
     });
     return rows.join('\n');
+  }
+
+  payForMember(member: Member) {
+    if (!this.receipt) {
+      return;
+    }
+
+    this.receipt?.members.forEach((receiptMember) => {
+      if (
+        typeof receiptMember !== 'string' &&
+        receiptMember.id &&
+        member.id === receiptMember.id
+      ) {
+        receiptMember.paid = this.needToPay.get(receiptMember.id);
+      }
+    });
+
+    let receipt = { ...this.receipt };
+    if (typeof this.receipt.currency !== 'string') {
+      receipt.currency = this.receipt.currency?.id;
+    }
+
+    delete receipt.formattedDate;
+
+    receipt.members.forEach((member) => {
+      if (typeof member !== 'string') {
+        delete member.name;
+        delete member.user;
+      }
+    });
+
+    this.receiptService.update(receipt);
+    this.members.forEach((tableMember) => {
+      if (
+        typeof tableMember !== 'string' &&
+        tableMember.id &&
+        member.id === tableMember.id
+      ) {
+        tableMember.paid = this.needToPay.get(tableMember.id);
+      }
+    });
   }
 }

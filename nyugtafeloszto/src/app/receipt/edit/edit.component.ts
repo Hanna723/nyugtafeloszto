@@ -351,7 +351,7 @@ export class EditComponent implements OnInit, AfterViewInit, OnDestroy {
       );
     } else {
       this.filteredMembersAndGroups = this.membersAndGroups.filter((el) =>
-        el.name.toLowerCase().includes(filterValue.toLowerCase())
+        el.name?.toLowerCase().includes(filterValue.toLowerCase())
       );
     }
   }
@@ -455,7 +455,7 @@ export class EditComponent implements OnInit, AfterViewInit, OnDestroy {
     const filterValue = input.value.toLowerCase();
 
     this.filteredMembers = this.fetchedMembers?.filter((el) =>
-      el.name.toLowerCase().includes(filterValue.toLowerCase())
+      el.name?.toLowerCase().includes(filterValue.toLowerCase())
     );
   }
 

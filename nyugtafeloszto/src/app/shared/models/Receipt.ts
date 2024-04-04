@@ -5,7 +5,7 @@ import { Member } from "./Member";
 
 export interface Receipt {
     id?: string;
-    currency?: Currency;
+    currency?: Currency | string;
     date?: Timestamp;
     formattedDate?: string | null;
     store: string;

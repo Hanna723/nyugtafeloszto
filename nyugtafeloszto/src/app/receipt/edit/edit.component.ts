@@ -47,6 +47,7 @@ export class EditComponent implements OnInit, AfterViewInit, OnDestroy {
   progressBar: boolean = false;
   id?: string;
   uid?: string;
+  paid: Map<string, number> = new Map();
   receiptForm: FormGroup = new FormGroup({
     store: new FormControl('', [Validators.maxLength(100)]),
     date: new FormControl(''),
@@ -150,8 +151,10 @@ export class EditComponent implements OnInit, AfterViewInit, OnDestroy {
         }
         if (data?.members) {
           const members = this.receiptForm.controls['members'] as FormArray;
-          data.members.forEach((member) => {
-            members.push(new FormControl(member));
+          data.members.forEach((member: any) => {
+            members.push(new FormControl(member.id));
+
+            this.paid?.set(member.id, member.paid);
           });
         }
         if (data?.currency && this.currencies) {
@@ -408,14 +411,36 @@ export class EditComponent implements OnInit, AfterViewInit, OnDestroy {
 
   removeMember(i: number): void {
     const members = this.getMembersFormArray();
+    let removedMember: string;
 
     if (members && i >= 0 && i < members?.length) {
+      removedMember = this.uid ? members.at(i).value.id : members.at(i).value;
       members.removeAt(i);
     }
 
     if (this.uid) {
       this.filterMembersAndGroups();
     }
+
+    const products = this.receiptForm.get('products') as FormArray;
+    products.controls.forEach((productControl) => {
+      const product = productControl as FormGroup;
+      const pays = product.get('pays') as FormArray;
+
+      let controlsToDelete = [];
+
+      for (let i = 0; i < pays.controls.length; i++) {
+        if (this.uid && pays.controls.at(i)?.value.id === removedMember) {
+          controlsToDelete.push(i);
+        } else if (!this.uid && pays.controls.at(i)?.value === removedMember) {
+          controlsToDelete.push(i - controlsToDelete.length);
+        }
+      }
+
+      controlsToDelete.forEach((i) => {
+        pays.removeAt(i);
+      });
+    });
   }
 
   selectedMember(event: MatAutocompleteActivatedEvent): void {
@@ -537,6 +562,18 @@ export class EditComponent implements OnInit, AfterViewInit, OnDestroy {
       sum += product.price;
     });
 
+    const memberIds = Array.from(members);
+    let receiptMembers: Member[] = [];
+
+    memberIds.forEach((id) => {
+      receiptMembers.push({
+        id: id,
+        name: this.uid ? '' : id,
+        paid: this.paid?.get(id) || 0,
+        user: this.uid || '',
+      });
+    });
+
     const receipt: Receipt = {
       user: this.uid || '',
       store: this.receiptForm.controls['store'].value,
@@ -544,7 +581,7 @@ export class EditComponent implements OnInit, AfterViewInit, OnDestroy {
       currency: this.receiptForm.controls['currency'].value.id,
       sum: sum,
       products: products,
-      members: Array.from(members),
+      members: receiptMembers,
     };
 
     if (!this.uid) {

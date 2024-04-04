@@ -3,4 +3,5 @@ export interface Member {
   user: string;
   name: string;
   pays?: number;
+  paid?: number;
 }

@@ -36,8 +36,9 @@ export class PreviewComponent implements OnInit, AfterViewInit, OnDestroy {
   needToPay: Map<string, number> = new Map();
   members: Array<Member> = [];
   tableData: MatTableDataSource<Member> = new MatTableDataSource();
-  columnsToDisplay = ['name', 'pays'];
+  columnsToDisplay = ['name', 'pays', 'paid'];
   downloadHref?: SafeUrl;
+  paidSum: number = 0;
 
   receiptSubscription?: Subscription;
   currencySubscription?: Subscription;
@@ -94,6 +95,15 @@ export class PreviewComponent implements OnInit, AfterViewInit, OnDestroy {
 
       receipt = JSON.parse(receipt);
       this.receipt = receipt as unknown as Receipt;
+
+      this.currencySubscription = this.currencyService
+        .getById(this.receipt?.currency as unknown as string)
+        .subscribe((currency) => {
+          if (currency && this.receipt) {
+            this.receipt.currency = currency;
+          }
+        });
+
       this.calculatePrices();
       this.getMembersFromReceipt();
     } else {
@@ -126,34 +136,29 @@ export class PreviewComponent implements OnInit, AfterViewInit, OnDestroy {
 
   getMembersFromReceipt() {
     if (!this.user && this.receipt?.members) {
-      this.receipt.members.forEach((memberName) => {
-        const member: Member = {
-          id: '',
-          user: '',
-          name: memberName,
-          pays: this.needToPay.get(memberName) || 0,
-        };
-        this.members.push(member);
+      this.receipt.members.forEach((memberData: string | Member) => {
+        if (typeof memberData === 'string') {
+          return;
+        }
+        memberData.pays = this.needToPay.get(memberData.name) || 0;
+        this.members.push(memberData);
+        this.paidSum += memberData.paid || 0;
       });
       return;
     }
 
-    this.receipt?.members.forEach((memberId) => {
-      if (this.user) {
+    this.receipt?.members.forEach((memberData: string | Member) => {
+      if (typeof memberData === 'string') {
+        return;
+      }
+      if (this.user && memberData.id) {
         this.memberSubscription = this.memberService
-          .getById(memberId, this.user)
+          .getById(memberData.id, this.user)
           .subscribe((member) => {
             if (member && member.id) {
               member.pays = this.needToPay.get(member.id) || 0;
+              member.paid = memberData.paid;
               this.members.push(member);
-            } else if (this.user) {
-              let deletedMember: Member = {
-                id: memberId,
-                user: this.user,
-                name: '*Törölt résztvevő*',
-                pays: this.needToPay.get(memberId) || 0,
-              };
-              this.members.push(deletedMember);
             }
           });
       }
@@ -161,8 +166,12 @@ export class PreviewComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   calculatePrices() {
-    this.receipt?.members.forEach((member) => {
-      this.needToPay.set(member, 0);
+    this.receipt?.members.forEach((member: string | Member) => {
+      if (typeof member === 'string') {
+        this.needToPay.set(member, 0);
+      } else if (member.id) {
+        this.needToPay.set(member.id, 0);
+      }
     });
 
     this.receipt?.products.forEach((product) => {
@@ -208,6 +217,7 @@ export class PreviewComponent implements OnInit, AfterViewInit, OnDestroy {
         members.push({
           név: data.name,
           fizet: data.pays,
+          fizetett: data.paid,
         });
       }
     });

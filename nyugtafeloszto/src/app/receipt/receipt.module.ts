@@ -20,9 +20,10 @@ import { ReceiptRoutingModule } from './receipt-routing.module';
 import { EditComponent } from './edit/edit.component';
 import { PreviewComponent } from './preview/preview.component';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { PaidComponent } from './paid/paid.component';
 
 @NgModule({
-  declarations: [ListComponent, EditComponent, PreviewComponent],
+  declarations: [ListComponent, EditComponent, PreviewComponent, PaidComponent],
   imports: [
     CommonModule,
     ReceiptRoutingModule,

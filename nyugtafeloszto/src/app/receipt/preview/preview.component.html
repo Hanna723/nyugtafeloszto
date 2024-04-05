@@ -33,7 +33,7 @@
       >
         <mat-icon color="accent">delete</mat-icon>
       </button>
-      <button mat-icon-button (click)="editReceipt()" aria-label="Edit button">
+      <button mat-icon-button (click)="editReceipt()" aria-label="Nyugta szerkesztése">
         <mat-icon color="accent">edit</mat-icon>
       </button>
     </div>
@@ -61,7 +61,7 @@
       <td
         mat-cell
         *matCellDef="let element"
-        [ngStyle]="{ color: element.pays !== element.paid ? 'red' : 'initial' }"
+        [ngStyle]="{ color: user && element.pays !== element.paid ? 'red' : 'initial' }"
       >
         {{ element.name }}
       </td>
@@ -79,13 +79,13 @@
       <td
         mat-cell
         *matCellDef="let element"
-        [ngStyle]="{ color: element.pays !== element.paid ? 'red' : 'initial' }"
+        [ngStyle]="{ color: user && element.pays !== element.paid ? 'red' : 'initial' }"
       >
         {{ element.pays }} {{ symbol }}
       </td>
       <td mat-footer-cell *matFooterCellDef>{{ receipt.sum }} {{ symbol }}</td>
     </ng-container>
-    <ng-container matColumnDef="paid">
+    <ng-container matColumnDef="paid" *ngIf="user">
       <th
         mat-header-cell
         *matHeaderCellDef
@@ -104,9 +104,11 @@
       </td>
       <td mat-footer-cell *matFooterCellDef>{{ paidSum }} {{ symbol }}</td>
     </ng-container>
-    <ng-container matColumnDef="edit">
+    <ng-container matColumnDef="edit" *ngIf="user">
       <th mat-header-cell *matHeaderCellDef>
-        <mat-icon color="accent">edit</mat-icon>
+        <button mat-icon-button (click)="openPaidDialog()" aria-label="Fizetett összegek szerkesztése">
+          <mat-icon color="accent">edit</mat-icon>
+        </button>
       </th>
       <th mat-header-cell *matHeaderCellDef></th>
       <td mat-cell *matCellDef="let element">

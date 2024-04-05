@@ -20,6 +20,7 @@ import { Receipt } from 'src/app/shared/models/Receipt';
 import { CurrencyService } from 'src/app/shared/services/currency.service';
 import { MemberService } from 'src/app/shared/services/member.service';
 import { ReceiptService } from 'src/app/shared/services/receipt.service';
+import { PaidComponent } from '../paid/paid.component';
 
 @Component({
   selector: 'app-preview',
@@ -36,7 +37,7 @@ export class PreviewComponent implements OnInit, AfterViewInit, OnDestroy {
   needToPay: Map<string, number> = new Map();
   members: Array<Member> = [];
   tableData: MatTableDataSource<Member> = new MatTableDataSource();
-  columnsToDisplay = ['name', 'pays', 'paid', 'edit'];
+  columnsToDisplay = ['name', 'pays'];
   downloadHref?: SafeUrl;
   paidSum: number = 0;
   symbol: string = '';
@@ -45,6 +46,7 @@ export class PreviewComponent implements OnInit, AfterViewInit, OnDestroy {
   currencySubscription?: Subscription;
   memberSubscription?: Subscription;
   submitSubscription?: Subscription;
+  dialogSubscription?: Subscription;
 
   constructor(
     private receiptService: ReceiptService,
@@ -53,7 +55,7 @@ export class PreviewComponent implements OnInit, AfterViewInit, OnDestroy {
     private datePipe: DatePipe,
     private route: ActivatedRoute,
     private router: Router,
-    public deleteDialog: MatDialog
+    public dialog: MatDialog
   ) {}
 
   ngOnInit(): void {
@@ -62,6 +64,8 @@ export class PreviewComponent implements OnInit, AfterViewInit, OnDestroy {
 
     if (this.user && id) {
       this.progressBar = true;
+      this.columnsToDisplay.push('paid', 'edit');
+
       this.receiptSubscription = this.receiptService
         .getById(id, this.user)
         .subscribe((data) => {
@@ -130,6 +134,7 @@ export class PreviewComponent implements OnInit, AfterViewInit, OnDestroy {
     this.currencySubscription?.unsubscribe();
     this.memberSubscription?.unsubscribe();
     this.submitSubscription?.unsubscribe();
+    this.dialogSubscription?.unsubscribe();
   }
 
   sortData() {
@@ -191,7 +196,7 @@ export class PreviewComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   deleteReceipt() {
-    const deleteDialogRef = this.deleteDialog.open(DialogComponent, {
+    const dialogRef = this.dialog.open(DialogComponent, {
       disableClose: true,
       data: {
         title: 'Figyelem! A nyugta véglegesen törlődik.',
@@ -200,13 +205,14 @@ export class PreviewComponent implements OnInit, AfterViewInit, OnDestroy {
       },
     });
 
-    this.submitSubscription =
-      deleteDialogRef.componentInstance.submitEvent.subscribe(() => {
+    this.submitSubscription = dialogRef.componentInstance.submitEvent.subscribe(
+      () => {
         if (this.receipt?.id) {
           this.receiptService.delete(this.receipt.id);
           this.router.navigateByUrl('/receipt/list');
         }
-      });
+      }
+    );
   }
 
   editReceipt() {
@@ -294,19 +300,11 @@ export class PreviewComponent implements OnInit, AfterViewInit, OnDestroy {
       }
     });
 
-    let receipt = { ...this.receipt };
-    if (typeof this.receipt.currency !== 'string') {
-      receipt.currency = this.receipt.currency?.id;
+    const receipt = this.transformReceipt();
+
+    if (!receipt) {
+      return;
     }
-
-    delete receipt.formattedDate;
-
-    receipt.members.forEach((member) => {
-      if (typeof member !== 'string') {
-        delete member.name;
-        delete member.user;
-      }
-    });
 
     this.receiptService.update(receipt);
     this.members.forEach((tableMember) => {
@@ -318,5 +316,58 @@ export class PreviewComponent implements OnInit, AfterViewInit, OnDestroy {
         tableMember.paid = this.needToPay.get(tableMember.id);
       }
     });
+  }
+
+  transformReceipt() {
+    if (!this.receipt) {
+      return;
+    }
+
+    let receipt = { ...this.receipt };
+    if (typeof this.receipt.currency !== 'string') {
+      receipt.currency = this.receipt.currency?.id;
+    }
+
+    delete receipt.formattedDate;
+
+    receipt.members.forEach((member) => {
+      if (typeof member !== 'string') {
+        delete member.name;
+        delete member.user;
+        delete member.pays;
+      }
+    });
+
+    return receipt;
+  }
+
+  openPaidDialog() {
+    const dialogRef = this.dialog.open(PaidComponent, {
+      disableClose: true,
+      data: {
+        members: this.members,
+        symbol: this.symbol,
+      },
+    });
+
+    this.dialogSubscription = dialogRef.componentInstance.submitEvent.subscribe(
+      (members: Member[]) => {
+        this.receipt?.members.forEach((receiptMember) => {
+          if (typeof receiptMember !== 'string') {
+            receiptMember.paid =
+              members.find((el: Member) => el.id === receiptMember.id)?.paid ||
+              0;
+          }
+        });
+        const receipt = this.transformReceipt();
+
+        if (!receipt) {
+          return;
+        }
+
+        this.receiptService.update(receipt);
+        this.members = members;
+      }
+    );
   }
 }

@@ -1,0 +1,35 @@
+<mat-dialog-content class="dialog-container">
+  <form [formGroup]="paidForm" (ngSubmit)="onSubmit()">
+    <ng-container formArrayName="paid">
+      <ng-container *ngFor="let member of getPaidAmount(); let i = index">
+        <mat-form-field>
+          <mat-label
+            [attr.for]="i"
+            [ngStyle]="{
+              color:
+                data.members[i].pays !== getPaidAmountAt(i).value
+                  ? 'red'
+                  : 'initial'
+            }"
+            >{{ data.members[i].name }} (Fizet: {{ data.members[i].pays }}
+            {{ data.symbol }})</mat-label
+          >
+          <input matInput type="number" [formControlName]="i" />
+        </mat-form-field>
+      </ng-container>
+    </ng-container>
+    <div class="buttons">
+      <button mat-stroked-button color="accent" (click)="close()" type="button">
+        Mégsem
+      </button>
+      <button
+        mat-flat-button
+        color="accent"
+        type="submit"
+        [disabled]="!paidForm.valid"
+      >
+        Mentés
+      </button>
+    </div>
+  </form>
+</mat-dialog-content>

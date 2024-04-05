@@ -12,8 +12,9 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { ListComponent } from './list/list.component';
 import { MemberRoutingModule } from './member-routing.module';
 import { MatIconModule } from '@angular/material/icon';
+import { PreviewComponent } from './preview/preview.component';
 @NgModule({
-  declarations: [ListComponent],
+  declarations: [ListComponent, PreviewComponent],
   imports: [
     CommonModule,
     MemberRoutingModule,

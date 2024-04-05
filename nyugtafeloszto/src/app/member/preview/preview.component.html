@@ -1,0 +1,50 @@
+<mat-progress-bar
+  mode="indeterminate"
+  color="accent"
+  *ngIf="progressBar"
+></mat-progress-bar>
+<div class="list-container" *ngIf="member">
+  <div class="header">
+    <div class="name">
+      {{ member.name }}
+    </div>
+    <div>
+      <button
+        mat-icon-button
+        (click)="deleteMember()"
+        aria-label="Törlés gomb"
+      >
+        <mat-icon color="accent">delete</mat-icon>
+      </button>
+    </div>
+  </div>
+  <!-- <table
+    mat-table
+    matSort
+    *ngIf="tableData.data.length > 0"
+    [dataSource]="tableData"
+    (matSortChange)="sortData()"
+    class="mat-elevation-z8"
+  >
+    <ng-container matColumnDef="name">
+      <th
+        mat-header-cell
+        *matHeaderCellDef
+        mat-sort-header="name"
+        sortActionDescription="Rendezés név alapján"
+      >
+        Tagok
+      </th>
+      <td mat-cell *matCellDef="let element">{{ element.name }}</td>
+    </ng-container>
+    <tr mat-header-row *matHeaderRowDef="columnsToDisplay"></tr>
+    <tr mat-row *matRowDef="let row; columns: columnsToDisplay"></tr>
+  </table>
+  <div
+    class="empty"
+    *ngIf="members && !members[0] && members.length === group.members.length"
+  >
+    A csoportnak nincsenek tagjai
+  </div> -->
+</div>
+<div></div>

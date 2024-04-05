@@ -21,6 +21,7 @@ import { Subscription } from 'rxjs';
 import { Member } from '../../shared/models/Member';
 import { MemberService } from 'src/app/shared/services/member.service';
 import { GroupService } from 'src/app/shared/services/group.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-list',
@@ -49,7 +50,8 @@ export class ListComponent implements OnInit, AfterViewInit, OnDestroy {
 
   constructor(
     private memberService: MemberService,
-    private groupService: GroupService
+    private groupService: GroupService,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -164,5 +166,9 @@ export class ListComponent implements OnInit, AfterViewInit, OnDestroy {
           });
         });
     }
+  }
+
+  navigateToPreview(member: Member) {
+    this.router.navigateByUrl(`/member/${member.id}`);
   }
 }

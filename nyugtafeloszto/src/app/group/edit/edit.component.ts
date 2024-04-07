@@ -193,7 +193,7 @@ export class EditComponent implements OnInit, OnDestroy {
   filter(event: Event): void {
     const filterValue = this.memberInput.nativeElement.value.toLowerCase();
     this.filteredMembers = this.memberList?.filter((member) =>
-      member.name.toLowerCase().includes(filterValue.toLowerCase())
+      member.name?.toLowerCase().includes(filterValue.toLowerCase())
     );
   }
 

@@ -1,0 +1,22 @@
+tr[mat-row] {
+  cursor: pointer;
+}
+
+tr[mat-row]:hover {
+  background-color: whitesmoke;
+}
+
+.sub-header {
+  margin: 12px 0;
+}
+
+.sub-header:last-of-type {
+  margin-top: 24px;
+}
+
+@media only screen and (max-width: 550px) {
+  .sub-header {
+    margin-left: 24px;
+    margin-right: 24px;
+  }
+}

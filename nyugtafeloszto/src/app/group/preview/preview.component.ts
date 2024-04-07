@@ -138,4 +138,8 @@ export class PreviewComponent implements OnInit, AfterViewInit, OnDestroy {
         }
       });
   }
+
+  navigateToMemberPreview(member: Member) {
+    this.router.navigateByUrl(`/member/${member.id}`);
+  }
 }

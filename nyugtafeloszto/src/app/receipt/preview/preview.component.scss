@@ -18,8 +18,21 @@ td {
   max-width: 400px;
 }
 
+tr[mat-row] {
+  cursor: pointer;
+}
+
+tr[mat-row]:hover {
+  background-color: whitesmoke;
+}
+
 @media only screen and (max-width: 550px) {
   td, .store {
     max-width: 60vw;
+  }
+
+  .paid {
+    margin-left: 24px;
+    margin-right: 24px;
   }
 }

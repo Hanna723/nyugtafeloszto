@@ -1,0 +1,151 @@
+<mat-progress-bar
+  mode="indeterminate"
+  color="accent"
+  *ngIf="progressBar"
+></mat-progress-bar>
+<div class="list-container" *ngIf="member">
+  <div class="header">
+    <div class="name">
+      {{ member.name }}
+    </div>
+    <div>
+      <button mat-icon-button (click)="deleteMember()" aria-label="Törlés gomb">
+        <mat-icon color="accent">delete</mat-icon>
+      </button>
+    </div>
+  </div>
+  <div class="sub-header">
+    Csoportok:
+  </div>
+  <table
+    #groupTable="matSort"
+    mat-table
+    matSort
+    [dataSource]="groupTableData"
+    *ngIf="groupTableData.data.length > 0"
+    (matSortChange)="sortGroupData()"
+    class="mat-elevation-z8"
+  >
+    <ng-container matColumnDef="name">
+      <th
+        mat-header-cell
+        *matHeaderCellDef
+        mat-sort-header="name"
+        sortActionDescription="Rendezés név alapján"
+      >
+        Név
+      </th>
+      <td mat-cell *matCellDef="let element">{{ element.name }}</td>
+    </ng-container>
+    <tr mat-header-row *matHeaderRowDef="groupColumnsToDisplay"></tr>
+    <tr
+      mat-row
+      *matRowDef="let row; columns: groupColumnsToDisplay"
+      (click)="navigateToGroupPreview(row)"
+    ></tr>
+  </table>
+  <div class="sub-header">
+    Nyugták:
+  </div>
+  <table
+    #receiptTable="matSort"
+    mat-table
+    matSort
+    *ngIf="receiptTableData.data.length > 0"
+    [dataSource]="receiptTableData"
+    (matSortChange)="sortReceiptData()"
+    class="mat-elevation-z8"
+  >
+    <ng-container matColumnDef="for">
+      <th
+        mat-header-cell
+        *matHeaderCellDef
+        mat-sort-header="for"
+        sortActionDescription="Rendezés receptért fizető személy alapján"
+      >
+        Kinek
+      </th>
+      <td
+        mat-cell
+        *matCellDef="let element"
+        (click)="navigateToReceiptPreview(element)"
+        [ngStyle]="{ color: element.pays !== element.paidSum ? 'red' : 'initial' }"
+      >
+        {{ element.paid }}
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="date">
+      <th
+        mat-header-cell
+        *matHeaderCellDef
+        mat-sort-header="date"
+        sortActionDescription="Rendezés dátum alapján"
+      >
+        Dátum
+      </th>
+      <td
+        mat-cell
+        *matCellDef="let element"
+        (click)="navigateToReceiptPreview(element)"
+        [ngStyle]="{ color: element.pays !== element.paidSum ? 'red' : 'initial' }"
+      >
+        {{ element.formattedDate }}
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="pays">
+      <th
+        mat-header-cell
+        *matHeaderCellDef
+        mat-sort-header="pays"
+        sortActionDescription="Rendezés fizendő összeg alapján"
+      >
+        Fizet
+      </th>
+      <td
+        mat-cell
+        *matCellDef="let element"
+        (click)="navigateToReceiptPreview(element)"
+        [ngStyle]="{
+          color: user && element.pays !== element.paidSum ? 'red' : 'initial'
+        }"
+      >
+        {{ element.pays }} {{ element.symbol }}
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="paidSum" *ngIf="user">
+      <th
+        mat-header-cell
+        *matHeaderCellDef
+        mat-sort-header="paidSum"
+        sortActionDescription="Rendezés kifizetett összeg alapján"
+      >
+        Fizetett
+      </th>
+      <td
+        mat-cell
+        *matCellDef="let element"
+        (click)="navigateToReceiptPreview(element)"
+        [ngStyle]="{ color: element.pays !== element.paidSum ? 'red' : 'initial' }"
+      >
+        {{ element.paidSum }}
+        {{ element.symbol }}
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="edit" *ngIf="user">
+      <th mat-header-cell *matHeaderCellDef>
+      </th>
+      <th mat-header-cell *matHeaderCellDef></th>
+      <td mat-cell *matCellDef="let element">
+        <mat-checkbox
+          color="accent"
+          [checked]="element.paidSum === element.pays"
+          [disabled]="element.paidSum === element.pays"
+          (change)="payReceipt(element)"
+        ></mat-checkbox>
+      </td>
+    </ng-container>
+    <tr mat-header-row *matHeaderRowDef="receiptColumnsToDisplay"></tr>
+    <tr mat-row *matRowDef="let row; columns: receiptColumnsToDisplay"></tr>
+  </table>
+</div>
+<div></div>

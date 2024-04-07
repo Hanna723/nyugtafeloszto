@@ -1,3 +1,11 @@
+tr[mat-row] {
+    cursor: pointer;
+}
+
+tr[mat-row]:hover {
+    background-color: whitesmoke;
+}
+
 button {
     margin: 0;
 }

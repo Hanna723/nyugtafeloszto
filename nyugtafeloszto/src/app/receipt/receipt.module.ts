@@ -19,9 +19,12 @@ import { ListComponent } from './list/list.component';
 import { ReceiptRoutingModule } from './receipt-routing.module';
 import { EditComponent } from './edit/edit.component';
 import { PreviewComponent } from './preview/preview.component';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { PaidComponent } from './paid/paid.component';
+import { MatSelectModule } from '@angular/material/select';
 
 @NgModule({
-  declarations: [ListComponent, EditComponent, PreviewComponent],
+  declarations: [ListComponent, EditComponent, PreviewComponent, PaidComponent],
   imports: [
     CommonModule,
     ReceiptRoutingModule,
@@ -39,6 +42,8 @@ import { PreviewComponent } from './preview/preview.component';
     MatSortModule,
     MatMenuModule,
     MatProgressBarModule,
+    MatCheckboxModule,
+    MatSelectModule
   ],
   providers: [
     DatePipe,

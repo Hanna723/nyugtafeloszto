@@ -21,6 +21,7 @@ import { EditComponent } from './edit/edit.component';
 import { PreviewComponent } from './preview/preview.component';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { PaidComponent } from './paid/paid.component';
+import { MatSelectModule } from '@angular/material/select';
 
 @NgModule({
   declarations: [ListComponent, EditComponent, PreviewComponent, PaidComponent],
@@ -42,6 +43,7 @@ import { PaidComponent } from './paid/paid.component';
     MatMenuModule,
     MatProgressBarModule,
     MatCheckboxModule,
+    MatSelectModule
   ],
   providers: [
     DatePipe,

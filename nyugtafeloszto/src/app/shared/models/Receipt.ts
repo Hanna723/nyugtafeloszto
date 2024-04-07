@@ -13,4 +13,5 @@ export interface Receipt {
     products: Array<Product>;
     sum: number;
     members: Array<Member> | Array<string>;
+    paid: string;
 }

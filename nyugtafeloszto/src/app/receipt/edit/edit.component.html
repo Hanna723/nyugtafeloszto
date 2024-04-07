@@ -102,6 +102,19 @@
           </mat-option>
         </mat-autocomplete>
       </mat-form-field>
+      <mat-form-field>
+        <mat-label for="paid"> Fizetett </mat-label>
+        <mat-select formControlName="paid">
+          <mat-option
+            *ngFor="let el of receiptForm.get('members')?.value"
+            [value]="uid ? el.id : el"
+            >{{ uid ? el.name : el }}</mat-option
+          >
+        </mat-select>
+        <mat-error *ngIf="receiptForm.controls['paid'].errors?.['required']"
+          >Kérem adja meg, ki fizetett!</mat-error
+        >
+      </mat-form-field>
     </div>
     <div formArrayName="products">
       <fieldset

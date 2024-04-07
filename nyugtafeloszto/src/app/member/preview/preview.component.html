@@ -56,22 +56,22 @@
     (matSortChange)="sortReceiptData()"
     class="mat-elevation-z8"
   >
-    <ng-container matColumnDef="store">
+    <ng-container matColumnDef="for">
       <th
         mat-header-cell
         *matHeaderCellDef
-        mat-sort-header="store"
-        sortActionDescription="Rendezés bolt alapján"
+        mat-sort-header="for"
+        sortActionDescription="Rendezés receptért fizető személy alapján"
       >
-        Bolt
+        Kinek
       </th>
       <td
         mat-cell
         *matCellDef="let element"
         (click)="navigateToReceiptPreview(element)"
-        [ngStyle]="{ color: element.pays !== element.paid ? 'red' : 'initial' }"
+        [ngStyle]="{ color: element.pays !== element.paidSum ? 'red' : 'initial' }"
       >
-        {{ element.store }}
+        {{ element.paid }}
       </td>
     </ng-container>
     <ng-container matColumnDef="date">
@@ -87,7 +87,7 @@
         mat-cell
         *matCellDef="let element"
         (click)="navigateToReceiptPreview(element)"
-        [ngStyle]="{ color: element.pays !== element.paid ? 'red' : 'initial' }"
+        [ngStyle]="{ color: element.pays !== element.paidSum ? 'red' : 'initial' }"
       >
         {{ element.formattedDate }}
       </td>
@@ -106,17 +106,17 @@
         *matCellDef="let element"
         (click)="navigateToReceiptPreview(element)"
         [ngStyle]="{
-          color: user && element.pays !== element.paid ? 'red' : 'initial'
+          color: user && element.pays !== element.paidSum ? 'red' : 'initial'
         }"
       >
         {{ element.pays }} {{ element.symbol }}
       </td>
     </ng-container>
-    <ng-container matColumnDef="paid" *ngIf="user">
+    <ng-container matColumnDef="paidSum" *ngIf="user">
       <th
         mat-header-cell
         *matHeaderCellDef
-        mat-sort-header="paid"
+        mat-sort-header="paidSum"
         sortActionDescription="Rendezés kifizetett összeg alapján"
       >
         Fizetett
@@ -125,9 +125,9 @@
         mat-cell
         *matCellDef="let element"
         (click)="navigateToReceiptPreview(element)"
-        [ngStyle]="{ color: element.pays !== element.paid ? 'red' : 'initial' }"
+        [ngStyle]="{ color: element.pays !== element.paidSum ? 'red' : 'initial' }"
       >
-        {{ element.paid }}
+        {{ element.paidSum }}
         {{ element.symbol }}
       </td>
     </ng-container>
@@ -138,8 +138,8 @@
       <td mat-cell *matCellDef="let element">
         <mat-checkbox
           color="accent"
-          [checked]="element.paid === element.pays"
-          [disabled]="element.paid === element.pays"
+          [checked]="element.paidSum === element.pays"
+          [disabled]="element.paidSum === element.pays"
           (change)="payReceipt(element)"
         ></mat-checkbox>
       </td>

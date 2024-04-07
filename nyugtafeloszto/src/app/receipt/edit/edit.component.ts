@@ -52,6 +52,7 @@ export class EditComponent implements OnInit, AfterViewInit, OnDestroy {
     store: new FormControl('', [Validators.maxLength(100)]),
     date: new FormControl(''),
     currency: new FormControl('', [Validators.required]),
+    paid: new FormControl('', [Validators.required]),
     members: this.formBuilder.array([]),
     products: this.formBuilder.array([]),
   });
@@ -146,6 +147,7 @@ export class EditComponent implements OnInit, AfterViewInit, OnDestroy {
       .getById(this.id, this.uid)
       .subscribe((data) => {
         this.receiptForm.controls['store'].setValue(data?.store);
+        this.receiptForm.controls['paid'].setValue(data?.paid);
         if (data?.date) {
           this.receiptForm.controls['date'].setValue(data.date.toDate());
         }
@@ -580,6 +582,7 @@ export class EditComponent implements OnInit, AfterViewInit, OnDestroy {
       date: this.receiptForm.controls['date'].value,
       currency: this.receiptForm.controls['currency'].value.id,
       sum: sum,
+      paid: this.receiptForm.controls['paid'].value,
       products: products,
       members: receiptMembers,
     };

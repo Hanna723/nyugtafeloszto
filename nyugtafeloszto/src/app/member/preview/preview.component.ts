@@ -11,9 +11,7 @@ import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
-import { PaidComponent } from 'src/app/receipt/paid/paid.component';
 import { DialogComponent } from 'src/app/shared/dialog/dialog.component';
-import { Currency } from 'src/app/shared/models/Currency';
 import { Group } from 'src/app/shared/models/Group';
 import { Member } from 'src/app/shared/models/Member';
 import { Product } from 'src/app/shared/models/Product';
@@ -40,7 +38,7 @@ export class PreviewComponent implements OnInit, AfterViewInit, OnDestroy {
   groupTableData: MatTableDataSource<Group> = new MatTableDataSource();
   receiptTableData: MatTableDataSource<object> = new MatTableDataSource();
   groupColumnsToDisplay = ['name'];
-  receiptColumnsToDisplay = ['store', 'date', 'pays', 'paid', 'edit'];
+  receiptColumnsToDisplay = ['for', 'pays', 'paidSum', 'edit'];
 
   constructor(
     private memberService: MemberService,
@@ -99,42 +97,48 @@ export class PreviewComponent implements OnInit, AfterViewInit, OnDestroy {
     const currencySubscription = this.currencyService
       .getById(receipt.currency as unknown as string)
       .subscribe((currency) => {
-        let formattedDate: string | null = '';
-        let paid = 0;
-        let inReceipt = false;
+        const memberSubscription = this.memberService
+          .getById(receipt.paid, this.user)
+          .subscribe((member) => {
+            let formattedDate: string | null = '';
+            let paid = 0;
+            let inReceipt = false;
 
-        receipt.members.forEach((member) => {
-          if (typeof member === 'object' && member.id === id) {
-            paid = member.paid || 0;
-            inReceipt = true;
-          }
-        });
+            receipt.members.forEach((member) => {
+              if (typeof member === 'object' && member.id === id) {
+                paid = member.paid || 0;
+                inReceipt = true;
+              }
+            });
 
-        if (!inReceipt) {
-          return;
-        }
+            if (!inReceipt) {
+              return;
+            }
 
-        if (receipt.date) {
-          let date = receipt.date.toDate();
-          formattedDate = this.datePipe.transform(date, 'yyyy. MM. dd.');
-        }
+            if (receipt.date) {
+              let date = receipt.date.toDate();
+              formattedDate = this.datePipe.transform(date, 'yyyy. MM. dd.');
+            }
 
-        const tableRow = {
-          id: receipt.id,
-          currency: receipt.currency,
-          date: receipt.date,
-          formattedDate: formattedDate,
-          store: receipt.store,
-          user: this.user,
-          products: receipt.products,
-          sum: receipt.sum,
-          members: receipt.members,
-          symbol: currency?.symbol,
-          pays: this.calculatePrices(receipt.products, id),
-          paid: paid,
-        };
+            const tableRow = {
+              id: receipt.id,
+              currency: receipt.currency,
+              date: receipt.date,
+              formattedDate: formattedDate,
+              store: receipt.store,
+              user: this.user,
+              products: receipt.products,
+              sum: receipt.sum,
+              paid: member?.name || '*Törölt résztvevő*',
+              members: receipt.members,
+              symbol: currency?.symbol,
+              pays: this.calculatePrices(receipt.products, id),
+              paidSum: paid,
+            };
 
-        this.receiptTableData.data.push(tableRow);
+            this.receiptTableData.data.push(tableRow);
+          });
+        this.subscriptions.push(memberSubscription);
       });
     this.subscriptions.push(currencySubscription);
   }
@@ -226,8 +230,8 @@ export class PreviewComponent implements OnInit, AfterViewInit, OnDestroy {
     this.receiptService.update(this.transformReceipt(receipt));
 
     this.receiptTableData.data.forEach((row) => {
-      if ('id' in row && row.id === receipt.id && 'paid' in row) {
-        row.paid = receipt.pays;
+      if ('id' in row && row.id === receipt.id && 'paidSum' in row) {
+        row.paidSum = receipt.pays;
       }
     });
   }
@@ -242,6 +246,7 @@ export class PreviewComponent implements OnInit, AfterViewInit, OnDestroy {
       products: tableRow.products,
       sum: tableRow.sum,
       members: tableRow.members,
+      paid: tableRow.paid,
     };
 
     return receipt;

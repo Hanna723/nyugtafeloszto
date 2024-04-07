@@ -42,6 +42,9 @@
       </button>
     </div>
   </div>
+  <div class="paid" *ngIf="tableData.data.length === receipt.members.length">
+    Fizetett: {{ receipt.paid }}
+  </div>
   <table
     mat-table
     matSort

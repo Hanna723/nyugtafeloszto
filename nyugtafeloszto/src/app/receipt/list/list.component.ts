@@ -172,6 +172,7 @@ export class ListComponent implements OnInit, AfterViewInit, OnDestroy {
       products: [],
       sum: 0,
       members: [],
+      paid: '',
     };
 
     const worker = await createWorker('hun');

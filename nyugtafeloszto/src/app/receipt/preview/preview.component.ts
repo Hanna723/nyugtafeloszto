@@ -107,8 +107,14 @@ export class PreviewComponent implements OnInit, AfterViewInit, OnDestroy {
         .subscribe((currency) => {
           if (currency && this.receipt) {
             this.receipt.currency = currency;
+            this.symbol = currency.symbol;
           }
         });
+
+      if (this.receipt.date) {
+        let date = new Date(this.receipt.date as unknown as string);
+        this.receipt.formattedDate = this.datePipe.transform(date, 'yyyy. MM. dd.');
+      }
 
       this.calculatePrices();
       this.getMembersFromReceipt();
@@ -179,6 +185,10 @@ export class PreviewComponent implements OnInit, AfterViewInit, OnDestroy {
                 paid: memberData.paid,
               };
               this.members.push(member);
+            }
+
+            if (memberData.id === this.receipt?.paid && this.receipt) {
+              this.receipt.paid = member?.name || '';
             }
           });
       }

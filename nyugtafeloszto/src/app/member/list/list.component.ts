@@ -22,6 +22,8 @@ import { Member } from '../../shared/models/Member';
 import { MemberService } from 'src/app/shared/services/member.service';
 import { GroupService } from 'src/app/shared/services/group.service';
 import { Router } from '@angular/router';
+import { MatDialog } from '@angular/material/dialog';
+import { DialogComponent } from 'src/app/shared/dialog/dialog.component';
 
 @Component({
   selector: 'app-list',
@@ -46,12 +48,13 @@ export class ListComponent implements OnInit, AfterViewInit, OnDestroy {
     ]),
   });
   user?: string | null;
-  memberSubscription?: Subscription;
+  subscriptions: Subscription[] = [];
 
   constructor(
     private memberService: MemberService,
     private groupService: GroupService,
-    private router: Router
+    private router: Router,
+    public dialog: MatDialog
   ) {}
 
   ngOnInit(): void {
@@ -62,13 +65,15 @@ export class ListComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     this.progressBar = true;
-    this.memberSubscription = this.memberService
+    const memberSubscription = this.memberService
       .getAllForOneUser(JSON.parse(this.user))
       .subscribe((data) => {
         this.tableData = new MatTableDataSource(data);
         this.filteredTableData = new MatTableDataSource(data);
         this.filteredTableData.sort = this.sort;
       });
+
+    this.subscriptions.push(memberSubscription);
   }
 
   ngAfterViewInit(): void {
@@ -81,7 +86,9 @@ export class ListComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.memberSubscription?.unsubscribe();
+    this.subscriptions.forEach((subscription) => {
+      subscription.unsubscribe();
+    });
   }
 
   onSubmit() {
@@ -154,18 +161,30 @@ export class ListComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   deleteMember(member: Member) {
-    if (member.id && this.user) {
-      this.memberService.delete(member.id);
+    const deleteDialogRef = this.dialog.open(DialogComponent, {
+      disableClose: true,
+      data: {
+        title: 'Figyelem! A résztvevő véglegesen törlődik.',
+        button: 'Mégsem',
+        submitButton: 'Ok',
+      },
+    });
 
-      this.groupService
-        .getByMember(JSON.parse(this.user), member.id)
-        .subscribe((data) => {
-          data.forEach((group) => {
-            group.members = group.members.filter((el) => el !== member.id);
-            this.groupService.update(group);
-          });
-        });
-    }
+    const deleteDialogSubscripton =
+      deleteDialogRef.componentInstance.submitEvent.subscribe(() => {
+        if (member.id && this.user) {
+          this.memberService.delete(member.id);
+
+          this.groupService
+            .getByMember(JSON.parse(this.user), member.id)
+            .subscribe((data) => {
+              data.forEach((group) => {
+                group.members = group.members.filter((el) => el !== member.id);
+                this.groupService.update(group);
+              });
+            });
+        }
+      });
   }
 
   navigateToPreview(member: Member) {

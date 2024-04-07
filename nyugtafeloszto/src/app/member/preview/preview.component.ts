@@ -1,6 +1,8 @@
 import { AfterViewInit, Component, OnDestroy, OnInit } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
+import { DialogComponent } from 'src/app/shared/dialog/dialog.component';
 import { Member } from 'src/app/shared/models/Member';
 import { Receipt } from 'src/app/shared/models/Receipt';
 import { GroupService } from 'src/app/shared/services/group.service';
@@ -24,7 +26,8 @@ export class PreviewComponent implements OnInit, AfterViewInit, OnDestroy {
     private groupService: GroupService,
     private receiptService: ReceiptService,
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    public dialog: MatDialog
   ) {}
 
   ngOnInit(): void {
@@ -42,7 +45,6 @@ export class PreviewComponent implements OnInit, AfterViewInit, OnDestroy {
             this.router.navigateByUrl('/member/list');
           }
           this.member = data;
-          console.log(data);
         });
 
       const receiptSubscription = this.receiptService
@@ -70,19 +72,39 @@ export class PreviewComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   deleteMember() {
-    if (!this.member?.id) {
-      return;
-    }
+    const deleteDialogRef = this.dialog.open(DialogComponent, {
+      disableClose: true,
+      data: {
+        title: 'Figyelem! A résztvevő véglegesen törlődik.',
+        button: 'Mégsem',
+        submitButton: 'Ok',
+      },
+    });
 
-    this.memberService.delete(this.member.id);
+    const deleteDialogSubscription =
+      deleteDialogRef.componentInstance.submitEvent.subscribe(() => {
+        if (!this.member?.id) {
+          return;
+        }
 
-    this.groupService
-      .getByMember(this.user, this.member.id)
-      .subscribe((data) => {
-        data.forEach((group) => {
-          group.members = group.members.filter((el) => el !== this.member?.id);
-          this.groupService.update(group);
-        });
+        this.progressBar = true;
+        this.memberService.delete(this.member.id);
+
+        this.groupService
+          .getByMember(this.user, this.member.id)
+          .subscribe((data) => {
+            data.forEach((group) => {
+              group.members = group.members.filter(
+                (el) => el !== this.member?.id
+              );
+              this.groupService.update(group);
+            });
+          });
+
+        this.progressBar = false;
+        this.router.navigateByUrl('member/list');
       });
+
+    this.subscriptions.push(deleteDialogSubscription);
   }
 }

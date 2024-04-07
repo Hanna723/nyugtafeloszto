@@ -162,12 +162,21 @@ export class PreviewComponent implements OnInit, AfterViewInit, OnDestroy {
         return;
       }
       if (this.user && memberData.id) {
+        console.log(memberData.id);
         this.memberSubscription = this.memberService
           .getById(memberData.id, this.user)
           .subscribe((member) => {
             if (member && member.id) {
               member.pays = this.needToPay.get(member.id) || 0;
               member.paid = memberData.paid;
+              this.members.push(member);
+            } else if (!member && memberData.id) {
+              member = {
+                id: memberData.id,
+                name: '*Törölt résztvevő*',
+                pays: this.needToPay.get(memberData.id),
+                paid: memberData.paid,
+              };
               this.members.push(member);
             }
           });

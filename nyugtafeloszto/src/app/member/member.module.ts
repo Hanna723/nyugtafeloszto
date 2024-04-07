@@ -13,6 +13,7 @@ import { ListComponent } from './list/list.component';
 import { MemberRoutingModule } from './member-routing.module';
 import { MatIconModule } from '@angular/material/icon';
 import { PreviewComponent } from './preview/preview.component';
+import { MatDialogModule } from '@angular/material/dialog';
 @NgModule({
   declarations: [ListComponent, PreviewComponent],
   imports: [
@@ -27,6 +28,7 @@ import { PreviewComponent } from './preview/preview.component';
     MatSortModule,
     MatIconModule,
     MatProgressBarModule,
+    MatDialogModule
   ],
 })
 export class MemberModule {}

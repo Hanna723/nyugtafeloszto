@@ -379,4 +379,10 @@ export class PreviewComponent implements OnInit, AfterViewInit, OnDestroy {
       }
     );
   }
+
+  navigateToMemberPreview(member: Member) {
+    if (member.name !== '*Törölt résztvevő*') {
+      this.router.navigateByUrl(`/member/${member.id}`);
+    }
+  }
 }

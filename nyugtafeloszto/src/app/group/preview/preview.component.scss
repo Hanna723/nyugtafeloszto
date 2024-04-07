@@ -9,6 +9,14 @@ table {
   margin-top: 32px;
 }
 
+tr[mat-row] {
+  cursor: pointer;
+}
+
+tr[mat-row]:hover {
+  background-color: whitesmoke;
+}
+
 @media only screen and (max-width: 550px) {
   .name {
     max-width: 60vw;

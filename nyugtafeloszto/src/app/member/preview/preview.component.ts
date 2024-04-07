@@ -1,10 +1,24 @@
-import { AfterViewInit, Component, OnDestroy, OnInit } from '@angular/core';
+import { DatePipe } from '@angular/common';
+import {
+  AfterViewInit,
+  Component,
+  OnDestroy,
+  OnInit,
+  ViewChild,
+} from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { MatSort } from '@angular/material/sort';
+import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
+import { PaidComponent } from 'src/app/receipt/paid/paid.component';
 import { DialogComponent } from 'src/app/shared/dialog/dialog.component';
+import { Currency } from 'src/app/shared/models/Currency';
+import { Group } from 'src/app/shared/models/Group';
 import { Member } from 'src/app/shared/models/Member';
+import { Product } from 'src/app/shared/models/Product';
 import { Receipt } from 'src/app/shared/models/Receipt';
+import { CurrencyService } from 'src/app/shared/services/currency.service';
 import { GroupService } from 'src/app/shared/services/group.service';
 import { MemberService } from 'src/app/shared/services/member.service';
 import { ReceiptService } from 'src/app/shared/services/receipt.service';
@@ -15,16 +29,25 @@ import { ReceiptService } from 'src/app/shared/services/receipt.service';
   styleUrls: ['./preview.component.scss'],
 })
 export class PreviewComponent implements OnInit, AfterViewInit, OnDestroy {
+  @ViewChild('groupTable') groupSort!: MatSort;
+  @ViewChild('receiptTable') receiptSort!: MatSort;
+
   progressBar: boolean = false;
   user!: string;
   member?: Member;
-  receipts: Array<Receipt> = [];
   subscriptions: Subscription[] = [];
+
+  groupTableData: MatTableDataSource<Group> = new MatTableDataSource();
+  receiptTableData: MatTableDataSource<object> = new MatTableDataSource();
+  groupColumnsToDisplay = ['name'];
+  receiptColumnsToDisplay = ['store', 'date', 'pays', 'paid', 'edit'];
 
   constructor(
     private memberService: MemberService,
     private groupService: GroupService,
     private receiptService: ReceiptService,
+    private currencyService: CurrencyService,
+    private datePipe: DatePipe,
     private route: ActivatedRoute,
     private router: Router,
     public dialog: MatDialog
@@ -47,19 +70,104 @@ export class PreviewComponent implements OnInit, AfterViewInit, OnDestroy {
           this.member = data;
         });
 
+      const groupSubscription = this.groupService
+        .getByMember(this.user, id)
+        .subscribe((data) => {
+          this.groupTableData = new MatTableDataSource(data);
+          this.groupTableData.sort = this.groupSort;
+        });
+
       const receiptSubscription = this.receiptService
         .getAllForOneUser(this.user)
         .subscribe((data) => {
-          console.log(data);
+          this.receiptTableData.sort = this.receiptSort;
+
+          data.forEach((el) => {
+            this.addReceiptToTableData(el, id);
+          });
         });
 
-      this.subscriptions.push(memberSubscription, receiptSubscription);
+      this.subscriptions.push(
+        memberSubscription,
+        groupSubscription,
+        receiptSubscription
+      );
     }
+  }
+
+  addReceiptToTableData(receipt: Receipt, id: string) {
+    const currencySubscription = this.currencyService
+      .getById(receipt.currency as unknown as string)
+      .subscribe((currency) => {
+        let formattedDate: string | null = '';
+        let paid = 0;
+        let inReceipt = false;
+
+        receipt.members.forEach((member) => {
+          if (typeof member === 'object' && member.id === id) {
+            paid = member.paid || 0;
+            inReceipt = true;
+          }
+        });
+
+        if (!inReceipt) {
+          return;
+        }
+
+        if (receipt.date) {
+          let date = receipt.date.toDate();
+          formattedDate = this.datePipe.transform(date, 'yyyy. MM. dd.');
+        }
+
+        const tableRow = {
+          id: receipt.id,
+          currency: receipt.currency,
+          date: receipt.date,
+          formattedDate: formattedDate,
+          store: receipt.store,
+          user: this.user,
+          products: receipt.products,
+          sum: receipt.sum,
+          members: receipt.members,
+          symbol: currency?.symbol,
+          pays: this.calculatePrices(receipt.products, id),
+          paid: paid,
+        };
+
+        this.receiptTableData.data.push(tableRow);
+      });
+    this.subscriptions.push(currencySubscription);
+  }
+
+  calculatePrices(products: Product[], id: string) {
+    let needToPay = 0;
+
+    products.forEach((product) => {
+      if (product.pays.includes(id)) {
+        needToPay += product.price / product.pays.length;
+      }
+    });
+
+    return needToPay;
   }
 
   ngAfterViewInit(): void {
     setTimeout(() => {
       setTimeout(() => {
+        if (this.groupSort) {
+          this.groupSort.sort({
+            id: 'name',
+            start: 'asc',
+            disableClear: false,
+          });
+        }
+        if (this.receiptSort) {
+          this.receiptSort.sort({
+            id: 'date',
+            start: 'desc',
+            disableClear: false,
+          });
+        }
         this.progressBar = false;
       });
     }, 900);
@@ -106,5 +214,52 @@ export class PreviewComponent implements OnInit, AfterViewInit, OnDestroy {
       });
 
     this.subscriptions.push(deleteDialogSubscription);
+  }
+
+  payReceipt(receipt: any) {
+    receipt.members.forEach((receiptMember: Member) => {
+      if (receiptMember.id === this.member?.id) {
+        receiptMember.paid = receipt.pays;
+      }
+    });
+
+    this.receiptService.update(this.transformReceipt(receipt));
+
+    this.receiptTableData.data.forEach((row) => {
+      if ('id' in row && row.id === receipt.id && 'paid' in row) {
+        row.paid = receipt.pays;
+      }
+    });
+  }
+
+  transformReceipt(tableRow: any): Receipt {
+    let receipt: Receipt = {
+      id: tableRow.id,
+      currency: tableRow.currency,
+      date: tableRow.date,
+      store: tableRow.store,
+      user: tableRow.user,
+      products: tableRow.products,
+      sum: tableRow.sum,
+      members: tableRow.members,
+    };
+
+    return receipt;
+  }
+
+  sortGroupData() {
+    this.groupTableData.sort = this.groupSort;
+  }
+
+  sortReceiptData() {
+    this.receiptTableData.sort = this.receiptSort;
+  }
+
+  navigateToGroupPreview(group: Group) {
+    this.router.navigateByUrl(`group/${group.id}`);
+  }
+
+  navigateToReceiptPreview(receipt: Receipt) {
+    this.router.navigateByUrl(`receipt/${receipt.id}`);
   }
 }

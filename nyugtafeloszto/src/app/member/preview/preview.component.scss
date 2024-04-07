@@ -1,0 +1,15 @@
+tr[mat-row] {
+    cursor: pointer;
+}
+
+tr[mat-row]:hover {
+    background-color: whitesmoke;
+}
+
+.sub-header {
+    margin: 12px 0;
+}
+
+.sub-header:last-of-type {
+    margin-top: 24px;
+}

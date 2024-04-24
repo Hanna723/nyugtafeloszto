@@ -2,7 +2,7 @@
   "hosting": [
     {
       "target": "nyugtafeloszto",
-      "source": ".",
+      "public": "dist/nyugtafeloszto",
       "frameworksBackend": {}
     }
   ],

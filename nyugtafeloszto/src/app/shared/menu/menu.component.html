@@ -26,7 +26,7 @@
       <a *ngIf="localUser" routerLink="/receipt/list" fxHide.xs>Nyugták</a>
       <a *ngIf="!localUser" routerLink="/receipt/new" fxHide.xs>Új nyugta</a>
       <a *ngIf="!localUser" routerLink="/auth/login" fxHide.xs>Bejelentkezés</a>
-      <img *ngIf="localUser" [matMenuTriggerFor]="menu" [src]="image" />
+      <img *ngIf="localUser" [matMenuTriggerFor]="menu" [src]="image" alt="Profilkép" />
       <mat-menu #menu="matMenu">
         <button mat-menu-item routerLink="/profile">Profil</button>
         <button mat-menu-item routerLink="/home" (click)="logOut()">

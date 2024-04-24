@@ -191,7 +191,7 @@ export class PreviewComponent implements OnInit, AfterViewInit, OnDestroy {
             }
 
             if (memberData.id === this.receipt?.paid && this.receipt) {
-              this.receipt.paid = member?.name || '';
+              this.receipt.paid = member?.name || '*Törölt résztvevő*';
             }
           });
       }

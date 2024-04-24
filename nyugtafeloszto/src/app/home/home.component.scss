@@ -3,37 +3,36 @@
 @import "../../styles.scss";
 
 div {
-    margin: 100px auto;
-    display: flex;
-    flex-direction: row;
-    column-gap: 50px;
-    row-gap: 50px;
-    flex-wrap: wrap;
-    justify-content: center;
+  margin: 100px auto;
+  display: flex;
+  flex-direction: row;
+  column-gap: 50px;
+  row-gap: 50px;
+  flex-wrap: wrap;
+  justify-content: center;
 }
 
 mat-card {
-    width: 300px;
-    background-color: mat.get-color-from-palette($primary-palette, default);
-    cursor: pointer;
+  width: 300px;
+  background-color: mat.get-color-from-palette($primary-palette, default);
+  cursor: pointer;
 }
 
 mat-card:hover {
-    background-color: mat.get-color-from-palette($primary-palette, 300);
+  background-color: mat.get-color-from-palette($primary-palette, 300);
 }
 
 mat-card-title {
-    margin-bottom: 16px;
-    color: $primary-white;
+  margin-bottom: 16px;
+  color: $primary-white;
 }
 
 img {
-    padding: 16px;
+  padding: 16px;
 }
 
 @media only screen and (max-width: 400px) {
-    mat-card {
-        width: 200px;
-    }
-    
+  mat-card {
+    width: 200px;
+  }
 }

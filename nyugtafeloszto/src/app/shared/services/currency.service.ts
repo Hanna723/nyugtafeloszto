@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
-import { Currency } from '../models/Currency';
 import { first } from 'rxjs';
+
+import { Currency } from '../models/Currency';
 
 @Injectable({
   providedIn: 'root',

@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { CommonModule, DatePipe, NgFor } from '@angular/common';
+import { CommonModule, DatePipe } from '@angular/common';
 import { MatTableModule } from '@angular/material/table';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
@@ -14,14 +14,14 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { MatSortModule } from '@angular/material/sort';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatSelectModule } from '@angular/material/select';
 
 import { ListComponent } from './list/list.component';
 import { ReceiptRoutingModule } from './receipt-routing.module';
 import { EditComponent } from './edit/edit.component';
 import { PreviewComponent } from './preview/preview.component';
-import { MatCheckboxModule } from '@angular/material/checkbox';
 import { PaidComponent } from './paid/paid.component';
-import { MatSelectModule } from '@angular/material/select';
 
 @NgModule({
   declarations: [ListComponent, EditComponent, PreviewComponent, PaidComponent],
@@ -43,7 +43,7 @@ import { MatSelectModule } from '@angular/material/select';
     MatMenuModule,
     MatProgressBarModule,
     MatCheckboxModule,
-    MatSelectModule
+    MatSelectModule,
   ],
   providers: [
     DatePipe,

@@ -24,7 +24,8 @@
   .list-container {
     width: 100%;
 
-    td:first-of-type, th:first-of-type {
+    td:first-of-type,
+    th:first-of-type {
       max-width: 250px;
       width: 60vw;
     }
@@ -32,20 +33,23 @@
 }
 
 @media only screen and (max-width: 515px) {
-  td, th {
+  td,
+  th {
     padding: 0 8px;
   }
-  
-  .list-container td:nth-of-type(2), .list-container th:nth-of-type(2) {
+
+  .list-container td:nth-of-type(2),
+  .list-container th:nth-of-type(2) {
     display: none;
   }
 }
 
 @media only screen and (max-width: 342px) {
-    .list-container {
-        td:first-of-type, th:first-of-type {
-          max-width: 150px;
-          width: 40vw;
-        }
-      }
+  .list-container {
+    td:first-of-type,
+    th:first-of-type {
+      max-width: 150px;
+      width: 40vw;
+    }
   }
+}

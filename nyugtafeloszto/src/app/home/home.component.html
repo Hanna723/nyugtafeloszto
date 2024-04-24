@@ -1,4 +1,8 @@
-<mat-progress-bar mode="indeterminate" color="accent" *ngIf="progressBar"></mat-progress-bar>
+<mat-progress-bar
+  mode="indeterminate"
+  color="accent"
+  *ngIf="progressBar"
+></mat-progress-bar>
 <div>
   <mat-card routerLink="/member/list" *ngIf="user && images">
     <img mat-card-image [src]="images.member" alt="Résztvevők" />
@@ -12,7 +16,10 @@
       <mat-card-title>Csoportok</mat-card-title>
     </mat-card-header>
   </mat-card>
-  <mat-card *ngIf="images" [routerLink]="user ? '/receipt/list' : '/receipt/new'">
+  <mat-card
+    *ngIf="images"
+    [routerLink]="user ? '/receipt/list' : '/receipt/new'"
+  >
     <img mat-card-image [src]="images.receipt" alt="Nyugták" />
     <mat-card-header>
       <mat-card-title>{{ user ? "Nyugták" : "Új nyugta" }}</mat-card-title>

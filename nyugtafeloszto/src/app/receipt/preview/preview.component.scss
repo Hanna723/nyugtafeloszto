@@ -27,7 +27,8 @@ tr[mat-row]:hover {
 }
 
 @media only screen and (max-width: 550px) {
-  td, .store {
+  td,
+  .store {
     max-width: 60vw;
   }
 

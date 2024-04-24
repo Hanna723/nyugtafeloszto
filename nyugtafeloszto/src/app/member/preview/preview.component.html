@@ -14,9 +14,7 @@
       </button>
     </div>
   </div>
-  <div class="sub-header">
-    Csoportok:
-  </div>
+  <div class="sub-header">Csoportok:</div>
   <table
     #groupTable="matSort"
     mat-table
@@ -44,9 +42,7 @@
       (click)="navigateToGroupPreview(row)"
     ></tr>
   </table>
-  <div class="sub-header">
-    Nyugták:
-  </div>
+  <div class="sub-header">Nyugták:</div>
   <table
     #receiptTable="matSort"
     mat-table
@@ -69,7 +65,9 @@
         mat-cell
         *matCellDef="let element"
         (click)="navigateToReceiptPreview(element)"
-        [ngStyle]="{ color: element.pays !== element.paidSum ? 'red' : 'initial' }"
+        [ngStyle]="{
+          color: element.pays !== element.paidSum ? 'red' : 'initial'
+        }"
       >
         {{ element.paid }}
       </td>
@@ -87,7 +85,9 @@
         mat-cell
         *matCellDef="let element"
         (click)="navigateToReceiptPreview(element)"
-        [ngStyle]="{ color: element.pays !== element.paidSum ? 'red' : 'initial' }"
+        [ngStyle]="{
+          color: element.pays !== element.paidSum ? 'red' : 'initial'
+        }"
       >
         {{ element.formattedDate }}
       </td>
@@ -125,15 +125,16 @@
         mat-cell
         *matCellDef="let element"
         (click)="navigateToReceiptPreview(element)"
-        [ngStyle]="{ color: element.pays !== element.paidSum ? 'red' : 'initial' }"
+        [ngStyle]="{
+          color: element.pays !== element.paidSum ? 'red' : 'initial'
+        }"
       >
         {{ element.paidSum }}
         {{ element.symbol }}
       </td>
     </ng-container>
     <ng-container matColumnDef="edit" *ngIf="user">
-      <th mat-header-cell *matHeaderCellDef>
-      </th>
+      <th mat-header-cell *matHeaderCellDef></th>
       <th mat-header-cell *matHeaderCellDef></th>
       <td mat-cell *matCellDef="let element">
         <mat-checkbox

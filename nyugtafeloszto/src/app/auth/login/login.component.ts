@@ -95,7 +95,7 @@ export class LoginComponent implements OnInit, OnDestroy {
         const dialogRef = this.dialog.open(PasswordChangeComponent, {
           data: {
             auth: this.auth,
-            actionCode: this.actionCode
+            actionCode: this.actionCode,
           },
           disableClose: true,
         });

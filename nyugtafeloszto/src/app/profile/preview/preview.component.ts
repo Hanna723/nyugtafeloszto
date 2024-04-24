@@ -6,8 +6,8 @@ import {
   OnInit,
   Output,
 } from '@angular/core';
-import { Subscription } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
+import { Subscription } from 'rxjs';
 
 import { User } from 'src/app/shared/models/User';
 import { ImageService } from 'src/app/shared/services/image.service';

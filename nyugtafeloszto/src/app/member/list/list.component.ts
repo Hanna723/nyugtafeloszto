@@ -16,13 +16,13 @@ import {
 } from '@angular/forms';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
+import { Router } from '@angular/router';
+import { MatDialog } from '@angular/material/dialog';
 import { Subscription } from 'rxjs';
 
 import { Member } from '../../shared/models/Member';
 import { MemberService } from 'src/app/shared/services/member.service';
 import { GroupService } from 'src/app/shared/services/group.service';
-import { Router } from '@angular/router';
-import { MatDialog } from '@angular/material/dialog';
 import { DialogComponent } from 'src/app/shared/dialog/dialog.component';
 
 @Component({

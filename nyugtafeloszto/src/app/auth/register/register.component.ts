@@ -2,12 +2,12 @@ import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { FirebaseError } from '@firebase/util';
 import { MatDialog } from '@angular/material/dialog';
+import { Router } from '@angular/router';
 
 import { AuthService } from 'src/app/shared/services/auth.service';
 import { UserService } from 'src/app/shared/services/user.service';
 import { User } from 'src/app/shared/models/User';
 import { DialogComponent } from 'src/app/shared/dialog/dialog.component';
-import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-register',
@@ -54,7 +54,7 @@ export class RegisterComponent implements OnInit {
           email: this.registrationForm.controls['email'].value,
           hasProfilePicture: false,
           admin: false,
-          lastLogin: null
+          lastLogin: null,
         };
         this.userService
           .create(user)
@@ -86,7 +86,7 @@ export class RegisterComponent implements OnInit {
 
   handleError(err: { code: any }): void {
     this.progressBar = false;
-    
+
     let errorName = 'error';
     if (err instanceof FirebaseError) {
       switch (err.code) {

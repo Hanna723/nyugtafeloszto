@@ -12,10 +12,10 @@ import { MatIconModule } from '@angular/material/icon';
 import { PreviewComponent } from './preview/preview.component';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MAT_DATE_LOCALE } from '@angular/material/core';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 
 import { ListComponent } from './list/list.component';
 import { MemberRoutingModule } from './member-routing.module';
-import { MatCheckboxModule } from '@angular/material/checkbox';
 @NgModule({
   declarations: [ListComponent, PreviewComponent],
   imports: [

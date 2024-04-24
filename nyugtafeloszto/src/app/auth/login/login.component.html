@@ -41,7 +41,13 @@
         >Helytelen e-mail cím vagy jelszó!</mat-error
       >
     </mat-form-field>
-    <button mat-button color="accent" type="button" id="forgot-password" (click)="sendPasswordResetEmail()">
+    <button
+      mat-button
+      color="accent"
+      type="button"
+      id="forgot-password"
+      (click)="sendPasswordResetEmail()"
+    >
       Elfelejtett jelszó?
     </button>
     <mat-checkbox formControlName="rememberMe">Emlékezz rám!</mat-checkbox>

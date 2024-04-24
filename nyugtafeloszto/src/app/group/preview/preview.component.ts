@@ -7,6 +7,9 @@ import {
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
+import { MatSort } from '@angular/material/sort';
+import { MatTableDataSource } from '@angular/material/table';
+import { Subscription } from 'rxjs';
 
 import { Group } from 'src/app/shared/models/Group';
 import { Member } from 'src/app/shared/models/Member';
@@ -14,9 +17,6 @@ import { GroupService } from 'src/app/shared/services/group.service';
 import { MemberService } from 'src/app/shared/services/member.service';
 import { EditComponent } from '../edit/edit.component';
 import { DialogComponent } from 'src/app/shared/dialog/dialog.component';
-import { Subscription } from 'rxjs';
-import { MatSort } from '@angular/material/sort';
-import { MatTableDataSource } from '@angular/material/table';
 
 @Component({
   selector: 'app-preview',

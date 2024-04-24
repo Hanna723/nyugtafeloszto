@@ -8,7 +8,7 @@ describe('EditComponent', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [PasswordChangeComponent]
+      declarations: [PasswordChangeComponent],
     });
     fixture = TestBed.createComponent(PasswordChangeComponent);
     component = fixture.componentInstance;

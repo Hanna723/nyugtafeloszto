@@ -15,7 +15,11 @@ import {
   FormGroup,
   Validators,
 } from '@angular/forms';
+import { MatChipInputEvent } from '@angular/material/chips';
+import { MatAutocompleteActivatedEvent } from '@angular/material/autocomplete';
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
+import { ActivatedRoute, Router } from '@angular/router';
+import { Subscription } from 'rxjs';
 
 import { Currency } from 'src/app/shared/models/Currency';
 import { Group } from 'src/app/shared/models/Group';
@@ -23,14 +27,9 @@ import { Member } from 'src/app/shared/models/Member';
 import { CurrencyService } from 'src/app/shared/services/currency.service';
 import { GroupService } from 'src/app/shared/services/group.service';
 import { MemberService } from 'src/app/shared/services/member.service';
-import { MatChipInputEvent } from '@angular/material/chips';
-import { MatAutocompleteActivatedEvent } from '@angular/material/autocomplete';
 import { Receipt } from 'src/app/shared/models/Receipt';
 import { Product } from 'src/app/shared/models/Product';
 import { ReceiptService } from 'src/app/shared/services/receipt.service';
-import { ActivatedRoute, Router } from '@angular/router';
-import { Subscription } from 'rxjs';
-import { Timestamp } from 'firebase/firestore';
 
 @Component({
   selector: 'app-edit',

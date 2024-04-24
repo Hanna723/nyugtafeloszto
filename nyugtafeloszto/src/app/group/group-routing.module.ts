@@ -14,7 +14,7 @@ const routes: Routes = [
       },
       {
         path: ':id',
-        component: PreviewComponent
+        component: PreviewComponent,
       },
       {
         path: '**',

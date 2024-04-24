@@ -11,6 +11,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
+import { Timestamp } from 'firebase/firestore';
 import { Subscription } from 'rxjs';
 import { createWorker } from 'tesseract.js';
 
@@ -20,7 +21,6 @@ import { ReceiptService } from 'src/app/shared/services/receipt.service';
 import { DialogComponent } from 'src/app/shared/dialog/dialog.component';
 import { Product } from 'src/app/shared/models/Product';
 import { Currency } from 'src/app/shared/models/Currency';
-import { Timestamp } from 'firebase/firestore';
 
 @Component({
   selector: 'app-list',

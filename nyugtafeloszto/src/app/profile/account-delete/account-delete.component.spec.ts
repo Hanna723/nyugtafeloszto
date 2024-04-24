@@ -8,7 +8,7 @@ describe('AccountDeleteComponent', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [AccountDeleteComponent]
+      declarations: [AccountDeleteComponent],
     });
     fixture = TestBed.createComponent(AccountDeleteComponent);
     component = fixture.componentInstance;

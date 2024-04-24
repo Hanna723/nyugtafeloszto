@@ -13,8 +13,8 @@ import { MatTableDataSource } from '@angular/material/table';
 import { SafeUrl } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
-import { DialogComponent } from 'src/app/shared/dialog/dialog.component';
 
+import { DialogComponent } from 'src/app/shared/dialog/dialog.component';
 import { Member } from 'src/app/shared/models/Member';
 import { Receipt } from 'src/app/shared/models/Receipt';
 import { CurrencyService } from 'src/app/shared/services/currency.service';
@@ -113,7 +113,10 @@ export class PreviewComponent implements OnInit, AfterViewInit, OnDestroy {
 
       if (this.receipt.date) {
         let date = new Date(this.receipt.date as unknown as string);
-        this.receipt.formattedDate = this.datePipe.transform(date, 'yyyy. MM. dd.');
+        this.receipt.formattedDate = this.datePipe.transform(
+          date,
+          'yyyy. MM. dd.'
+        );
       }
 
       this.calculatePrices();

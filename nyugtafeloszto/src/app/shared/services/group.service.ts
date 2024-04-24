@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
+import { first } from 'rxjs';
 
 import { Group } from '../models/Group';
-import { first } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -45,7 +45,9 @@ export class GroupService {
   getByMember(userId: string, memberId: string) {
     return this.angularFirestore
       .collection<Group>(this.collectionName, (ref) =>
-        ref.where('user', '==', userId).where('members', 'array-contains', memberId)
+        ref
+          .where('user', '==', userId)
+          .where('members', 'array-contains', memberId)
       )
       .valueChanges();
   }

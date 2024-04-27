@@ -18,7 +18,7 @@
       <mat-error *ngIf="memberForm.controls['name'].errors?.['exists']"
         >A név már foglalt!</mat-error
       >
-      <mat-error *ngIf="memberForm.controls['name'].errors?.['deleted']"
+      <mat-error *ngIf="memberForm.controls['name'].errors?.['invalid']"
         >Ez a név nem adható résztvevőkek!</mat-error
       >
     </mat-form-field>

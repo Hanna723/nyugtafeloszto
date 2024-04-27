@@ -40,6 +40,7 @@ export class EditComponent implements OnInit, OnDestroy {
       Validators.required,
       Validators.maxLength(100),
       Validators.pattern(/^(\s+\S+\s*)*(?!\s).*$/),
+      this.invalidNameValidator(),
       this.existenceValidator(),
     ]),
     members: this.formBuilder.array([]),
@@ -228,6 +229,20 @@ export class EditComponent implements OnInit, OnDestroy {
       });
 
       return exists ? { exists: true } : null;
+    };
+  }
+
+  invalidNameValidator(): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      const value = control.value.trim();
+
+      if (!value) {
+        return null;
+      }
+
+      return value === '*Törölt résztvevő*' || value === 'Mindenki'
+        ? { invalid: true }
+        : null;
     };
   }
 }

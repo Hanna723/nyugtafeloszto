@@ -43,7 +43,7 @@ export class ListComponent implements OnInit, AfterViewInit, OnDestroy {
       Validators.required,
       Validators.maxLength(100),
       Validators.pattern(/^(\s+\S+\s*)*(?!\s).*$/),
-      this.deletedMemberValidator(),
+      this.invalidNameValidator(),
       this.existenceValidator(),
     ]),
   });
@@ -148,7 +148,7 @@ export class ListComponent implements OnInit, AfterViewInit, OnDestroy {
     };
   }
 
-  deletedMemberValidator(): ValidatorFn {
+  invalidNameValidator(): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
       const value = control.value.trim();
 
@@ -156,7 +156,9 @@ export class ListComponent implements OnInit, AfterViewInit, OnDestroy {
         return null;
       }
 
-      return value === '*Törölt résztvevő*' ? { deleted: true } : null;
+      return value === '*Törölt résztvevő*' || value === 'Mindenki'
+        ? { invalid: true }
+        : null;
     };
   }
 

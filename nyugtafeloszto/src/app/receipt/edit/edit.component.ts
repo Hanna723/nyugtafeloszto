@@ -578,7 +578,7 @@ export class EditComponent implements OnInit, AfterViewInit, OnDestroy {
     const receipt: Receipt = {
       user: this.uid || '',
       store: this.receiptForm.controls['store'].value,
-      date: this.receiptForm.controls['date'].value,
+      date: this.receiptForm.controls['date'].value || null,
       currency: this.receiptForm.controls['currency'].value.id,
       sum: sum,
       paid: this.receiptForm.controls['paid'].value,

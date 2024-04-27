@@ -56,7 +56,11 @@ export class AppComponent implements OnInit, OnDestroy {
 
   onComponentChange(componentRef: any): void {
     if (componentRef instanceof HomeComponent) {
-      this.menu.localUser = localStorage.getItem('user');
+      const localUser = localStorage.getItem('user');
+
+      if (localUser) {
+        this.menu.localUser = JSON.parse(localUser);
+      }
     }
 
     if (!(componentRef instanceof PreviewComponent)) {

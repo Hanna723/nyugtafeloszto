@@ -5,7 +5,7 @@ import { Subscription } from 'rxjs';
 
 import { AuthService } from '../services/auth.service';
 import { ImageService } from '../services/image.service';
-import { User } from '../models/User';
+import { UserService } from '../services/user.service';
 
 @Component({
   selector: 'app-menu',
@@ -15,30 +15,40 @@ import { User } from '../models/User';
 export class MenuComponent implements OnInit, OnDestroy {
   @ViewChild('sidenav') sidenav?: MatSidenav;
   @Input() image?: string;
-  @Input() user?: User;
   @Input() localUser?: string | null;
   routerSubscription?: Subscription;
   imageSubscription?: Subscription;
+  userSubscription?: Subscription;
 
   constructor(
     private router: Router,
     private authService: AuthService,
+    private userService: UserService,
     private imageService: ImageService
   ) {}
 
   ngOnInit(): void {
-    this.localUser = localStorage.getItem('user');
+    const localUser = localStorage.getItem('user');
+    if (localUser) {
+      this.localUser = JSON.parse(localUser);
+    }
     const image = localStorage.getItem('profilePicture');
 
-    if (image) {
+    if (image && this.localUser) {
       this.image = image;
-    } else {
-      const imageName = this.user?.hasProfilePicture ? this.user.id : 'default';
-      this.imageSubscription = this.imageService
-        .getImage(`profile/${imageName}.png`)
-        .subscribe((image) => {
-          this.image = image;
-          localStorage.setItem('profilePicture', image);
+    } else if (this.localUser) {
+      this.userSubscription = this.userService
+        .getById(this.localUser)
+        .subscribe((user) => {
+          const imageName = user?.hasProfilePicture
+            ? this.localUser
+            : 'default';
+          this.imageSubscription = this.imageService
+            .getImage(`profile/${imageName}.png`)
+            .subscribe((image) => {
+              this.image = image;
+              localStorage.setItem('profilePicture', image);
+            });
         });
     }
 
@@ -50,6 +60,7 @@ export class MenuComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.routerSubscription?.unsubscribe();
     this.imageSubscription?.unsubscribe();
+    this.userSubscription?.unsubscribe();
   }
 
   logOut(): void {

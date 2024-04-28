@@ -69,17 +69,24 @@ export class AppComponent implements OnInit, OnDestroy {
       if (localUser) {
         this.menu.localUser = JSON.parse(localUser);
 
-        const imageName = this.user?.hasProfilePicture
-          ? this.localUser
-          : 'default';
-        this.imageSubscription = this.imageService
-          .getImage(`profile/${imageName}.png`)
-          .subscribe((image) => {
-            this.menu.image = image;
-            localStorage.setItem('profilePicture', image);
+        this.userSubscription = this.userService
+          .getById(JSON.parse(localUser))
+          .subscribe((user) => {
+            this.user = user;
+            const imageName = this.user?.hasProfilePicture
+              ? JSON.parse(localUser)
+              : 'default';
+
+            this.imageSubscription = this.imageService
+              .getImage(`profile/${imageName}.png`)
+              .subscribe((image) => {
+                this.menu.image = image;
+                localStorage.setItem('profilePicture', image);
+              });
           });
       } else {
         this.menu.localUser = null;
+        this.menu.image = null;
       }
     }
 

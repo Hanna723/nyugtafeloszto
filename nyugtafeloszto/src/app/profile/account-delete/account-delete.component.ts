@@ -95,6 +95,7 @@ export class AccountDeleteComponent implements OnInit {
           this.authService.delete().then(() => {
             this.authService.logOut().then(() => {
               localStorage.removeItem('user');
+              localStorage.removeItem('profilePicture');
               this.close();
               this.progressEvent.emit(false);
               this.router.navigateByUrl('/auth/login');

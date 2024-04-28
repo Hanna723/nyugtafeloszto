@@ -7,6 +7,8 @@ import { UserService } from './shared/services/user.service';
 import { User } from './shared/models/User';
 import { HomeComponent } from './home/home.component';
 import { MenuComponent } from './shared/menu/menu.component';
+import { LoginComponent } from './auth/login/login.component';
+import { ImageService } from './shared/services/image.service';
 
 @Component({
   selector: 'app-root',
@@ -18,17 +20,19 @@ export class AppComponent implements OnInit, OnDestroy {
   title = 'nyugtafeloszto';
 
   firebaseUser?: firebase.default.User | null;
-  user?: User;
+  user?: User | null;
   localUser?: string | null;
   image?: string;
   componentRef?: any;
 
   authSubscription?: Subscription;
   userSubscription?: Subscription;
+  imageSubscription?: Subscription;
 
   constructor(
     private authService: AuthService,
-    private userService: UserService
+    private userService: UserService,
+    private imageService: ImageService
   ) {}
 
   ngOnInit(): void {
@@ -52,14 +56,30 @@ export class AppComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.authSubscription?.unsubscribe();
     this.userSubscription?.unsubscribe();
+    this.imageSubscription?.unsubscribe();
   }
 
   onComponentChange(componentRef: any): void {
-    if (componentRef instanceof HomeComponent) {
+    if (
+      componentRef instanceof HomeComponent ||
+      componentRef instanceof LoginComponent
+    ) {
       const localUser = localStorage.getItem('user');
 
       if (localUser) {
         this.menu.localUser = JSON.parse(localUser);
+
+        const imageName = this.user?.hasProfilePicture
+          ? this.localUser
+          : 'default';
+        this.imageSubscription = this.imageService
+          .getImage(`profile/${imageName}.png`)
+          .subscribe((image) => {
+            this.menu.image = image;
+            localStorage.setItem('profilePicture', image);
+          });
+      } else {
+        this.menu.localUser = null;
       }
     }
 

@@ -158,7 +158,9 @@ export class PreviewComponent implements OnInit, AfterViewInit, OnDestroy {
         }
 
         if (memberData.name) {
-          memberData.pays = this.needToPay.get(memberData.name) || 0;
+          memberData.pays = Math.round(
+            this.needToPay.get(memberData.name) || 0
+          );
           this.members.push(memberData);
           this.paidSum += memberData.paid || 0;
         }
@@ -177,16 +179,17 @@ export class PreviewComponent implements OnInit, AfterViewInit, OnDestroy {
             this.paidSum += memberData.paid || 0;
 
             if (member && member.id) {
-              member.pays = this.needToPay.get(member.id) || 0;
+              member.pays = Math.round(this.needToPay.get(member.id) || 0);
               member.paid = memberData.paid;
               this.members.push(member);
             } else if (!member && memberData.id) {
               member = {
                 id: memberData.id,
                 name: '*Törölt résztvevő*',
-                pays: this.needToPay.get(memberData.id),
+                pays: Math.round(this.needToPay.get(memberData.id) || 0),
                 paid: memberData.paid,
               };
+
               this.members.push(member);
             }
 
@@ -209,7 +212,7 @@ export class PreviewComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.receipt?.products.forEach((product) => {
       product.pays.forEach((member) => {
-        const priceSoFar = this.needToPay.get(member) || 0;
+        const priceSoFar = Math.round(this.needToPay.get(member) || 0);
         this.needToPay.set(
           member,
           priceSoFar + product.price / product.pays.length

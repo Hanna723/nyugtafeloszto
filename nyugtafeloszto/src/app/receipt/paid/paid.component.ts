@@ -1,5 +1,11 @@
 import { Component, EventEmitter, Inject, OnInit, Output } from '@angular/core';
-import { FormArray, FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import {
+  FormArray,
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  Validators,
+} from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
 import { Member } from 'src/app/shared/models/Member';
@@ -25,7 +31,7 @@ export class PaidComponent implements OnInit {
     const paid = this.paidForm.controls['paid'] as FormArray;
 
     this.data.members.forEach((member: Member) => {
-      paid.push(new FormControl(member.paid));
+      paid.push(new FormControl(member.paid, [Validators.pattern('^[0-9]*$')]));
     });
   }
 

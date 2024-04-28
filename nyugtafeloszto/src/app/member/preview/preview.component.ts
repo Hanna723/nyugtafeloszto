@@ -153,7 +153,7 @@ export class PreviewComponent implements OnInit, AfterViewInit, OnDestroy {
       }
     });
 
-    return needToPay;
+    return Math.round(needToPay);
   }
 
   ngAfterViewInit(): void {

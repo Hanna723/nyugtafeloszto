@@ -140,7 +140,7 @@
       <td mat-footer-cell *matFooterCellDef></td>
     </ng-container>
     <tr mat-header-row *matHeaderRowDef="columnsToDisplay"></tr>
-    <tr mat-row *matRowDef="let row; columns: columnsToDisplay"></tr>
+    <tr mat-row *matRowDef="let row; columns: columnsToDisplay" [ngClass]="user ? '' : 'no-user'"></tr>
     <tr mat-footer-row *matFooterRowDef="columnsToDisplay"></tr>
   </table>
   <div

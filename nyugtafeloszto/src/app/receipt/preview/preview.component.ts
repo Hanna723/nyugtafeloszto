@@ -395,7 +395,7 @@ export class PreviewComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   navigateToMemberPreview(member: Member) {
-    if (member.name !== '*Törölt résztvevő*') {
+    if (member.name !== '*Törölt résztvevő*' && this.user) {
       this.router.navigateByUrl(`/member/${member.id}`);
     }
   }

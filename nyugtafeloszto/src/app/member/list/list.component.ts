@@ -17,13 +17,10 @@ import {
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
-import { MatDialog } from '@angular/material/dialog';
 import { Subscription } from 'rxjs';
 
 import { Member } from '../../shared/models/Member';
 import { MemberService } from 'src/app/shared/services/member.service';
-import { GroupService } from 'src/app/shared/services/group.service';
-import { DialogComponent } from 'src/app/shared/dialog/dialog.component';
 
 @Component({
   selector: 'app-list',
@@ -37,7 +34,7 @@ export class ListComponent implements OnInit, AfterViewInit, OnDestroy {
   progressBar: boolean = false;
   tableData: MatTableDataSource<Member> = new MatTableDataSource();
   filteredTableData: MatTableDataSource<Member> = new MatTableDataSource();
-  columnsToDisplay = ['name', 'delete'];
+  columnsToDisplay = ['name'];
   memberForm: FormGroup = new FormGroup({
     name: new FormControl('', [
       Validators.required,
@@ -52,9 +49,7 @@ export class ListComponent implements OnInit, AfterViewInit, OnDestroy {
 
   constructor(
     private memberService: MemberService,
-    private groupService: GroupService,
     private router: Router,
-    public dialog: MatDialog
   ) {}
 
   ngOnInit(): void {
@@ -160,33 +155,6 @@ export class ListComponent implements OnInit, AfterViewInit, OnDestroy {
         ? { invalid: true }
         : null;
     };
-  }
-
-  deleteMember(member: Member) {
-    const deleteDialogRef = this.dialog.open(DialogComponent, {
-      disableClose: true,
-      data: {
-        title: 'Figyelem! A résztvevő véglegesen törlődik.',
-        button: 'Mégsem',
-        submitButton: 'Ok',
-      },
-    });
-
-    const deleteDialogSubscripton =
-      deleteDialogRef.componentInstance.submitEvent.subscribe(() => {
-        if (member.id && this.user) {
-          this.memberService.delete(member.id);
-
-          this.groupService
-            .getByMember(JSON.parse(this.user), member.id)
-            .subscribe((data) => {
-              data.forEach((group) => {
-                group.members = group.members.filter((el) => el !== member.id);
-                this.groupService.update(group);
-              });
-            });
-        }
-      });
   }
 
   navigateToPreview(member: Member) {

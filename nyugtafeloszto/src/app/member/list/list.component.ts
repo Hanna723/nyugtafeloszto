@@ -47,10 +47,7 @@ export class ListComponent implements OnInit, AfterViewInit, OnDestroy {
   user?: string | null;
   subscriptions: Subscription[] = [];
 
-  constructor(
-    private memberService: MemberService,
-    private router: Router,
-  ) {}
+  constructor(private memberService: MemberService, private router: Router) {}
 
   ngOnInit(): void {
     this.user = localStorage.getItem('user');
@@ -88,6 +85,7 @@ export class ListComponent implements OnInit, AfterViewInit, OnDestroy {
 
   onSubmit() {
     const user = localStorage.getItem('user');
+    const tableDataLength = this.tableData.data.length;
 
     if (!user) {
       return;
@@ -104,6 +102,18 @@ export class ListComponent implements OnInit, AfterViewInit, OnDestroy {
     this.memberForm.controls['name'].setErrors(null);
 
     this.search.nativeElement.value = '';
+
+    setTimeout(() => {
+      if (
+        tableDataLength === 0 &&
+        this.tableData.data.length === 1 &&
+        this.sort
+      ) {
+        this.sort.sort({ id: 'name', start: 'asc', disableClear: false });
+      }
+      this.progressBar = false;
+    }, 1000);
+
     this.sortData();
   }
 

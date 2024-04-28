@@ -26,6 +26,10 @@ button[type="submit"] {
   flex-direction: row;
   flex-wrap: wrap;
   justify-content: space-between;
+
+  mat-form-field {
+    width: 48%;
+  }
 }
 
 .short {
@@ -47,12 +51,40 @@ fieldset {
   }
 }
 
+.members {
+  width: 48%;
+
+  mat-form-field {
+    width: 100%;
+  }
+}
+
+.error {
+  display: block;
+  font-size: 12px;
+  padding: 0 16px;
+  position: relative;
+  top: -22px;
+  height: 0;
+}
+
+.error-field {
+  mat-label {
+    color: #f44336;
+  }
+}
+
 @media only screen and (max-width: 550px) {
   .container {
     width: 90vw;
   }
 
   .short {
+    width: 100%;
+  }
+
+  .col-fields mat-form-field,
+  .members {
     width: 100%;
   }
 }

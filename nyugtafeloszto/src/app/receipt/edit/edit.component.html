@@ -49,61 +49,72 @@
           </mat-option>
         </mat-autocomplete>
       </mat-form-field>
-      <mat-form-field>
-        <mat-label>Résztvevők</mat-label>
-        <mat-chip-grid #chipGrid aria-label="Résztvevők kiválasztása">
-          <mat-chip-row
-            *ngFor="
-              let selected of getMembersFormArray().controls;
-              let i = index
-            "
-            (removed)="removeMember(i)"
-          >
-            {{ uid ? selected.value.name : selected.value }}
-            <button
-              matChipRemove
-              [attr.aria-label]="
-                uid ? selected.value.name : selected.value + ' törlése'
-              "
-            >
-              <mat-icon>cancel</mat-icon>
-            </button>
-          </mat-chip-row>
-        </mat-chip-grid>
-        <input
-          *ngIf="uid"
-          #memberInput
-          [matChipInputFor]="chipGrid"
-          [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
-          (matChipInputTokenEnd)="addMember($event)"
-          [matAutocomplete]="autoMember"
-          (input)="filterMember($event)"
-          (focus)="filterMember($event)"
-        />
-        <input
-          *ngIf="!uid"
-          #memberInput
-          [matChipInputFor]="chipGrid"
-          [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
-          (matChipInputTokenEnd)="addMemberWithoutUser($event)"
-        />
-        <mat-autocomplete
-          #autoMember="matAutocomplete"
-          requireSelection
-          (optionSelected)="selectedMember($event)"
+      <div class="members">
+        <mat-form-field
+          [ngClass]="receiptForm.controls['members'].errors?.['required'] && receiptForm.controls['members'].errors?.['touched'] ? 'error-field' : ''"
         >
-          <mat-option
-            *ngFor="let el of filteredMembers; trackBy: trackPayer"
-            [value]="el"
+          <mat-label>Résztvevők*</mat-label>
+          <mat-chip-grid #chipGrid aria-label="Résztvevők kiválasztása">
+            <mat-chip-row
+              *ngFor="
+                let selected of getMembersFormArray().controls;
+                let i = index
+              "
+              (removed)="removeMember(i)"
+            >
+              {{ uid ? selected.value.name : selected.value }}
+              <button
+                matChipRemove
+                [attr.aria-label]="
+                  uid ? selected.value.name : selected.value + ' törlése'
+                "
+              >
+                <mat-icon>cancel</mat-icon>
+              </button>
+            </mat-chip-row>
+          </mat-chip-grid>
+          <input
+            *ngIf="uid"
+            #memberInput
+            [matChipInputFor]="chipGrid"
+            [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+            (matChipInputTokenEnd)="addMember($event)"
+            [matAutocomplete]="autoMember"
+            (input)="filterMember($event)"
+            (focus)="filterMember($event)"
+            (focusout)="memberFocusOut()"
+          />
+          <input
+            *ngIf="!uid"
+            #memberInput
+            [matChipInputFor]="chipGrid"
+            [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+            (matChipInputTokenEnd)="addMemberWithoutUser($event)"
+          />
+          <mat-autocomplete
+            #autoMember="matAutocomplete"
+            requireSelection
+            (optionSelected)="selectedMember($event)"
           >
-            <span>
-              {{ el.name }}
-            </span>
-          </mat-option>
-        </mat-autocomplete>
-      </mat-form-field>
+            <mat-option
+              *ngFor="let el of filteredMembers; trackBy: trackPayer"
+              [value]="el"
+            >
+              <span>
+                {{ el.name }}
+              </span>
+            </mat-option>
+          </mat-autocomplete>
+        </mat-form-field>
+        <mat-error
+          class="error"
+          *ngIf="receiptForm.controls['members'].errors?.['required'] && receiptForm.controls['members'].errors?.['touched']"
+        >
+          Kérem adja meg a résztvevőket!
+        </mat-error>
+      </div>
       <mat-form-field>
-        <mat-label for="paid"> Fizetett </mat-label>
+        <mat-label for="paid">Fizetett</mat-label>
         <mat-select formControlName="paid">
           <mat-option
             *ngFor="let el of receiptForm.get('members')?.value"
@@ -111,7 +122,10 @@
             >{{ uid ? el.name : el }}</mat-option
           >
         </mat-select>
-        <mat-error *ngIf="receiptForm.controls['paid'].errors?.['required']"
+        <mat-error *ngIf="receiptForm.controls['paid'].errors?.['no-members']"
+          >Először a résztvevőket adja meg!</mat-error
+        >
+        <mat-error *ngIf="receiptForm.controls['paid'].errors?.['required'] && !receiptForm.controls['paid'].errors?.['no-members']"
           >Kérem adja meg, ki fizetett!</mat-error
         >
       </mat-form-field>

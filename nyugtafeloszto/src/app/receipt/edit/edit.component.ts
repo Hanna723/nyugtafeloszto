@@ -13,6 +13,8 @@ import {
   FormBuilder,
   FormControl,
   FormGroup,
+  ValidationErrors,
+  ValidatorFn,
   Validators,
 } from '@angular/forms';
 import { MatChipInputEvent } from '@angular/material/chips';
@@ -51,8 +53,8 @@ export class EditComponent implements OnInit, AfterViewInit, OnDestroy {
     store: new FormControl('', [Validators.maxLength(100)]),
     date: new FormControl(''),
     currency: new FormControl('', [Validators.required]),
-    paid: new FormControl('', [Validators.required]),
-    members: this.formBuilder.array([]),
+    paid: new FormControl('', [Validators.required, this.noMemberValidator()]),
+    members: this.formBuilder.array([], [Validators.required]),
     products: this.formBuilder.array([]),
   });
 
@@ -146,10 +148,11 @@ export class EditComponent implements OnInit, AfterViewInit, OnDestroy {
       .getById(this.id, this.uid)
       .subscribe((data) => {
         this.receiptForm.controls['store'].setValue(data?.store);
-        this.receiptForm.controls['paid'].setValue(data?.paid);
+
         if (data?.date) {
           this.receiptForm.controls['date'].setValue(data.date.toDate());
         }
+
         if (data?.members) {
           const members = this.receiptForm.controls['members'] as FormArray;
           data.members.forEach((member: any) => {
@@ -158,6 +161,9 @@ export class EditComponent implements OnInit, AfterViewInit, OnDestroy {
             this.paid?.set(member.id, member.paid);
           });
         }
+
+        this.receiptForm.controls['paid'].setValue(data?.paid);
+
         if (data?.currency && this.currencies) {
           const currency = this.currencies.find(
             (el) => el.id === (data.currency as unknown as string)
@@ -368,6 +374,18 @@ export class EditComponent implements OnInit, AfterViewInit, OnDestroy {
     return option;
   }
 
+  noMemberValidator(): ValidatorFn {
+    return (): ValidationErrors | null => {
+      if (!this.receiptForm) {
+        return null;
+      }
+
+      return this.receiptForm.controls['members'].value.length === 0
+        ? { 'no-members': true }
+        : null;
+    };
+  }
+
   getMembersFormArray(): FormArray {
     const members = this.receiptForm.get('members') as FormArray;
 
@@ -403,6 +421,14 @@ export class EditComponent implements OnInit, AfterViewInit, OnDestroy {
         let control = new FormControl<Member>(selected);
         this.getMembersFormArray()?.push(control);
         this.filteredMembers = this.fetchedMembers;
+
+        if (
+          this.receiptForm.controls['paid'].errors &&
+          this.receiptForm.controls['paid'].hasError('no-members')
+        ) {
+          delete this.receiptForm.controls['paid'].errors['no-members'];
+          this.receiptForm.controls['paid'].updateValueAndValidity();
+        }
       }
     }
 
@@ -449,6 +475,20 @@ export class EditComponent implements OnInit, AfterViewInit, OnDestroy {
     this.getMembersFormArray()?.push(control);
     this.memberInput.nativeElement.value = '';
     this.filterMembersAndGroups();
+
+    if (
+      this.receiptForm.controls['paid'].errors &&
+      this.receiptForm.controls['paid'].hasError('no-members')
+    ) {
+      delete this.receiptForm.controls['paid'].errors['no-members'];
+    }
+  }
+
+  memberFocusOut() {
+    this.receiptForm.controls['members'].setErrors({
+      ...(this.receiptForm.controls['members'].errors || {}),
+      touched: true,
+    });
   }
 
   filterMember(event: Event): void {

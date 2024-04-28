@@ -212,7 +212,7 @@ export class PreviewComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.receipt?.products.forEach((product) => {
       product.pays.forEach((member) => {
-        const priceSoFar = Math.round(this.needToPay.get(member) || 0);
+        const priceSoFar = this.needToPay.get(member) || 0;
         this.needToPay.set(
           member,
           priceSoFar + product.price / product.pays.length
@@ -323,7 +323,9 @@ export class PreviewComponent implements OnInit, AfterViewInit, OnDestroy {
         receiptMember.id &&
         member.id === receiptMember.id
       ) {
-        receiptMember.paid = this.needToPay.get(receiptMember.id);
+        receiptMember.paid = Math.round(
+          this.needToPay.get(receiptMember.id) || 0
+        );
       }
     });
 
@@ -333,6 +335,7 @@ export class PreviewComponent implements OnInit, AfterViewInit, OnDestroy {
       return;
     }
 
+    this.paidSum = 0;
     this.receiptService.update(receipt);
     this.members.forEach((tableMember) => {
       if (
@@ -340,7 +343,10 @@ export class PreviewComponent implements OnInit, AfterViewInit, OnDestroy {
         tableMember.id &&
         member.id === tableMember.id
       ) {
-        tableMember.paid = this.needToPay.get(tableMember.id);
+        tableMember.paid = Math.round(this.needToPay.get(tableMember.id) || 0);
+        this.paidSum += tableMember.paid;
+      } else if (typeof tableMember !== 'string') {
+        this.paidSum += tableMember.paid || 0;
       }
     });
   }
@@ -379,11 +385,14 @@ export class PreviewComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.dialogSubscription = dialogRef.componentInstance.submitEvent.subscribe(
       (members: Member[]) => {
+        this.paidSum = 0;
         this.receipt?.members.forEach((receiptMember) => {
           if (typeof receiptMember !== 'string') {
             receiptMember.paid =
               members.find((el: Member) => el.id === receiptMember.id)?.paid ||
               0;
+
+            this.paidSum += receiptMember.paid;
           }
         });
         const receipt = this.transformReceipt();

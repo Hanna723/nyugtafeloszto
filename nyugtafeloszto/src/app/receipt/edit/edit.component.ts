@@ -468,6 +468,19 @@ export class EditComponent implements OnInit, AfterViewInit, OnDestroy {
         pays.removeAt(i);
       });
     });
+
+    if ((this.receiptForm.controls['members'] as FormArray).length === 0) {
+      this.receiptForm.controls['members'].setErrors({
+        ...(this.receiptForm.controls['members'].errors || {}),
+        touched: true,
+      });
+
+      this.receiptForm.controls['paid'].setErrors({
+        ...(this.receiptForm.controls['paid'].errors || {}),
+        'no-members': true,
+        required: true,
+      });
+    }
   }
 
   selectedMember(event: MatAutocompleteActivatedEvent): void {
@@ -485,10 +498,12 @@ export class EditComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   memberFocusOut() {
-    this.receiptForm.controls['members'].setErrors({
-      ...(this.receiptForm.controls['members'].errors || {}),
-      touched: true,
-    });
+    if ((this.receiptForm.controls['members'] as FormArray).length === 0) {
+      this.receiptForm.controls['members'].setErrors({
+        ...(this.receiptForm.controls['members'].errors || {}),
+        touched: true,
+      });
+    }
   }
 
   filterMember(event: Event): void {
@@ -607,10 +622,23 @@ export class EditComponent implements OnInit, AfterViewInit, OnDestroy {
     let receiptMembers: Member[] = [];
 
     memberIds.forEach((id) => {
+      let defaultPrice = 0;
+      let url = this.router.url;
+      if (
+        id === this.receiptForm.controls['paid'].value &&
+        (url === '/receipt/upload' || url === '/receipt/new')
+      ) {
+        products.forEach((product) => {
+          if (product.pays.includes(id)) {
+            defaultPrice += product.price / product.pays.length;
+          }
+        });
+      }
+
       receiptMembers.push({
         id: id,
         name: this.uid ? '' : id,
-        paid: this.paid?.get(id) || 0,
+        paid: this.paid?.get(id) || Math.round(defaultPrice),
         user: this.uid || '',
       });
     });

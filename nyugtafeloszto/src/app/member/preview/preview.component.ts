@@ -95,6 +95,10 @@ export class PreviewComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   addReceiptToTableData(receipt: Receipt, id: string) {
+    if (receipt.paid == id) {
+      return;
+    }
+
     const currencySubscription = this.currencyService
       .getById(receipt.currency as unknown as string)
       .subscribe((currency) => {

@@ -264,6 +264,7 @@ export class PreviewComponent implements OnInit, AfterViewInit, OnDestroy {
           ? ''
           : this.receipt?.currency?.symbol,
       végösszeg: this.receipt?.sum,
+      fizetett: this.receipt?.paid,
       tagok: members,
     };
 

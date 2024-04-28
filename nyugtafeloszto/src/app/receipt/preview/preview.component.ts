@@ -41,6 +41,7 @@ export class PreviewComponent implements OnInit, AfterViewInit, OnDestroy {
   downloadHref?: SafeUrl;
   paidSum: number = 0;
   symbol: string = '';
+  paid: string = '';
 
   receiptSubscription?: Subscription;
   currencySubscription?: Subscription;
@@ -194,7 +195,7 @@ export class PreviewComponent implements OnInit, AfterViewInit, OnDestroy {
             }
 
             if (memberData.id === this.receipt?.paid && this.receipt) {
-              this.receipt.paid = member?.name || '*Törölt résztvevő*';
+              this.paid = member?.name || '*Törölt résztvevő*';
             }
           });
       }

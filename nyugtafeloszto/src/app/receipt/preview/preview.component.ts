@@ -41,6 +41,7 @@ export class PreviewComponent implements OnInit, AfterViewInit, OnDestroy {
   downloadHref?: SafeUrl;
   paidSum: number = 0;
   symbol: string = '';
+  paid: string = '';
 
   receiptSubscription?: Subscription;
   currencySubscription?: Subscription;
@@ -158,7 +159,9 @@ export class PreviewComponent implements OnInit, AfterViewInit, OnDestroy {
         }
 
         if (memberData.name) {
-          memberData.pays = this.needToPay.get(memberData.name) || 0;
+          memberData.pays = Math.round(
+            this.needToPay.get(memberData.name) || 0
+          );
           this.members.push(memberData);
           this.paidSum += memberData.paid || 0;
         }
@@ -177,21 +180,22 @@ export class PreviewComponent implements OnInit, AfterViewInit, OnDestroy {
             this.paidSum += memberData.paid || 0;
 
             if (member && member.id) {
-              member.pays = this.needToPay.get(member.id) || 0;
+              member.pays = Math.round(this.needToPay.get(member.id) || 0);
               member.paid = memberData.paid;
               this.members.push(member);
             } else if (!member && memberData.id) {
               member = {
                 id: memberData.id,
                 name: '*Törölt résztvevő*',
-                pays: this.needToPay.get(memberData.id),
+                pays: Math.round(this.needToPay.get(memberData.id) || 0),
                 paid: memberData.paid,
               };
+
               this.members.push(member);
             }
 
             if (memberData.id === this.receipt?.paid && this.receipt) {
-              this.receipt.paid = member?.name || '*Törölt résztvevő*';
+              this.paid = member?.name || '*Törölt résztvevő*';
             }
           });
       }
@@ -264,6 +268,7 @@ export class PreviewComponent implements OnInit, AfterViewInit, OnDestroy {
           ? ''
           : this.receipt?.currency?.symbol,
       végösszeg: this.receipt?.sum,
+      fizetett: this.receipt?.paid,
       tagok: members,
     };
 
@@ -319,7 +324,9 @@ export class PreviewComponent implements OnInit, AfterViewInit, OnDestroy {
         receiptMember.id &&
         member.id === receiptMember.id
       ) {
-        receiptMember.paid = this.needToPay.get(receiptMember.id);
+        receiptMember.paid = Math.round(
+          this.needToPay.get(receiptMember.id) || 0
+        );
       }
     });
 
@@ -329,6 +336,7 @@ export class PreviewComponent implements OnInit, AfterViewInit, OnDestroy {
       return;
     }
 
+    this.paidSum = 0;
     this.receiptService.update(receipt);
     this.members.forEach((tableMember) => {
       if (
@@ -336,7 +344,10 @@ export class PreviewComponent implements OnInit, AfterViewInit, OnDestroy {
         tableMember.id &&
         member.id === tableMember.id
       ) {
-        tableMember.paid = this.needToPay.get(tableMember.id);
+        tableMember.paid = Math.round(this.needToPay.get(tableMember.id) || 0);
+        this.paidSum += tableMember.paid;
+      } else if (typeof tableMember !== 'string') {
+        this.paidSum += tableMember.paid || 0;
       }
     });
   }
@@ -375,11 +386,14 @@ export class PreviewComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.dialogSubscription = dialogRef.componentInstance.submitEvent.subscribe(
       (members: Member[]) => {
+        this.paidSum = 0;
         this.receipt?.members.forEach((receiptMember) => {
           if (typeof receiptMember !== 'string') {
             receiptMember.paid =
               members.find((el: Member) => el.id === receiptMember.id)?.paid ||
               0;
+
+            this.paidSum += receiptMember.paid;
           }
         });
         const receipt = this.transformReceipt();
@@ -395,7 +409,7 @@ export class PreviewComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   navigateToMemberPreview(member: Member) {
-    if (member.name !== '*Törölt résztvevő*') {
+    if (member.name !== '*Törölt résztvevő*' && this.user) {
       this.router.navigateByUrl(`/member/${member.id}`);
     }
   }

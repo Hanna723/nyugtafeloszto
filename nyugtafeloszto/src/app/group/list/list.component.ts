@@ -76,9 +76,22 @@ export class ListComponent implements OnInit, AfterViewInit, OnDestroy {
 
   openEdit(): void {
     const dialogRef = this.edit.open(EditComponent, { disableClose: true });
+    const tableDataLength = this.tableData.data.length;
 
     this.editSubscription = dialogRef.afterClosed().subscribe(() => {
       this.search.nativeElement.value = '';
+
+      setTimeout(() => {
+        if (
+          tableDataLength === 0 &&
+          this.tableData.data.length === 1 &&
+          this.sort
+        ) {
+          this.sort.sort({ id: 'name', start: 'asc', disableClear: false });
+        }
+        this.progressBar = false;
+      }, 1000);
+
       this.sortData();
     });
   }

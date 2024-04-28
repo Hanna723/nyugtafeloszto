@@ -18,7 +18,7 @@
       <mat-error *ngIf="memberForm.controls['name'].errors?.['exists']"
         >A név már foglalt!</mat-error
       >
-      <mat-error *ngIf="memberForm.controls['name'].errors?.['deleted']"
+      <mat-error *ngIf="memberForm.controls['name'].errors?.['invalid']"
         >Ez a név nem adható résztvevőkek!</mat-error
       >
     </mat-form-field>
@@ -59,18 +59,6 @@
         (click)="navigateToPreview(element)"
       >
         {{ element.name }}
-      </td>
-    </ng-container>
-    <ng-container matColumnDef="delete">
-      <th mat-header-cell *matHeaderCellDef></th>
-      <td mat-cell *matCellDef="let element">
-        <button
-          mat-icon-button
-          (click)="deleteMember(element)"
-          aria-label="Törlés gomb"
-        >
-          <mat-icon color="accent">delete</mat-icon>
-        </button>
       </td>
     </ng-container>
     <tr mat-header-row *matHeaderRowDef="columnsToDisplay"></tr>

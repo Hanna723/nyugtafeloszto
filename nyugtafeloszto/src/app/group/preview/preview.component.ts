@@ -127,6 +127,7 @@ export class PreviewComponent implements OnInit, AfterViewInit, OnDestroy {
       disableClose: true,
       data: { group: this.group },
     });
+    const tableDataLength = this.tableData.data.length;
 
     this.editSubscription = dialogRef
       .afterClosed()
@@ -135,6 +136,17 @@ export class PreviewComponent implements OnInit, AfterViewInit, OnDestroy {
           this.group = updatedValues.group;
           this.members = updatedValues.members;
           this.tableData.data = this.members;
+
+          setTimeout(() => {
+            if (
+              tableDataLength === 0 &&
+              this.tableData.data.length === 1 &&
+              this.sort
+            ) {
+              this.sort.sort({ id: 'name', start: 'asc', disableClear: false });
+            }
+            this.progressBar = false;
+          }, 1000);
         }
       });
   }

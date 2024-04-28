@@ -35,6 +35,7 @@ export class PreviewComponent implements OnInit, AfterViewInit, OnDestroy {
   user!: string;
   member?: Member;
   subscriptions: Subscription[] = [];
+  receiptSubscription?: Subscription;
 
   groupTableData: MatTableDataSource<Group> = new MatTableDataSource();
   receiptTableData: MatTableDataSource<object> = new MatTableDataSource();
@@ -60,6 +61,10 @@ export class PreviewComponent implements OnInit, AfterViewInit, OnDestroy {
       this.user = JSON.parse(user);
       this.progressBar = true;
 
+      if (this.member) {
+        return;
+      }
+
       const memberSubscription = this.memberService
         .getById(id, this.user)
         .subscribe((data) => {
@@ -76,7 +81,7 @@ export class PreviewComponent implements OnInit, AfterViewInit, OnDestroy {
           this.groupTableData.sort = this.groupSort;
         });
 
-      const receiptSubscription = this.receiptService
+      this.receiptSubscription = this.receiptService
         .getAllForOneUser(this.user)
         .subscribe((data) => {
           this.receiptTableData.sort = this.receiptSort;
@@ -86,15 +91,15 @@ export class PreviewComponent implements OnInit, AfterViewInit, OnDestroy {
           });
         });
 
-      this.subscriptions.push(
-        memberSubscription,
-        groupSubscription,
-        receiptSubscription
-      );
+      this.subscriptions.push(memberSubscription, groupSubscription);
     }
   }
 
   addReceiptToTableData(receipt: Receipt, id: string) {
+    if (receipt.paid == id) {
+      return;
+    }
+
     const currencySubscription = this.currencyService
       .getById(receipt.currency as unknown as string)
       .subscribe((currency) => {
@@ -130,6 +135,7 @@ export class PreviewComponent implements OnInit, AfterViewInit, OnDestroy {
               user: this.user,
               products: receipt.products,
               sum: receipt.sum,
+              paidId: member?.id,
               paid: member?.name || '*Törölt résztvevő*',
               members: receipt.members,
               symbol: currency?.symbol,
@@ -153,7 +159,7 @@ export class PreviewComponent implements OnInit, AfterViewInit, OnDestroy {
       }
     });
 
-    return needToPay;
+    return Math.round(needToPay);
   }
 
   ngAfterViewInit(): void {
@@ -182,6 +188,7 @@ export class PreviewComponent implements OnInit, AfterViewInit, OnDestroy {
     this.subscriptions.forEach((subscription: Subscription) => {
       subscription.unsubscribe();
     });
+    this.receiptSubscription?.unsubscribe();
   }
 
   deleteMember() {
@@ -231,6 +238,7 @@ export class PreviewComponent implements OnInit, AfterViewInit, OnDestroy {
     this.receiptService.update(this.transformReceipt(receipt));
 
     this.receiptTableData.data.forEach((row) => {
+      row = row;
       if ('id' in row && row.id === receipt.id && 'paidSum' in row) {
         row.paidSum = receipt.pays;
       }
@@ -247,7 +255,7 @@ export class PreviewComponent implements OnInit, AfterViewInit, OnDestroy {
       products: tableRow.products,
       sum: tableRow.sum,
       members: tableRow.members,
-      paid: tableRow.paid,
+      paid: tableRow.paidId,
     };
 
     return receipt;

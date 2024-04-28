@@ -17,13 +17,10 @@ import {
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
-import { MatDialog } from '@angular/material/dialog';
 import { Subscription } from 'rxjs';
 
 import { Member } from '../../shared/models/Member';
 import { MemberService } from 'src/app/shared/services/member.service';
-import { GroupService } from 'src/app/shared/services/group.service';
-import { DialogComponent } from 'src/app/shared/dialog/dialog.component';
 
 @Component({
   selector: 'app-list',
@@ -37,25 +34,20 @@ export class ListComponent implements OnInit, AfterViewInit, OnDestroy {
   progressBar: boolean = false;
   tableData: MatTableDataSource<Member> = new MatTableDataSource();
   filteredTableData: MatTableDataSource<Member> = new MatTableDataSource();
-  columnsToDisplay = ['name', 'delete'];
+  columnsToDisplay = ['name'];
   memberForm: FormGroup = new FormGroup({
     name: new FormControl('', [
       Validators.required,
       Validators.maxLength(100),
       Validators.pattern(/^(\s+\S+\s*)*(?!\s).*$/),
-      this.deletedMemberValidator(),
+      this.invalidNameValidator(),
       this.existenceValidator(),
     ]),
   });
   user?: string | null;
   subscriptions: Subscription[] = [];
 
-  constructor(
-    private memberService: MemberService,
-    private groupService: GroupService,
-    private router: Router,
-    public dialog: MatDialog
-  ) {}
+  constructor(private memberService: MemberService, private router: Router) {}
 
   ngOnInit(): void {
     this.user = localStorage.getItem('user');
@@ -93,6 +85,7 @@ export class ListComponent implements OnInit, AfterViewInit, OnDestroy {
 
   onSubmit() {
     const user = localStorage.getItem('user');
+    const tableDataLength = this.tableData.data.length;
 
     if (!user) {
       return;
@@ -109,6 +102,18 @@ export class ListComponent implements OnInit, AfterViewInit, OnDestroy {
     this.memberForm.controls['name'].setErrors(null);
 
     this.search.nativeElement.value = '';
+
+    setTimeout(() => {
+      if (
+        tableDataLength === 0 &&
+        this.tableData.data.length === 1 &&
+        this.sort
+      ) {
+        this.sort.sort({ id: 'name', start: 'asc', disableClear: false });
+      }
+      this.progressBar = false;
+    }, 1000);
+
     this.sortData();
   }
 
@@ -148,7 +153,7 @@ export class ListComponent implements OnInit, AfterViewInit, OnDestroy {
     };
   }
 
-  deletedMemberValidator(): ValidatorFn {
+  invalidNameValidator(): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
       const value = control.value.trim();
 
@@ -156,35 +161,10 @@ export class ListComponent implements OnInit, AfterViewInit, OnDestroy {
         return null;
       }
 
-      return value === '*Törölt résztvevő*' ? { deleted: true } : null;
+      return value === '*Törölt résztvevő*' || value === 'Mindenki'
+        ? { invalid: true }
+        : null;
     };
-  }
-
-  deleteMember(member: Member) {
-    const deleteDialogRef = this.dialog.open(DialogComponent, {
-      disableClose: true,
-      data: {
-        title: 'Figyelem! A résztvevő véglegesen törlődik.',
-        button: 'Mégsem',
-        submitButton: 'Ok',
-      },
-    });
-
-    const deleteDialogSubscripton =
-      deleteDialogRef.componentInstance.submitEvent.subscribe(() => {
-        if (member.id && this.user) {
-          this.memberService.delete(member.id);
-
-          this.groupService
-            .getByMember(JSON.parse(this.user), member.id)
-            .subscribe((data) => {
-              data.forEach((group) => {
-                group.members = group.members.filter((el) => el !== member.id);
-                this.groupService.update(group);
-              });
-            });
-        }
-      });
   }
 
   navigateToPreview(member: Member) {

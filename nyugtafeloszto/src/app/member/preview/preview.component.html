@@ -14,7 +14,7 @@
       </button>
     </div>
   </div>
-  <div class="sub-header">Csoportok:</div>
+  <div class="sub-header" *ngIf="groupTableData.data.length > 0">Csoportok:</div>
   <table
     #groupTable="matSort"
     mat-table
@@ -42,7 +42,7 @@
       (click)="navigateToGroupPreview(row)"
     ></tr>
   </table>
-  <div class="sub-header">Nyugták:</div>
+  <div class="sub-header" *ngIf="receiptTableData.data.length > 0">Nyugták:</div>
   <table
     #receiptTable="matSort"
     mat-table

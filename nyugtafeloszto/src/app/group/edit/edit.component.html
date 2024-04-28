@@ -13,6 +13,9 @@
       <mat-error *ngIf="groupForm.controls['name'].errors?.['exists']"
         >A név már foglalt!</mat-error
       >
+      <mat-error *ngIf="groupForm.controls['name'].errors?.['invalid']"
+        >Ez a név nem adható csoportoknak!</mat-error
+      >
     </mat-form-field>
     <mat-form-field>
       <mat-label for="members">Résztvevők</mat-label>

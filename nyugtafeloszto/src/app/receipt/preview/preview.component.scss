@@ -22,8 +22,16 @@ tr[mat-row] {
   cursor: pointer;
 }
 
+.no-user {
+  cursor: default !important;
+}
+
 tr[mat-row]:hover {
   background-color: whitesmoke;
+}
+
+.no-user:hover {
+  background-color: initial !important;
 }
 
 @media only screen and (max-width: 550px) {

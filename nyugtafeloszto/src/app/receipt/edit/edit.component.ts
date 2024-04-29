@@ -625,12 +625,17 @@ export class EditComponent implements OnInit, AfterViewInit, OnDestroy {
         });
       }
 
-      receiptMembers.push({
-        id: id,
-        name: this.uid ? '' : id,
-        paid: this.paid?.get(id) || Math.round(defaultPrice),
-        user: this.uid || '',
-      });
+      if (this.uid) {
+        receiptMembers.push({
+          id: id,
+          paid: this.paid?.get(id) || Math.round(defaultPrice),
+        });
+      } else {
+        receiptMembers.push({
+          id: id,
+          name: id,
+        });
+      }
     });
 
     const receipt: Receipt = {

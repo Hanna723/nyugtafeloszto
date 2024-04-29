@@ -171,21 +171,7 @@ export class EditComponent implements OnInit, AfterViewInit, OnDestroy {
           this.receiptForm.controls['currency'].setValue(currency);
         }
 
-        const products = <FormArray>this.receiptForm.controls['products'];
-        data?.products.forEach((product) => {
-          products.push(
-            this.formBuilder.group({
-              name: new FormControl(product.name, [Validators.maxLength(100)]),
-              piece: new FormControl(product.piece, [
-                Validators.min(1),
-                Validators.pattern('^[0-9]*$'),
-              ]),
-              price: new FormControl(product.price, []),
-              pays: this.formBuilder.array(product.pays),
-            })
-          );
-        });
-        this.filterMembersAndGroups();
+        this.setProducts(data?.products || []);
       });
   }
 
@@ -205,22 +191,26 @@ export class EditComponent implements OnInit, AfterViewInit, OnDestroy {
         this.receiptForm.controls['currency'].setValue(data.currency);
       }
 
-      const products = <FormArray>this.receiptForm.controls['products'];
-      data.products.forEach((product) => {
-        products.push(
-          this.formBuilder.group({
-            name: new FormControl(product.name, [Validators.maxLength(100)]),
-            piece: new FormControl(product.piece, [
-              Validators.min(1),
-              Validators.pattern('^[0-9]*$'),
-            ]),
-            price: new FormControl(product.price, []),
-            pays: this.formBuilder.array(product.pays),
-          })
-        );
-      });
-      this.filterMembersAndGroups();
+      this.setProducts(data.products);
     }
+  }
+
+  setProducts(existingProducts: Product[]) {
+    const products = <FormArray>this.receiptForm.controls['products'];
+    existingProducts.forEach((product) => {
+      products.push(
+        this.formBuilder.group({
+          name: new FormControl(product.name, [Validators.maxLength(100)]),
+          piece: new FormControl(product.piece, [
+            Validators.min(1),
+            Validators.pattern('^[0-9]*$'),
+          ]),
+          price: new FormControl(product.price, []),
+          pays: this.formBuilder.array(product.pays),
+        })
+      );
+    });
+    this.filterMembersAndGroups();
   }
 
   filter(): void {

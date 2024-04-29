@@ -71,7 +71,7 @@ export class PreviewComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
-  fetchImage(imageName: string, uploaded: boolean) {
+  fetchImage(imageName: string, uploaded: boolean): void {
     const image = localStorage.getItem('profilePicture');
 
     if (image && !uploaded) {
@@ -93,7 +93,7 @@ export class PreviewComponent implements OnInit, AfterViewInit, OnDestroy {
     this.imageSubscriptions.push(imageSubscription);
   }
 
-  changePassword() {
+  changePassword(): void {
     const dialogRef = this.dialog.open(PasswordChangeComponent, {
       disableClose: true,
     });
@@ -105,7 +105,7 @@ export class PreviewComponent implements OnInit, AfterViewInit, OnDestroy {
     this.dialogSubscriptions.push(changePasswordSubscription);
   }
 
-  changePicture(event: Event) {
+  changePicture(event: Event): void {
     const target = event.target as HTMLInputElement;
 
     if (!target.files || !target.files[0].type.includes('image/')) {
@@ -153,7 +153,7 @@ export class PreviewComponent implements OnInit, AfterViewInit, OnDestroy {
       });
   }
 
-  deleteProfile() {
+  deleteProfile(): void {
     const dialogRef = this.dialog.open(AccountDeleteComponent, {
       disableClose: true,
       data: {

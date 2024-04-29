@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
-import { first } from 'rxjs';
+import { Observable, first } from 'rxjs';
 
 import { Member } from '../models/Member';
 
@@ -12,7 +12,7 @@ export class MemberService {
 
   constructor(private angularFirestore: AngularFirestore) {}
 
-  create(member: Member) {
+  create(member: Member): Promise<void> {
     member.id = this.angularFirestore.createId();
     return this.angularFirestore
       .collection<Member>(this.collectionName)
@@ -20,14 +20,14 @@ export class MemberService {
       .set(member);
   }
 
-  delete(id: string) {
+  delete(id: string): Promise<void> {
     return this.angularFirestore
       .collection<Member>(this.collectionName)
       .doc(id)
       .delete();
   }
 
-  getAllForOneUser(userId: string) {
+  getAllForOneUser(userId: string): Observable<Member[]> {
     return this.angularFirestore
       .collection<Member>(this.collectionName, (ref) =>
         ref.where('user', '==', userId)
@@ -35,7 +35,7 @@ export class MemberService {
       .valueChanges();
   }
 
-  getById(id: string, userId: string) {
+  getById(id: string, userId: string): Observable<Member | undefined> {
     return this.angularFirestore
       .collection<Member>(this.collectionName, (ref) =>
         ref.where('user', '==', userId)

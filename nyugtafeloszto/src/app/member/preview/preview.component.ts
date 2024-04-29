@@ -95,7 +95,7 @@ export class PreviewComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
-  addReceiptToTableData(receipt: Receipt, id: string) {
+  addReceiptToTableData(receipt: Receipt, id: string): void {
     if (receipt.paid == id) {
       return;
     }
@@ -150,7 +150,7 @@ export class PreviewComponent implements OnInit, AfterViewInit, OnDestroy {
     this.subscriptions.push(currencySubscription);
   }
 
-  calculatePrices(products: Product[], id: string) {
+  calculatePrices(products: Product[], id: string): number {
     let needToPay = 0;
 
     products.forEach((product) => {
@@ -191,7 +191,7 @@ export class PreviewComponent implements OnInit, AfterViewInit, OnDestroy {
     this.receiptSubscription?.unsubscribe();
   }
 
-  deleteMember() {
+  deleteMember(): void {
     const deleteDialogRef = this.dialog.open(DialogComponent, {
       disableClose: true,
       data: {
@@ -228,7 +228,7 @@ export class PreviewComponent implements OnInit, AfterViewInit, OnDestroy {
     this.subscriptions.push(deleteDialogSubscription);
   }
 
-  payReceipt(receipt: any) {
+  payReceipt(receipt: any): void {
     receipt.members.forEach((receiptMember: Member) => {
       if (receiptMember.id === this.member?.id) {
         receiptMember.paid = receipt.pays;
@@ -261,19 +261,19 @@ export class PreviewComponent implements OnInit, AfterViewInit, OnDestroy {
     return receipt;
   }
 
-  sortGroupData() {
+  sortGroupData(): void {
     this.groupTableData.sort = this.groupSort;
   }
 
-  sortReceiptData() {
+  sortReceiptData(): void {
     this.receiptTableData.sort = this.receiptSort;
   }
 
-  navigateToGroupPreview(group: Group) {
+  navigateToGroupPreview(group: Group): void {
     this.router.navigateByUrl(`group/${group.id}`);
   }
 
-  navigateToReceiptPreview(receipt: Receipt) {
+  navigateToReceiptPreview(receipt: Receipt): void {
     this.router.navigateByUrl(`receipt/${receipt.id}`);
   }
 }

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
-import { first } from 'rxjs';
+import { Observable, first } from 'rxjs';
 
 import { Group } from '../models/Group';
 
@@ -12,7 +12,7 @@ export class GroupService {
 
   constructor(private angularFirestore: AngularFirestore) {}
 
-  create(group: Group) {
+  create(group: Group): Promise<void> {
     group.id = this.angularFirestore.createId();
     return this.angularFirestore
       .collection<Group>(this.collectionName)
@@ -20,21 +20,21 @@ export class GroupService {
       .set(group);
   }
 
-  update(group: Group) {
+  update(group: Group): Promise<void> {
     return this.angularFirestore
       .collection<Group>(this.collectionName)
       .doc(group.id)
       .update(group);
   }
 
-  delete(id: string) {
+  delete(id: string): Promise<void> {
     return this.angularFirestore
       .collection<Group>(this.collectionName)
       .doc(id)
       .delete();
   }
 
-  getAllForOneUser(userId: string) {
+  getAllForOneUser(userId: string): Observable<Group[]> {
     return this.angularFirestore
       .collection<Group>(this.collectionName, (ref) =>
         ref.where('user', '==', userId)
@@ -42,7 +42,7 @@ export class GroupService {
       .valueChanges();
   }
 
-  getByMember(userId: string, memberId: string) {
+  getByMember(userId: string, memberId: string): Observable<Group[]> {
     return this.angularFirestore
       .collection<Group>(this.collectionName, (ref) =>
         ref
@@ -52,7 +52,7 @@ export class GroupService {
       .valueChanges();
   }
 
-  getById(id: string, userId: string) {
+  getById(id: string, userId: string): Observable<Group | undefined> {
     return this.angularFirestore
       .collection<Group>(this.collectionName, (ref) =>
         ref.where('user', '==', userId)

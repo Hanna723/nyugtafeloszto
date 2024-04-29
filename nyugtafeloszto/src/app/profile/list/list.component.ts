@@ -88,7 +88,7 @@ export class ListComponent implements OnInit, AfterViewInit, OnDestroy {
     );
   }
 
-  changeAdmin(event: Event, user: User) {
+  changeAdmin(event: Event, user: User): void {
     if (user.id === this.user?.id) {
       return;
     }

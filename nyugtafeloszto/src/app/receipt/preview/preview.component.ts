@@ -147,11 +147,11 @@ export class PreviewComponent implements OnInit, AfterViewInit, OnDestroy {
     this.dialogSubscription?.unsubscribe();
   }
 
-  sortData() {
+  sortData(): void {
     this.tableData.sort = this.sort;
   }
 
-  getMembersFromReceipt() {
+  getMembersFromReceipt(): void {
     if (!this.user && this.receipt?.members) {
       this.receipt.members.forEach((memberData: string | Member) => {
         if (typeof memberData === 'string') {
@@ -163,9 +163,10 @@ export class PreviewComponent implements OnInit, AfterViewInit, OnDestroy {
             this.needToPay.get(memberData.name) || 0
           );
           this.members.push(memberData);
-          this.paidSum += memberData.paid || 0;
         }
       });
+
+      this.paid = this.receipt.paid;
       return;
     }
 
@@ -180,6 +181,7 @@ export class PreviewComponent implements OnInit, AfterViewInit, OnDestroy {
             this.paidSum += memberData.paid || 0;
 
             if (member && member.id) {
+              console.log(member);
               member.pays = Math.round(this.needToPay.get(member.id) || 0);
               member.paid = memberData.paid;
               this.members.push(member);
@@ -202,7 +204,7 @@ export class PreviewComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
-  calculatePrices() {
+  calculatePrices(): void {
     this.receipt?.members.forEach((member: string | Member) => {
       if (typeof member === 'string') {
         this.needToPay.set(member, 0);
@@ -222,7 +224,7 @@ export class PreviewComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
-  deleteReceipt() {
+  deleteReceipt(): void {
     const dialogRef = this.dialog.open(DialogComponent, {
       disableClose: true,
       data: {
@@ -242,13 +244,13 @@ export class PreviewComponent implements OnInit, AfterViewInit, OnDestroy {
     );
   }
 
-  editReceipt() {
+  editReceipt(): void {
     if (this.receipt?.id) {
       this.router.navigateByUrl(`/receipt/edit/${this.receipt.id}`);
     }
   }
 
-  downloadReceipt(type: string) {
+  downloadReceipt(type: string): void {
     let members: Object[] = [];
     this.tableData.data.forEach((data) => {
       if (typeof data !== 'string') {
@@ -288,7 +290,7 @@ export class PreviewComponent implements OnInit, AfterViewInit, OnDestroy {
     this.download?.nativeElement.click();
   }
 
-  createCsv(data: Object) {
+  createCsv(data: Object): string {
     let rows = [];
 
     const headers = Object.keys(data).map(
@@ -313,7 +315,7 @@ export class PreviewComponent implements OnInit, AfterViewInit, OnDestroy {
     return rows.join('\n');
   }
 
-  payForMember(member: Member) {
+  payForMember(member: Member): void {
     if (!this.receipt) {
       return;
     }
@@ -352,7 +354,7 @@ export class PreviewComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
-  transformReceipt() {
+  transformReceipt(): Receipt | undefined {
     if (!this.receipt) {
       return;
     }
@@ -375,7 +377,7 @@ export class PreviewComponent implements OnInit, AfterViewInit, OnDestroy {
     return receipt;
   }
 
-  openPaidDialog() {
+  openPaidDialog(): void {
     const dialogRef = this.dialog.open(PaidComponent, {
       disableClose: true,
       data: {
@@ -408,7 +410,7 @@ export class PreviewComponent implements OnInit, AfterViewInit, OnDestroy {
     );
   }
 
-  navigateToMemberPreview(member: Member) {
+  navigateToMemberPreview(member: Member): void {
     if (member.name !== '*Törölt résztvevő*' && this.user) {
       this.router.navigateByUrl(`/member/${member.id}`);
     }

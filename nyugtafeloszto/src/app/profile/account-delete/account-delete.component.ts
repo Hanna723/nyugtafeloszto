@@ -44,7 +44,7 @@ export class AccountDeleteComponent implements OnInit {
     });
   }
 
-  onSubmit() {
+  onSubmit(): void {
     if (!this.user) {
       return;
     }

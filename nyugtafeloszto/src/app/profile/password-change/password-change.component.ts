@@ -41,7 +41,7 @@ export class PasswordChangeComponent implements OnInit {
     });
   }
 
-  onSubmit() {
+  onSubmit(): void {
     if (!this.user) {
       confirmPasswordReset(
         this.data.auth,

@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
-import { AngularFireStorage } from '@angular/fire/compat/storage';
+import { AngularFireStorage, AngularFireUploadTask } from '@angular/fire/compat/storage';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -7,15 +8,15 @@ import { AngularFireStorage } from '@angular/fire/compat/storage';
 export class ImageService {
   constructor(private storage: AngularFireStorage) {}
 
-  getImage(url: string) {
+  getImage(url: string): Observable<any> {
     return this.storage.ref(url).getDownloadURL();
   }
 
-  uploadImage(path: string, data: any) {
+  uploadImage(path: string, data: any): AngularFireUploadTask {
     return this.storage.upload(path, data);
   }
 
-  deleteImage(url: string) {
+  deleteImage(url: string): Observable<any> {
     return this.storage.ref(url).delete();
   }
 }

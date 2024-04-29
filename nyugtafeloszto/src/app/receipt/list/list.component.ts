@@ -107,7 +107,7 @@ export class ListComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
-  sortData() {
+  sortData(): void {
     this.filteredTableData.sort = this.sort;
   }
 
@@ -124,7 +124,7 @@ export class ListComponent implements OnInit, AfterViewInit, OnDestroy {
     );
   }
 
-  openDialog(event: Event) {
+  openDialog(event: Event): void {
     const dialogRef = this.dialog.open(DialogComponent, {
       data: {
         title: 'Figyelem!',

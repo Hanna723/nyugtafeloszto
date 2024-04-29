@@ -92,7 +92,7 @@ export class EditComponent implements OnInit, OnDestroy {
     this.memberSubscription?.unsubscribe();
   }
 
-  getControls() {
+  getControls(): AbstractControl<any, any>[] {
     const controls = (this.groupForm.get('members') as FormArray).controls;
 
     if (this.memberList && !this.setMembers) {
@@ -198,7 +198,7 @@ export class EditComponent implements OnInit, OnDestroy {
     );
   }
 
-  trackMember(index: number, option: Member) {
+  trackMember(index: number, option: Member): string | undefined {
     return option.name;
   }
 

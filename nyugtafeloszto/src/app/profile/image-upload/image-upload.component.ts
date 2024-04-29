@@ -15,13 +15,13 @@ export class ImageUploadComponent {
     public dialogRef: MatDialogRef<ImageUploadComponent>
   ) {}
 
-  imageCropped(event: ImageCroppedEvent) {
+  imageCropped(event: ImageCroppedEvent): void {
     if (event.objectUrl) {
       this.croppedImage = event.blob;
     }
   }
 
-  saveCroppedImage() {
+  saveCroppedImage(): void {
     this.dialogRef.close(this.croppedImage);
   }
 

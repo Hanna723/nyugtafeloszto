@@ -9,6 +9,7 @@ import {
   ViewChildren,
 } from '@angular/core';
 import {
+  AbstractControl,
   FormArray,
   FormBuilder,
   FormControl,
@@ -175,7 +176,7 @@ export class EditComponent implements OnInit, AfterViewInit, OnDestroy {
       });
   }
 
-  setUploadedReceiptData() {
+  setUploadedReceiptData(): void {
     let receipt = localStorage.getItem('receipt');
     localStorage.removeItem('receipt');
     if (receipt) {
@@ -195,7 +196,7 @@ export class EditComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
-  setProducts(existingProducts: Product[]) {
+  setProducts(existingProducts: Product[]): void {
     const products = <FormArray>this.receiptForm.controls['products'];
     existingProducts.forEach((product) => {
       products.push(
@@ -222,7 +223,7 @@ export class EditComponent implements OnInit, AfterViewInit, OnDestroy {
     );
   }
 
-  trackOption(index: number, option: Currency) {
+  trackOption(index: number, option: Currency): string {
     return option.name;
   }
 
@@ -233,11 +234,11 @@ export class EditComponent implements OnInit, AfterViewInit, OnDestroy {
     return `${currency.name} (${currency.symbol})`;
   }
 
-  getProducts() {
+  getProducts(): AbstractControl<any, any>[] {
     return (this.receiptForm.get('products') as FormArray).controls;
   }
 
-  getProductAt(i: number) {
+  getProductAt(i: number): FormGroup {
     return (this.receiptForm.get('products') as FormArray).controls.at(
       i
     ) as FormGroup;
@@ -353,14 +354,17 @@ export class EditComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
-  trackPayer(index: number, option: Member | Group) {
+  trackPayer(
+    index: number,
+    option: Member | Group
+  ): Member | Group | string | undefined {
     if (!this.uid) {
       return option;
     }
     return option.name;
   }
 
-  trackPayerWithoutUser(index: number, option: string) {
+  trackPayerWithoutUser(index: number, option: string): string {
     return option;
   }
 
@@ -487,7 +491,7 @@ export class EditComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
-  memberFocusOut() {
+  memberFocusOut(): void {
     if ((this.receiptForm.controls['members'] as FormArray).length === 0) {
       this.receiptForm.controls['members'].setErrors({
         ...(this.receiptForm.controls['members'].errors || {}),
@@ -560,7 +564,7 @@ export class EditComponent implements OnInit, AfterViewInit, OnDestroy {
     event.chipInput!.clear();
   }
 
-  onSubmit() {
+  onSubmit(): void {
     let sum = 0;
     let products: Product[] = [];
     let members: Set<string> = new Set();

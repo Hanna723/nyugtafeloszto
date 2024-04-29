@@ -97,13 +97,13 @@ export class PreviewComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
-  sortData() {
+  sortData(): void {
     if (this.sort) {
       this.tableData.sort = this.sort;
     }
   }
 
-  deleteGroup() {
+  deleteGroup(): void {
     const deleteDialogRef = this.deleteDialog.open(DialogComponent, {
       disableClose: true,
       data: {
@@ -122,7 +122,7 @@ export class PreviewComponent implements OnInit, AfterViewInit, OnDestroy {
       });
   }
 
-  editGroup() {
+  editGroup(): void {
     const dialogRef = this.edit.open(EditComponent, {
       disableClose: true,
       data: { group: this.group },
@@ -151,7 +151,7 @@ export class PreviewComponent implements OnInit, AfterViewInit, OnDestroy {
       });
   }
 
-  navigateToMemberPreview(member: Member) {
+  navigateToMemberPreview(member: Member): void {
     this.router.navigateByUrl(`/member/${member.id}`);
   }
 }

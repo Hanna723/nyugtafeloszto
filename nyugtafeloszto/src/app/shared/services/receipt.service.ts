@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
-import { first } from 'rxjs';
+import { Observable, first } from 'rxjs';
 
 import { Receipt } from '../models/Receipt';
 
@@ -12,7 +12,7 @@ export class ReceiptService {
 
   constructor(private angularFirestore: AngularFirestore) {}
 
-  create(receipt: Receipt) {
+  create(receipt: Receipt): string {
     receipt.id = this.angularFirestore.createId();
     this.angularFirestore
       .collection<Receipt>(this.collectionName)
@@ -21,21 +21,21 @@ export class ReceiptService {
     return receipt.id;
   }
 
-  update(receipt: Receipt) {
+  update(receipt: Receipt): Promise<void> {
     return this.angularFirestore
       .collection<Receipt>(this.collectionName)
       .doc(receipt.id)
       .update(receipt);
   }
 
-  delete(id: string) {
+  delete(id: string): Promise<void> {
     return this.angularFirestore
       .collection<Receipt>(this.collectionName)
       .doc(id)
       .delete();
   }
 
-  getAllForOneUser(userId: string) {
+  getAllForOneUser(userId: string): Observable<Receipt[]> {
     return this.angularFirestore
       .collection<Receipt>(this.collectionName, (ref) =>
         ref.where('user', '==', userId)
@@ -43,7 +43,7 @@ export class ReceiptService {
       .valueChanges();
   }
 
-  getById(id: string, userId: string) {
+  getById(id: string, userId: string): Observable<Receipt | undefined> {
     return this.angularFirestore
       .collection<Receipt>(this.collectionName, (ref) =>
         ref.where('user', '==', userId)

@@ -88,7 +88,7 @@ export class LoginComponent implements OnInit, OnDestroy {
     }
   }
 
-  handleResetPassword() {
+  handleResetPassword(): void {
     verifyPasswordResetCode(this.auth, this.actionCode)
       .then(() => {
         this.progressBar = false;
@@ -109,7 +109,7 @@ export class LoginComponent implements OnInit, OnDestroy {
       });
   }
 
-  handleVerifyEmail() {
+  handleVerifyEmail(): void {
     applyActionCode(this.auth, this.actionCode)
       .then(() => {
         this.progressBar = false;

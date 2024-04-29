@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Inject, OnInit, Output } from '@angular/core';
 import {
+  AbstractControl,
   FormArray,
   FormBuilder,
   FormControl,
@@ -35,15 +36,15 @@ export class PaidComponent implements OnInit {
     });
   }
 
-  getPaidAmount() {
+  getPaidAmount(): AbstractControl<any, any>[] {
     return (this.paidForm.get('paid') as FormArray).controls;
   }
 
-  getPaidAmountAt(i: number) {
+  getPaidAmountAt(i: number): FormControl<any> {
     return this.getPaidAmount().at(i) as FormControl;
   }
 
-  onSubmit() {
+  onSubmit(): void {
     for (let i = 0; i < this.data.members.length; i++) {
       this.data.members[i].paid = this.getPaidAmountAt(i).value;
     }

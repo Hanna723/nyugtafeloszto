@@ -96,7 +96,7 @@ export class ListComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
-  sortData() {
+  sortData(): void {
     this.filteredTableData.sort = this.sort;
   }
 

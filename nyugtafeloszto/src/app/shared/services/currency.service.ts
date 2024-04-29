@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
-import { first } from 'rxjs';
+import { Observable, first } from 'rxjs';
 
 import { Currency } from '../models/Currency';
 
@@ -12,13 +12,13 @@ export class CurrencyService {
 
   constructor(private angularFirestore: AngularFirestore) {}
 
-  getAll() {
+  getAll(): Observable<Currency[]> {
     return this.angularFirestore
       .collection<Currency>(this.collectionName, (ref) => ref.orderBy('name'))
       .valueChanges();
   }
 
-  getById(id: string) {
+  getById(id: string): Observable<Currency | undefined> {
     return this.angularFirestore
       .collection<Currency>(this.collectionName)
       .doc(id)

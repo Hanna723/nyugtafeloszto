@@ -22,7 +22,7 @@ export class PasswordResetComponent {
     public dialogRef: MatDialogRef<PasswordResetComponent>
   ) {}
 
-  onSubmit() {
+  onSubmit(): void {
     const email = this.passwordResetForm.controls['email'].value;
 
     if (!email) {

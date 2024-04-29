@@ -14,7 +14,7 @@ import { UserService } from '../services/user.service';
 })
 export class MenuComponent implements OnInit, OnDestroy {
   @ViewChild('sidenav') sidenav?: MatSidenav;
-  @Input() image?: string;
+  @Input() image?: string | null;
   @Input() localUser?: string | null;
   routerSubscription?: Subscription;
   imageSubscription?: Subscription;

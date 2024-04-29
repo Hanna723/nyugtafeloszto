@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
-import { first } from 'rxjs';
+import { Observable, first } from 'rxjs';
 
 import { User } from '../models/User';
 
@@ -12,20 +12,20 @@ export class UserService {
 
   constructor(private angularFirestore: AngularFirestore) {}
 
-  create(user: User) {
+  create(user: User): Promise<void> {
     return this.angularFirestore
       .collection<User>(this.collectionName)
       .doc(user.id)
       .set(user);
   }
 
-  getAll() {
+  getAll(): Observable<User[]> {
     return this.angularFirestore
       .collection<User>(this.collectionName)
       .valueChanges();
   }
 
-  getById(id: string) {
+  getById(id: string): Observable<User | undefined> {
     return this.angularFirestore
       .collection<User>(this.collectionName)
       .doc(id)
@@ -42,14 +42,14 @@ export class UserService {
       .pipe(first());
   }
 
-  update(user: User) {
+  update(user: User): Promise<void> {
     return this.angularFirestore
       .collection<User>(this.collectionName)
       .doc(user.id)
       .set(user);
   }
 
-  delete(id: string) {
+  delete(id: string): Promise<void> {
     return this.angularFirestore
       .collection<User>(this.collectionName)
       .doc(id)

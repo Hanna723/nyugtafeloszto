@@ -83,7 +83,7 @@ export class ListComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
-  onSubmit() {
+  onSubmit(): void {
     const user = localStorage.getItem('user');
     const tableDataLength = this.tableData.data.length;
 
@@ -117,7 +117,7 @@ export class ListComponent implements OnInit, AfterViewInit, OnDestroy {
     this.sortData();
   }
 
-  sortData() {
+  sortData(): void {
     this.filteredTableData.sort = this.sort;
   }
 
@@ -167,7 +167,7 @@ export class ListComponent implements OnInit, AfterViewInit, OnDestroy {
     };
   }
 
-  navigateToPreview(member: Member) {
+  navigateToPreview(member: Member): void {
     this.router.navigateByUrl(`/member/${member.id}`);
   }
 }
